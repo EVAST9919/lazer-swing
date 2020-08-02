@@ -13,6 +13,10 @@ using osu.Game.Rulesets.Swing.Scoring;
 using osu.Game.Rulesets.Swing.Difficulty;
 using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Rulesets.Swing.Beatmaps;
+using osu.Game.Configuration;
+using osu.Game.Rulesets.Configuration;
+using osu.Game.Rulesets.Swing.Configuration;
+using osu.Game.Overlays.Settings;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -23,6 +27,10 @@ namespace osu.Game.Rulesets.Swing
         public override ScoreProcessor CreateScoreProcessor() => new SwingScoreProcessor();
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new SwingBeatmapConverter(beatmap, this);
+
+        public override IRulesetConfigManager CreateConfig(SettingsStore settings) => new SwingRulesetConfigManager(settings, RulesetInfo);
+
+        public override RulesetSettingsSubsection CreateSettings() => new SwingSettingsSubsection(this);
 
         public override IEnumerable<KeyBinding> GetDefaultKeyBindings(int variant = 0) => new[]
         {

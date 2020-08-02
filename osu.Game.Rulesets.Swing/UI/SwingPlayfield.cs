@@ -6,6 +6,8 @@ using osu.Framework.Graphics.Containers;
 using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Swing.Objects;
+using osu.Game.Rulesets.Swing.Configuration;
+using osu.Framework.Bindables;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -13,38 +15,55 @@ namespace osu.Game.Rulesets.Swing.UI
     {
         public static readonly Vector2 FULL_SIZE = new Vector2(512, 512);
 
+        [Resolved(canBeNull: true)]
+        private SwingRulesetConfigManager config { get; set; }
+
+        private readonly Bindable<PlayfieldOrientation> orientation = new Bindable<PlayfieldOrientation>(PlayfieldOrientation.Taiko);
+
         [BackgroundDependencyLoader]
         private void load()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
-            X = -200;
-            InternalChildren = new Drawable[]
+            InternalChild = new Container
             {
-                new Box
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                RelativeSizeAxes = Axes.Both,
+                X = -200,
+                Children = new Drawable[]
                 {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
-                    Width = 1,
-                    EdgeSmoothness = Vector2.One
-                },
-                new Box
-                {
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
-                    Width = 1,
-                    EdgeSmoothness = Vector2.One
-                },
-                new Ring
-                {
-                    Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre
-                },
-                HitObjectContainer
+                    new Box
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
+                        Width = 1,
+                        EdgeSmoothness = Vector2.One
+                    },
+                    new Box
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
+                        Width = 1,
+                        EdgeSmoothness = Vector2.One
+                    },
+                    new Ring
+                    {
+                        Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    },
+                    HitObjectContainer
+                }
             };
+
+            config?.BindWith(SwingRulesetSetting.PlayfieldOrientation, orientation);
+            orientation.BindValueChanged(u =>
+            {
+                Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
+            }, true);
         }
 
         private class Ring : CircularContainer
