@@ -131,8 +131,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    this.ScaleTo(1.1f, 200, Easing.OutQuint);
-                    this.FadeOut(200);
+                    this.ScaleTo(1.1f, 300, Easing.OutQuint);
+                    Bar.FadeOut();
+                    this.FadeOut(300);
                     break;
             }
         }

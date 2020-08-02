@@ -16,8 +16,27 @@ namespace osu.Game.Rulesets.Swing.UI
         [BackgroundDependencyLoader]
         private void load()
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
+            X = -200;
             InternalChildren = new Drawable[]
             {
+                new Box
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
+                    Width = 1,
+                    EdgeSmoothness = Vector2.One
+                },
+                new Box
+                {
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
+                    Width = 1,
+                    EdgeSmoothness = Vector2.One
+                },
                 new Ring
                 {
                     Size = new Vector2(SwingHitObject.DEFAULT_SIZE),

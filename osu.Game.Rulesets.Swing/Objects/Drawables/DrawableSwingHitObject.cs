@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
     public abstract class DrawableSwingHitObject : DrawableHitObject<SwingHitObject>
     {
         protected readonly Container Content;
+        protected readonly CircularContainer Bar;
 
         protected DrawableSwingHitObject(SwingHitObject hitObject)
             : base(hitObject)
@@ -27,12 +28,15 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
                 Children = new Drawable[]
                 {
-                    new Box
+                    Bar = new CircularContainer
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
                         RelativeSizeAxes = Axes.Y,
-                        Width = 2
+                        Width = 2,
+                        Masking = true,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both
+                        }
                     },
                     Content = new Container
                     {
@@ -85,6 +89,8 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
 
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            Bar.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            Bar.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Content.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
 
             RecreatePieces();
