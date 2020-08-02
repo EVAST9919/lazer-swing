@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly double rotationTime;
         private readonly double appearTime;
 
-        private Circle circle;
+        private Box circle;
 
         public DrawableTapHitObject(TapHitObject h)
             : base(h)
@@ -35,10 +36,16 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }, true);
         }
 
-        protected override Drawable CreateMainPiece() => circle = new Circle
+        protected override Drawable CreateMainPiece() => new CircularContainer
         {
             RelativeSizeAxes = Axes.Both,
-            Masking = true
+            Masking = true,
+            BorderThickness = 4,
+            BorderColour = Color4.White,
+            Child = circle = new Box
+            {
+                RelativeSizeAxes = Axes.Both,
+            }
         };
 
         protected override void Update()

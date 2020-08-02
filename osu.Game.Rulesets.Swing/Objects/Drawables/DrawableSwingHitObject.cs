@@ -31,11 +31,12 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
                     Bar = new CircularContainer
                     {
                         RelativeSizeAxes = Axes.Y,
-                        Width = 2,
+                        Width = 2.5f,
                         Masking = true,
                         Child = new Box
                         {
-                            RelativeSizeAxes = Axes.Both
+                            RelativeSizeAxes = Axes.Both,
+                            EdgeSmoothness = Vector2.One,
                         }
                     },
                     Content = new Container
