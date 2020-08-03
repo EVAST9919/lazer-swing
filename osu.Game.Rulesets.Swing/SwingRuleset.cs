@@ -17,6 +17,7 @@ using osu.Game.Configuration;
 using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Swing.Configuration;
 using osu.Game.Overlays.Settings;
+using osu.Game.Rulesets.Swing.Mods;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -40,7 +41,41 @@ namespace osu.Game.Rulesets.Swing
             new KeyBinding(InputKey.M, SwingAction.DownSwingAdditional)
         };
 
-        public override IEnumerable<Mod> GetModsFor(ModType type) => Array.Empty<Mod>();
+        public override IEnumerable<Mod> GetModsFor(ModType type)
+        {
+            switch (type)
+            {
+                case ModType.DifficultyReduction:
+                    return new Mod[]
+                    {
+                        new SwingModEasy(),
+                        new SwingModNoFail(),
+                        new MultiMod(new SwingModHalfTime(), new SwingModDaycore())
+                    };
+
+                case ModType.DifficultyIncrease:
+                    return new Mod[]
+                    {
+                        new SwingModSuddenDeath(),
+                        new MultiMod(new SwingModDoubleTime(), new SwingModNightcore()),
+                    };
+
+                //case ModType.Automation:
+                //    return new Mod[]
+                //    {
+                //        new MultiMod(new TouhosuModAutoplay(), new TouhosuModCinema()),
+                //    };
+
+                case ModType.Fun:
+                    return new Mod[]
+                    {
+                        new MultiMod(new ModWindUp(), new ModWindDown()),
+                    };
+
+                default:
+                    return Array.Empty<Mod>();
+            }
+        }
 
         public override string Description => "Swing";
 
