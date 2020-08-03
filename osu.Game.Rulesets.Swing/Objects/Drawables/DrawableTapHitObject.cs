@@ -78,7 +78,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.UpdateInitialTransforms();
 
-            this.FadeInFromZero(100, Easing.OutQuint);
+            this.FadeInFromZero(HitObject.TimePreempt / 10, Easing.OutQuint);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
