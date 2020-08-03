@@ -18,6 +18,8 @@ using osu.Game.Rulesets.Configuration;
 using osu.Game.Rulesets.Swing.Configuration;
 using osu.Game.Overlays.Settings;
 using osu.Game.Rulesets.Swing.Mods;
+using osu.Game.Rulesets.Replays.Types;
+using osu.Game.Rulesets.Swing.Replays;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -89,5 +91,7 @@ namespace osu.Game.Rulesets.Swing
         };
 
         public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) => new SwingDifficultyCalculator(this, beatmap);
+
+        public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SwingReplayFrame();
     }
 }
