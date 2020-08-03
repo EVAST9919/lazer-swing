@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableTapHitObject : DrawableSwingHitObject<TapHitObject>, IKeyBindingHandler<SwingAction>
+    public class DrawableTap : DrawableSwingHitObject<Tap>, IKeyBindingHandler<SwingAction>
     {
         private bool validActionPressed;
         private bool pressHandledThisFrame;
@@ -27,7 +27,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        public DrawableTapHitObject(TapHitObject h)
+        public DrawableTap(Tap h)
             : base(h)
         {
             AutoSizeAxes = Axes.Both;

@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Swing.Replays
 
                 switch (h)
                 {
-                    case TapHitObject hit:
+                    case Tap hit:
                         {
                             SwingAction[] actions;
 

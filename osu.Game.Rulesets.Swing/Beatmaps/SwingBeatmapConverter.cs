@@ -39,7 +39,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                 default:
                     if (strong)
                     {
-                        yield return new TapHitObject
+                        yield return new Tap
                         {
                             StartTime = obj.StartTime,
                             Type = HitType.Up,
@@ -49,7 +49,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                             IndexInBeatmap = index
                         };
 
-                        yield return new TapHitObject
+                        yield return new Tap
                         {
                             StartTime = obj.StartTime,
                             Type = HitType.Down,
@@ -61,7 +61,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                     }
                     else
                     {
-                        yield return new TapHitObject
+                        yield return new Tap
                         {
                             StartTime = obj.StartTime,
                             Type = !isRim ? HitType.Up : HitType.Down,

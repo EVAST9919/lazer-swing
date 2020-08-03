@@ -33,8 +33,8 @@ namespace osu.Game.Rulesets.Swing.UI
         {
             switch (h)
             {
-                case TapHitObject tap:
-                    return new DrawableTapHitObject(tap);
+                case Tap tap:
+                    return new DrawableTap(tap);
             }
 
             return null;
