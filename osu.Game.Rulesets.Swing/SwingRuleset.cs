@@ -62,11 +62,11 @@ namespace osu.Game.Rulesets.Swing
                         new MultiMod(new SwingModDoubleTime(), new SwingModNightcore()),
                     };
 
-                //case ModType.Automation:
-                //    return new Mod[]
-                //    {
-                //        new MultiMod(new TouhosuModAutoplay(), new TouhosuModCinema()),
-                //    };
+                case ModType.Automation:
+                    return new Mod[]
+                    {
+                        new MultiMod(new SwingModAutoplay(), new SwingModCinema()),
+                    };
 
                 case ModType.Fun:
                     return new Mod[]
