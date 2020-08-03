@@ -1,11 +1,14 @@
 ﻿using osu.Framework.Allocation;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Rulesets.Touhosu.Objects.Drawables;
+using osuTK;
 using osuTK.Graphics;
 using System.Linq;
 
@@ -18,11 +21,52 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly double rotationTime;
         private readonly double appearTime;
 
-        private Box circle;
+        private readonly Box circle;
+        private readonly Container content;
+        private readonly CircularContainer bar;
+
+        protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         public DrawableTapHitObject(TapHitObject h)
             : base(h)
         {
+            AutoSizeAxes = Axes.Both;
+            AddInternal(new Container
+            {
+                AutoSizeAxes = Axes.X,
+                Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                Children = new Drawable[]
+                {
+                    bar = new CircularContainer
+                    {
+                        RelativeSizeAxes = Axes.Y,
+                        Width = 2.5f,
+                        Masking = true,
+                        Child = new Box
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            EdgeSmoothness = Vector2.One,
+                        }
+                    },
+                    content = new Container
+                    {
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
+                        Child = new CircularContainer
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Masking = true,
+                            BorderThickness = 4,
+                            BorderColour = Color4.White,
+                            Child = circle = new Box
+                            {
+                                RelativeSizeAxes = Axes.Both,
+                            }
+                        }
+                    }
+                }
+            });
+
             rotationTime = h.TimePreempt * 2;
             appearTime = HitObject.StartTime - HitObject.TimePreempt;
         }
@@ -30,23 +74,28 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         [BackgroundDependencyLoader]
         private void load()
         {
+            Type.BindTo(HitObject.TypeBindable);
+            Type.BindValueChanged(_ => updateType(), true);
+
             AccentColour.BindValueChanged(accent =>
             {
                 circle.Colour = accent.NewValue;
             }, true);
         }
 
-        protected override Drawable CreateMainPiece() => new CircularContainer
+        private void updateType()
         {
-            RelativeSizeAxes = Axes.Both,
-            Masking = true,
-            BorderThickness = 4,
-            BorderColour = Color4.White,
-            Child = circle = new Box
-            {
-                RelativeSizeAxes = Axes.Both,
-            }
-        };
+            HitActions =
+                HitObject.Type == HitType.Up
+                    ? new[] { SwingAction.UpSwing, SwingAction.UpSwingAdditional }
+                    : new[] { SwingAction.DownSwing, SwingAction.DownSwingAdditional };
+
+            Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            bar.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            bar.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            content.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
+        }
 
         protected override void Update()
         {
@@ -140,9 +189,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    Content.ScaleTo(1.2f, 150, Easing.OutQuint);
+                    content.ScaleTo(1.2f, 150, Easing.OutQuint);
                     circle.FlashColour(Color4.White, 300, Easing.Out);
-                    Bar.FadeOut();
+                    bar.FadeOut();
                     this.FadeOut(300, Easing.OutQuint);
                     break;
             }
