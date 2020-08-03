@@ -56,6 +56,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             // for us to remove the extra press blocking, before input is handled in the next frame
             pressHandledThisFrame = false;
 
+            if (Result.HasResult && Result.Type != HitResult.Miss)
+                return;
+
             var currentTime = Time.Current;
 
             if (currentTime < appearTime)
@@ -77,7 +80,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-
             this.FadeInFromZero(HitObject.TimePreempt / 10, Easing.OutQuint);
         }
 
@@ -133,14 +135,15 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Miss:
-                    this.FadeColour(Color4.Red, 100);
+                    this.FadeColour(Color4.Red, 100, Easing.OutQuint);
                     this.FadeOut(100);
                     break;
 
                 case ArmedState.Hit:
-                    this.ScaleTo(1.1f, 300, Easing.OutQuint);
+                    Content.ScaleTo(1.2f, 150, Easing.OutQuint);
+                    circle.FlashColour(Color4.White, 300, Easing.Out);
                     Bar.FadeOut();
-                    this.FadeOut(300);
+                    this.FadeOut(300, Easing.OutQuint);
                     break;
             }
         }
