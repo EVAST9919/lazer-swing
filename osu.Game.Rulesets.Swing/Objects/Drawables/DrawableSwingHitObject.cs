@@ -1,4 +1,5 @@
-﻿using osu.Game.Rulesets.Objects.Drawables;
+﻿using osu.Framework.Input.Bindings;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing;
 using osu.Game.Rulesets.Swing.Objects;
 using osuTK.Graphics;
@@ -6,10 +7,16 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
 {
-    public abstract class DrawableSwingHitObject : DrawableHitObject<SwingHitObject>
+    public abstract class DrawableSwingHitObject : DrawableHitObject<SwingHitObject>, IKeyBindingHandler<SwingAction>
     {
         protected DrawableSwingHitObject(SwingHitObject hitObject)
             : base(hitObject)
+        {
+        }
+
+        public abstract bool OnPressed(SwingAction action);
+
+        public virtual void OnReleased(SwingAction action)
         {
         }
     }

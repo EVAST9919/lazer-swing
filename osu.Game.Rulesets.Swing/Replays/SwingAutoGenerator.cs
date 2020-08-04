@@ -13,6 +13,8 @@ namespace osu.Game.Rulesets.Swing.Replays
     {
         public new SwingBeatmap Beatmap => (SwingBeatmap)base.Beatmap;
 
+        private const double spinner_hit_speed = 50;
+
         public SwingAutoGenerator(IBeatmap beatmap)
             : base(beatmap)
         {
@@ -36,6 +38,46 @@ namespace osu.Game.Rulesets.Swing.Replays
 
                 switch (h)
                 {
+                    case Spinner spinner:
+                        {
+                            int d = 0;
+                            int count = 0;
+                            int req = spinner.RequiredHits;
+                            double hitRate = Math.Min(spinner_hit_speed, spinner.Duration / req);
+
+                            for (double j = h.StartTime; j < endTime; j += hitRate)
+                            {
+                                SwingAction action;
+
+                                switch (d)
+                                {
+                                    default:
+                                    case 0:
+                                        action = SwingAction.UpSwing;
+                                        break;
+
+                                    case 1:
+                                        action = SwingAction.DownSwing;
+                                        break;
+
+                                    case 2:
+                                        action = SwingAction.UpSwingAdditional;
+                                        break;
+
+                                    case 3:
+                                        action = SwingAction.DownSwingAdditional;
+                                        break;
+                                }
+
+                                Frames.Add(new SwingReplayFrame(j, action));
+                                d = (d + 1) % 4;
+                                if (++count == req)
+                                    break;
+                            }
+
+                            break;
+                        }
+
                     case Tap hit:
                         {
                             SwingAction[] actions;

@@ -3,7 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.UI;
@@ -14,7 +13,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableTap : DrawableSwingHitObject<Tap>, IKeyBindingHandler<SwingAction>
+    public class DrawableTap : DrawableSwingHitObject<Tap>
     {
         private bool validActionPressed;
         private bool pressHandledThisFrame;
@@ -151,7 +150,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 ApplyResult(r => r.Type = result);
         }
 
-        public bool OnPressed(SwingAction action)
+        public override bool OnPressed(SwingAction action)
         {
             if (pressHandledThisFrame)
                 return true;
@@ -171,7 +170,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             return result;
         }
 
-        public void OnReleased(SwingAction action)
+        public override void OnReleased(SwingAction action)
         {
             if (action == HitAction)
                 HitAction = null;

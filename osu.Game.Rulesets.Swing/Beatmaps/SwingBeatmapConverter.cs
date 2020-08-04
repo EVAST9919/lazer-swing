@@ -5,11 +5,14 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Audio;
+using System;
 
 namespace osu.Game.Rulesets.Swing.Beatmaps
 {
     public class SwingBeatmapConverter : BeatmapConverter<SwingHitObject>
     {
+        private const float spinner_hit_multiplier = 1.65f;
+
         public SwingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
@@ -36,6 +39,57 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
             switch (obj)
             {
+                case IHasPathWithRepeats _:
+                    if (strong)
+                    {
+                        yield return new Tap
+                        {
+                            StartTime = obj.StartTime,
+                            Type = HitType.Up,
+                            Samples = obj.Samples,
+                            NewCombo = comboData?.NewCombo ?? false,
+                            ComboOffset = comboData?.ComboOffset ?? 0,
+                            IndexInBeatmap = index
+                        };
+
+                        yield return new Tap
+                        {
+                            StartTime = obj.StartTime,
+                            Type = HitType.Down,
+                            Samples = obj.Samples,
+                            NewCombo = comboData?.NewCombo ?? false,
+                            ComboOffset = comboData?.ComboOffset ?? 0,
+                            IndexInBeatmap = index
+                        };
+                    }
+                    else
+                    {
+                        yield return new Tap
+                        {
+                            StartTime = obj.StartTime,
+                            Type = !isRim ? HitType.Up : HitType.Down,
+                            Samples = obj.Samples,
+                            NewCombo = comboData?.NewCombo ?? false,
+                            ComboOffset = comboData?.ComboOffset ?? 0,
+                            IndexInBeatmap = index
+                        };
+                    }
+                    break;
+
+                case IHasDuration endTimeData:
+                    {
+                        double hitMultiplier = BeatmapDifficulty.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.OverallDifficulty, 3, 5, 7.5) * spinner_hit_multiplier;
+
+                        yield return new Spinner
+                        {
+                            StartTime = obj.StartTime,
+                            Samples = obj.Samples,
+                            Duration = endTimeData.Duration,
+                            RequiredHits = (int)Math.Max(1, endTimeData.Duration / 1000 * hitMultiplier)
+                        };
+                        break;
+                    }
+
                 default:
                     if (strong)
                     {

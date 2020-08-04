@@ -3,7 +3,6 @@ using osu.Game.Rulesets.UI;
 using osuTK;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
-using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.Configuration;
@@ -64,22 +63,6 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
             }, true);
-        }
-
-        private class Ring : CircularContainer
-        {
-            public Ring()
-            {
-                Masking = true;
-                BorderColour = Color4.White;
-                BorderThickness = 2;
-                Child = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Alpha = 0,
-                    AlwaysPresent = true
-                };
-            }
         }
     }
 }
