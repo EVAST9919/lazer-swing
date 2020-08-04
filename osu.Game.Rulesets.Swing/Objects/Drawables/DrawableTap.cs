@@ -1,7 +1,9 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -21,7 +23,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private readonly Box circle;
         private readonly Container content;
-        private readonly CircularContainer bar;
+        private readonly Box bar;
 
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
@@ -35,16 +37,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
                 Children = new Drawable[]
                 {
-                    bar = new CircularContainer
+                    bar = new Box
                     {
                         Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 + 1,
-                        Width = 2.5f,
-                        Masking = true,
-                        Child = new Box
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            EdgeSmoothness = Vector2.One,
-                        }
+                        Width = 1,
+                        EdgeSmoothness = Vector2.One,
                     },
                     content = new Container
                     {
@@ -59,6 +56,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                             Child = circle = new Box
                             {
                                 RelativeSizeAxes = Axes.Both,
+                            },
+                            EdgeEffect = new EdgeEffectParameters
+                            {
+                                Colour = Color4.Black.Opacity(0.25f),
+                                Type = EdgeEffectType.Shadow,
+                                Radius = 10
                             }
                         }
                     }
@@ -123,7 +126,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            this.FadeInFromZero(HitObject.TimePreempt / 10, Easing.OutQuint);
+            this.FadeInFromZero(HitObject.TimePreempt / 5, Easing.Out);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
