@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     bar = new CircularContainer
                     {
-                        RelativeSizeAxes = Axes.Y,
+                        Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 + 1,
                         Width = 2.5f,
                         Masking = true,
                         Child = new Box
