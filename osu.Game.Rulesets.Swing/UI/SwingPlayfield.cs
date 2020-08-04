@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
                 RelativeSizeAxes = Axes.Both,
-                X = -200,
+                X = -150,
                 Children = new Drawable[]
                 {
                     new Box
@@ -59,6 +59,17 @@ namespace osu.Game.Rulesets.Swing.UI
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
+                    new HalfRing
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.BottomCentre,
+                        Rotation = -180
+                    },
+                    new HalfRing
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre
+                    },
                     HitObjectContainer
                 }
             };
@@ -68,6 +79,23 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
             }, true);
+        }
+
+        private class HalfRing : Container
+        {
+            private static readonly float size = FULL_SIZE.X - SwingHitObject.DEFAULT_SIZE;
+
+            public HalfRing()
+            {
+                Size = new Vector2(size, size / 2);
+                Masking = true;
+                Child = new Ring
+                {
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(size)
+                };
+            }
         }
     }
 }

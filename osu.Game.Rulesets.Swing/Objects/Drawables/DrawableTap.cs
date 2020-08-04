@@ -21,29 +21,28 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly double rotationTime;
         private readonly double appearTime;
 
-        private readonly Box circle;
-        private readonly Container content;
         private readonly Box bar;
+        private readonly Container contentContainer;
+        private readonly Container content;
+        private readonly Box circle;
 
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         public DrawableTap(Tap h)
             : base(h)
         {
-            AutoSizeAxes = Axes.Both;
-            AddInternal(new Container
+            AddRangeInternal(new Drawable[]
             {
-                AutoSizeAxes = Axes.X,
-                Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                Children = new Drawable[]
+                bar = new Box
                 {
-                    bar = new Box
-                    {
-                        Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 + 1,
-                        Width = 1,
-                        EdgeSmoothness = Vector2.One,
-                    },
-                    content = new Container
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 + 1,
+                    Width = 1,
+                    EdgeSmoothness = Vector2.One,
+                },
+                contentContainer = new Container
+                {
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                    Child = content = new Container
                     {
                         Origin = Anchor.Centre,
                         Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
@@ -93,32 +92,45 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+
             bar.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             bar.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+
+            contentContainer.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+
             content.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
         }
+
+        private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;
 
         protected override void Update()
         {
             base.Update();
 
-            if (Result.HasResult && Result.Type != HitResult.Miss)
-                return;
-
             var currentTime = Time.Current;
 
             if (currentTime < appearTime)
-                Rotation = Type.Value == HitType.Up ? -90 : 90;
+            {
+                bar.Rotation = contentContainer.Rotation = Type.Value == HitType.Up ? -90 : 90;
+            }
             else
             {
                 var rotationOffset = (currentTime - appearTime) / rotationTime * 180;
+
                 if (Type.Value == HitType.Up)
                 {
-                    Rotation = (float)(-90 + rotationOffset);
+                    if (!hasNonMissResult)
+                        contentContainer.Rotation = (float)(-90 + rotationOffset);
+
+                    bar.Rotation = (float)(-90 + rotationOffset);
                 }
                 else
                 {
-                    Rotation = (float)(90 - rotationOffset);
+                    if (!hasNonMissResult)
+                        contentContainer.Rotation = (float)(90 - rotationOffset);
+
+                    bar.Rotation = (float)(90 - rotationOffset);
                 }
             }
         }
@@ -183,7 +195,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Hit:
                     content.ScaleTo(1.2f, 150, Easing.OutQuint);
                     circle.FlashColour(Color4.White, 300, Easing.Out);
-                    bar.FadeOut();
                     this.FadeOut(300, Easing.OutQuint);
                     break;
             }
