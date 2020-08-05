@@ -15,8 +15,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
     public class DrawableSpinner : DrawableSwingHitObject<Spinner>
     {
         private readonly Container<DrawableSpinnerTick> ticks;
-        private readonly Ring border;
         private readonly Circle filler;
+        private readonly Box line;
+        private readonly FoldableHalfRing ring1;
+        private readonly FoldableHalfRing ring2;
 
         public DrawableSpinner(Spinner h)
             : base(h)
@@ -27,6 +29,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]
             {
+                line = new Box
+                {
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Height = 0.5f,
+                    EdgeSmoothness = Vector2.One
+                },
                 filler = new Circle
                 {
                     Anchor = Anchor.Centre,
@@ -37,11 +46,27 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Colour = Color4.White,
                     Alpha = 0.5f
                 },
-                border = new Ring
+                new Container
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = Vector2.Zero
+                    Size = new Vector2(200),
+                    Children = new Drawable[]
+                    {
+                        ring1 = new FoldableHalfRing(RingState.Closed)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
+                        },
+                        ring2 = new FoldableHalfRing(RingState.Closed)
+                        {
+                            RelativeSizeAxes = Axes.Both,
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre,
+                            Rotation = 180
+                        }
+                    }
                 }
             });
 
@@ -81,7 +106,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.UpdateInitialTransforms();
 
-            border.ResizeTo(SwingHitObject.DEFAULT_SIZE).Then().ResizeTo(200, HitObject.TimePreempt, Easing.OutQuint);
+            line.ResizeWidthTo(198, HitObject.TimePreempt / 2, Easing.Out).Then().RotateTo(180, HitObject.TimePreempt / 2, Easing.Out);
+
+            using (BeginDelayedSequence(HitObject.TimePreempt / 2, true))
+            {
+                ring1.Open(HitObject.TimePreempt / 2);
+                ring2.Open(HitObject.TimePreempt / 2);
+            };
         }
 
         private Spinner spinnerObject => (Spinner)HitObject;
@@ -130,9 +161,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     tick.TriggerResult(HitResult.Miss);
                 }
 
-                var hitResult = numHits > spinnerObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss;
-
-                ApplyResult(r => r.Type = hitResult);
+                ApplyResult(r => r.Type = numHits > spinnerObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
             }
         }
 
@@ -140,6 +169,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action)
         {
+            if (Time.Current > HitObject.StartTime + spinnerObject.Duration)
+                return false;
+
             // Don't handle keys before the swell starts
             if (Time.Current < HitObject.StartTime)
                 return false;
@@ -168,8 +200,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Miss:
                     using (BeginDelayedSequence(spinnerObject.Duration, true))
                     {
+                        line.RotateTo(0, transition_duration, Easing.Out);
+                        ring1.CloseBack(transition_duration);
+                        ring2.CloseBack(transition_duration);
                         this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
-                        this.FadeOut(transition_duration);
+                        this.FadeOut(transition_duration, Easing.Out);
                     }
 
                     break;
@@ -177,8 +212,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginDelayedSequence(spinnerObject.Duration, true))
                     {
-                        this.FadeOut(transition_duration, Easing.OutQuint);
-                        this.ScaleTo(0, transition_duration, Easing.OutQuint);
+                        line.RotateTo(360, transition_duration, Easing.Out).Then().ResizeWidthTo(0, transition_duration, Easing.Out);
+                        ring1.Close(transition_duration);
+                        ring2.Close(transition_duration);
+                        this.Delay(transition_duration).FadeOut(transition_duration, Easing.Out);
                     }
 
                     break;
