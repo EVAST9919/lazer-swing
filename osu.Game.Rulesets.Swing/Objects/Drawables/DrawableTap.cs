@@ -2,6 +2,7 @@
 using osu.Framework.Bindables;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
+using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
@@ -96,6 +97,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             bar.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             bar.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+
+            bar.Colour = Type.Value == HitType.Up ? ColourInfo.GradientVertical(Color4.Black.Opacity(0), Color4.White) : ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0));
 
             contentContainer.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;

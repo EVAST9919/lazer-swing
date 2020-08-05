@@ -10,6 +10,8 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics.Colour;
 using osuTK.Graphics;
 using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics.Textures;
+using osu.Framework.Graphics.Sprites;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -62,13 +64,13 @@ namespace osu.Game.Rulesets.Swing.UI
                     new HalfRing
                     {
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.BottomCentre,
-                        Rotation = -180
+                        Origin = Anchor.TopCentre,
                     },
                     new HalfRing
                     {
                         Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.BottomCentre
+                        Origin = Anchor.TopCentre,
+                        Rotation = -180
                     },
                     HitObjectContainer
                 }
@@ -85,15 +87,14 @@ namespace osu.Game.Rulesets.Swing.UI
         {
             private static readonly float size = FULL_SIZE.X - SwingHitObject.DEFAULT_SIZE;
 
-            public HalfRing()
+            [BackgroundDependencyLoader]
+            private void load(TextureStore textures)
             {
                 Size = new Vector2(size, size / 2);
-                Masking = true;
-                Child = new Ring
+                Child = new Sprite
                 {
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(size)
+                    RelativeSizeAxes = Axes.Both,
+                    Texture = textures.Get("half-ring-gradient")
                 };
             }
         }
