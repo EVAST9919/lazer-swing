@@ -12,6 +12,7 @@ using osuTK.Graphics;
 using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Sprites;
+using osu.Framework.Input.Bindings;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -61,18 +62,12 @@ namespace osu.Game.Rulesets.Swing.UI
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
-                    new HalfRing
+                    HitObjectContainer,
+                    new Rings
                     {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
                     },
-                    new HalfRing
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.TopCentre,
-                        Rotation = -180
-                    },
-                    HitObjectContainer
                 }
             };
 
@@ -81,6 +76,66 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
             }, true);
+        }
+
+        private class Rings : CompositeDrawable, IKeyBindingHandler<SwingAction>
+        {
+            private readonly HalfRing topRing;
+            private readonly HalfRing bottomRing;
+
+            public Rings()
+            {
+                AutoSizeAxes = Axes.X;
+                RelativeSizeAxes = Axes.Y;
+                InternalChildren = new Drawable[]
+                {
+                    topRing = new HalfRing
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                    },
+                    bottomRing = new HalfRing
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.TopCentre,
+                        Rotation = -180
+                    }
+                };
+            }
+
+            public bool OnPressed(SwingAction action)
+            {
+                switch (action)
+                {
+                    case SwingAction.UpSwing:
+                    case SwingAction.UpSwingAdditional:
+                        topRing.FadeColour(Color4.DeepSkyBlue, 100, Easing.Out);
+                        break;
+
+                    case SwingAction.DownSwing:
+                    case SwingAction.DownSwingAdditional:
+                        bottomRing.FadeColour(Color4.Red, 100, Easing.Out);
+                        break;
+                }
+
+                return false;
+            }
+
+            public void OnReleased(SwingAction action)
+            {
+                switch (action)
+                {
+                    case SwingAction.UpSwing:
+                    case SwingAction.UpSwingAdditional:
+                        topRing.FadeColour(Color4.White, 300, Easing.Out);
+                        break;
+
+                    case SwingAction.DownSwing:
+                    case SwingAction.DownSwingAdditional:
+                        bottomRing.FadeColour(Color4.White, 300, Easing.Out);
+                        break;
+                }
+            }
         }
 
         private class HalfRing : Container

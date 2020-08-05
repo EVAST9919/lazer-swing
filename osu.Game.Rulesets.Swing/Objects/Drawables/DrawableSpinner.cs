@@ -43,8 +43,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Masking = true,
                     Size = new Vector2(200),
                     Scale = Vector2.Zero,
-                    Colour = Color4.White,
-                    Alpha = 0.5f
+                    Colour = Color4.DeepSkyBlue,
+                    Alpha = 0.6f
                 },
                 new Container
                 {
