@@ -32,10 +32,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 headContainer = new Container<DrawableHoldHeadCircle>(),
-                headSoundContainer = new Container<DrawableHoldHeadSound>(),
                 ticksContainer = new Container<DrawableHoldTick>(),
                 repeatsContainer = new Container<DrawableHoldRepeat>(),
                 tailContainer = new Container<DrawableHoldTailCircle>(),
+                headSoundContainer = new Container<DrawableHoldHeadSound>(),
             });
         }
 
@@ -137,7 +137,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.Update();
 
-            var isTracking = HeadCircle.IsTracking;
+            var isTracking = HeadCircle.IsTracking.Value;
 
             TailCircle.IsTracking = isTracking;
 

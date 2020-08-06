@@ -24,11 +24,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly double appearTime;
 
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
+        public readonly BindableBool IsTracking = new BindableBool();
 
         private readonly IHasPathWithRepeats path;
         private readonly Box bar;
         private readonly Container contentContainer;
         private readonly DrawableTapCircle tapCircle;
+        private readonly Ring trackingRing;
 
         public DrawableHoldHeadCircle(HoldHeadCircle h)
             : base(h)
@@ -46,7 +48,15 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 contentContainer = new Container
                 {
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Child = tapCircle = new DrawableTapCircle()
+                    Children = new Drawable[]
+                    {
+                        trackingRing = new Ring
+                        {
+                            Origin = Anchor.Centre,
+                            Size = new Vector2(50)
+                        },
+                        tapCircle = new DrawableTapCircle(),
+                    }
                 }
             });
 
@@ -80,6 +90,18 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }, true);
         }
 
+        protected override void LoadComplete()
+        {
+            base.LoadComplete();
+            IsTracking.BindValueChanged(onTrackingChanged);
+        }
+
+        private void onTrackingChanged(ValueChangedEvent<bool> tracked)
+        {
+            trackingRing.ResizeTo(tracked.NewValue ? 70 : 50, 100, Easing.OutQuint);
+            tapCircle.FadeColour(tracked.NewValue ? Color4.White : Color4.Gray, 100, Easing.OutQuint);
+        }
+
         private void updateType()
         {
             HitActions =
@@ -99,6 +121,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
 
             tapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
+            trackingRing.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
         }
 
         protected override void UpdateInitialTransforms()
@@ -156,27 +179,30 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            if (Auto && timeOffset > 0)
+            {
+                IsTracking.Value = true;
+            }
+
             if (timeOffset > path.Duration)
             {
-                ApplyResult(r => r.Type = IsTracking || Auto ? HitResult.Perfect : HitResult.Miss);
+                ApplyResult(r => r.Type = IsTracking.Value ? HitResult.Perfect : HitResult.Miss);
             }
         }
-
-        public bool IsTracking { get; private set; }
 
         public override bool OnPressed(SwingAction action)
         {
             if (Judged)
                 return false;
 
-            IsTracking = HitActions.Contains(action);
-            return IsTracking;
+            IsTracking.Value = HitActions.Contains(action);
+            return IsTracking.Value;
         }
 
         public override void OnReleased(SwingAction action)
         {
             base.OnReleased(action);
-            IsTracking = false;
+            IsTracking.Value = false;
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
