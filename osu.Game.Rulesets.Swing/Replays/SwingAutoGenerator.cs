@@ -38,6 +38,27 @@ namespace osu.Game.Rulesets.Swing.Replays
 
                 switch (h)
                 {
+                    case Hold hold:
+                        {
+                            SwingAction action;
+                            if (hold.Type == HitType.Down)
+                            {
+                                action = hitButton ? SwingAction.DownSwing : SwingAction.DownSwingAdditional;
+                            }
+                            else
+                            {
+                                action = hitButton ? SwingAction.UpSwing : SwingAction.UpSwingAdditional;
+                            }
+
+                            for (double j = h.StartTime; j < hold.Path.EndTime; j += 10)
+                            {
+                                Frames.Add(new SwingReplayFrame(j, action));
+                            }
+
+                            Frames.Add(new SwingReplayFrame(hold.Path.EndTime + 10));
+                            break;
+                        }
+
                     case Spinner spinner:
                         {
                             int d = 0;
@@ -75,6 +96,12 @@ namespace osu.Game.Rulesets.Swing.Replays
                                     break;
                             }
 
+                            var nextHitObject = GetNextObject(i); // Get the next object that requires pressing the same button
+
+                            bool canDelayKeyUp = nextHitObject == null || nextHitObject.StartTime > endTime + KEY_UP_DELAY;
+                            double calculatedDelay = canDelayKeyUp ? KEY_UP_DELAY : (nextHitObject.StartTime - endTime) * 0.9;
+                            Frames.Add(new SwingReplayFrame(endTime + calculatedDelay));
+
                             break;
                         }
 
@@ -92,18 +119,19 @@ namespace osu.Game.Rulesets.Swing.Replays
                             }
 
                             Frames.Add(new SwingReplayFrame(h.StartTime, actions));
+
+                            var nextHitObject = GetNextObject(i); // Get the next object that requires pressing the same button
+
+                            bool canDelayKeyUp = nextHitObject == null || nextHitObject.StartTime > endTime + KEY_UP_DELAY;
+                            double calculatedDelay = canDelayKeyUp ? KEY_UP_DELAY : (nextHitObject.StartTime - endTime) * 0.9;
+                            Frames.Add(new SwingReplayFrame(endTime + calculatedDelay));
+
                             break;
                         }
 
                     default:
                         throw new InvalidOperationException("Unknown hit object type.");
                 }
-
-                var nextHitObject = GetNextObject(i); // Get the next object that requires pressing the same button
-
-                bool canDelayKeyUp = nextHitObject == null || nextHitObject.StartTime > endTime + KEY_UP_DELAY;
-                double calculatedDelay = canDelayKeyUp ? KEY_UP_DELAY : (nextHitObject.StartTime - endTime) * 0.9;
-                Frames.Add(new SwingReplayFrame(endTime + calculatedDelay));
 
                 hitButton = !hitButton;
             }

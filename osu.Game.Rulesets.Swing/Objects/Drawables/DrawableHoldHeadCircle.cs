@@ -4,34 +4,37 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
-using System;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableTap : DrawableSwingHitObject<Tap>
+    public class DrawableHoldHeadCircle : DrawableSwingHitObject<HoldHeadCircle>
     {
-        private bool validActionPressed;
         private readonly double rotationTime;
         private readonly double appearTime;
 
+        protected readonly Bindable<HitType> Type = new Bindable<HitType>();
+
+        private readonly IHasPathWithRepeats path;
         private readonly Box bar;
         private readonly Container contentContainer;
         private readonly DrawableTapCircle tapCircle;
 
-        protected readonly Bindable<HitType> Type = new Bindable<HitType>();
-
-        public DrawableTap(Tap h)
+        public DrawableHoldHeadCircle(HoldHeadCircle h)
             : base(h)
         {
+            path = h.Path;
+
             AddRangeInternal(new Drawable[]
             {
                 bar = new Box
@@ -44,6 +47,20 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
                     Child = tapCircle = new DrawableTapCircle()
+                }
+            });
+
+            tapCircle.Add(new Circle
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(20),
+                Masking = true,
+                EdgeEffect = new EdgeEffectParameters
+                {
+                    Colour = Color4.Black.Opacity(0.25f),
+                    Type = EdgeEffectType.Shadow,
+                    Radius = 10
                 }
             });
 
@@ -84,6 +101,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             tapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
         }
 
+        protected override void UpdateInitialTransforms()
+        {
+            base.UpdateInitialTransforms();
+            this.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
+        }
+
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;
 
         protected override void Update()
@@ -99,86 +122,83 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             else
             {
                 var rotationOffset = (currentTime - appearTime) / rotationTime * 180;
+                bar.Rotation = Type.Value == HitType.Up ? (float)(-90 + rotationOffset) : (float)(90 - rotationOffset);
 
-                if (Type.Value == HitType.Up)
+                if (currentTime < HitObject.StartTime)
                 {
-                    if (!hasNonMissResult)
-                        contentContainer.Rotation = (float)(-90 + rotationOffset);
-
-                    bar.Rotation = (float)(-90 + rotationOffset);
+                    contentContainer.Rotation = Type.Value == HitType.Up ? (float)(-90 + rotationOffset) : (float)(90 - rotationOffset);
+                }
+                else if (currentTime < path.EndTime)
+                {
+                    contentContainer.Rotation = 0;
+                    var offsetFromStart = currentTime - HitObject.StartTime;
+                    if (offsetFromStart > HitObject.TimePreempt / 3)
+                        bar.Alpha = 0;
+                    else
+                    {
+                        bar.Alpha = 1 - (float)(offsetFromStart / (HitObject.TimePreempt / 3));
+                    }
                 }
                 else
                 {
-                    if (!hasNonMissResult)
-                        contentContainer.Rotation = (float)(90 - rotationOffset);
-
-                    bar.Rotation = (float)(90 - rotationOffset);
+                    if (hasNonMissResult)
+                    {
+                        contentContainer.Rotation = 0;
+                    }
+                    else
+                    {
+                        var postRotationOffset = (currentTime - appearTime - path.Duration) / rotationTime * 180;
+                        contentContainer.Rotation = Type.Value == HitType.Up ? (float)(-90 + postRotationOffset) : (float)(90 - postRotationOffset);
+                    }
                 }
             }
-        }
-
-        protected override void UpdateInitialTransforms()
-        {
-            base.UpdateInitialTransforms();
-            this.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (!userTriggered)
             {
-                if (!HitObject.HitWindows.CanBeHit(timeOffset))
-                {
-                    ApplyResult(r => r.Type = HitResult.Miss);
-                }
-                return;
+                if (timeOffset > path.Duration)
+                    ApplyResult(r => r.Type = IsTracking ? HitResult.Perfect : HitResult.Miss);
             }
-
-            var result = HitObject.HitWindows.ResultFor(timeOffset);
-            if (result == HitResult.None)
-                return;
-
-            if (validActionPressed)
-                ApplyResult(r => r.Type = result);
         }
+
+        public bool IsTracking { get; private set; }
 
         public override bool OnPressed(SwingAction action)
         {
             if (Judged)
                 return false;
 
-            validActionPressed = HitActions.Contains(action);
-
-            // Only count this as handled if the new judgement is a hit
-            var result = UpdateResult(true);
-            if (IsHit)
-                HitAction = action;
-
-            return result;
+            IsTracking = HitActions.Contains(action);
+            return IsTracking;
         }
 
         public override void OnReleased(SwingAction action)
         {
-            if (action == HitAction)
-                HitAction = null;
+            base.OnReleased(action);
+            IsTracking = false;
         }
 
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
 
-            switch (state)
+            using (BeginDelayedSequence(path.Duration, true))
             {
-                case ArmedState.Miss:
-                    this.FadeColour(Color4.Red, 100, Easing.OutQuint);
-                    this.FadeOut(HitObject.TimePreempt / 3, Easing.Out);
-                    break;
+                switch (state)
+                {
+                    case ArmedState.Miss:
+                        this.FadeColour(Color4.Red, 100, Easing.OutQuint);
+                        this.FadeOut(HitObject.TimePreempt / 3, Easing.Out);
+                        break;
 
-                case ArmedState.Hit:
-                    tapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
-                    tapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
-                    this.FadeOut(HitObject.TimePreempt / 3, Easing.OutQuint);
-                    break;
+                    case ArmedState.Hit:
+                        tapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
+                        tapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
+                        this.FadeOut(HitObject.TimePreempt / 3, Easing.OutQuint);
+                        break;
+                }
             }
         }
     }

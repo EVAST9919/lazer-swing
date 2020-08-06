@@ -39,41 +39,18 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
             switch (obj)
             {
-                case IHasPathWithRepeats _:
-                    if (strong)
+                case IHasPathWithRepeats path:
+                    yield return new Hold
                     {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Up,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
-                    else
-                    {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = !isRim ? HitType.Up : HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
+                        StartTime = obj.StartTime,
+                        Path = path,
+                        Type = !isRim ? HitType.Up : HitType.Down,
+                        Samples = obj.Samples,
+                        NewCombo = comboData?.NewCombo ?? false,
+                        ComboOffset = comboData?.ComboOffset ?? 0,
+                        IndexInBeatmap = index,
+                        LegacyLastTickOffset = (obj as IHasLegacyLastTickOffset)?.LegacyLastTickOffset
+                    };
                     break;
 
                 case IHasDuration endTimeData:
