@@ -9,6 +9,8 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
 {
     public abstract class DrawableSwingHitObject : DrawableHitObject<SwingHitObject>, IKeyBindingHandler<SwingAction>
     {
+        public bool Auto { get; set; }
+
         protected DrawableSwingHitObject(SwingHitObject hitObject)
             : base(hitObject)
         {

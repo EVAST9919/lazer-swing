@@ -156,10 +156,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (!userTriggered)
+            if (timeOffset > path.Duration)
             {
-                if (timeOffset > path.Duration)
-                    ApplyResult(r => r.Type = IsTracking ? HitResult.Perfect : HitResult.Miss);
+                ApplyResult(r => r.Type = IsTracking || Auto ? HitResult.Perfect : HitResult.Miss);
             }
         }
 

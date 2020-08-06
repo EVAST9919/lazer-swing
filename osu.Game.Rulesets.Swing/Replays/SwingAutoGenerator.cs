@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using osu.Game.Beatmaps;
 using osu.Game.Replays;
-using osu.Game.Rulesets.Swing.Objects;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Replays;
 using osu.Game.Rulesets.Swing.Beatmaps;
-using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Swing.Objects;
 
 namespace osu.Game.Rulesets.Swing.Replays
 {
@@ -38,32 +38,14 @@ namespace osu.Game.Rulesets.Swing.Replays
 
                 switch (h)
                 {
-                    case Hold hold:
-                        {
-                            SwingAction action;
-                            if (hold.Type == HitType.Down)
-                            {
-                                action = hitButton ? SwingAction.DownSwing : SwingAction.DownSwingAdditional;
-                            }
-                            else
-                            {
-                                action = hitButton ? SwingAction.UpSwing : SwingAction.UpSwingAdditional;
-                            }
-
-                            for (double j = h.StartTime; j < hold.Path.EndTime; j += 10)
-                            {
-                                Frames.Add(new SwingReplayFrame(j, action));
-                            }
-
-                            Frames.Add(new SwingReplayFrame(hold.Path.EndTime + 10));
-                            break;
-                        }
+                    case Hold _:
+                        break;
 
                     case Spinner spinner:
                         {
                             int d = 0;
                             int count = 0;
-                            int req = spinner.RequiredHits;
+                            int req = spinner.RequiredHits + 1;
                             double hitRate = Math.Min(spinner_hit_speed, spinner.Duration / req);
 
                             for (double j = h.StartTime; j < endTime; j += hitRate)
@@ -96,38 +78,13 @@ namespace osu.Game.Rulesets.Swing.Replays
                                     break;
                             }
 
-                            var nextHitObject = GetNextObject(i); // Get the next object that requires pressing the same button
-
-                            bool canDelayKeyUp = nextHitObject == null || nextHitObject.StartTime > endTime + KEY_UP_DELAY;
-                            double calculatedDelay = canDelayKeyUp ? KEY_UP_DELAY : (nextHitObject.StartTime - endTime) * 0.9;
-                            Frames.Add(new SwingReplayFrame(endTime + calculatedDelay));
+                            Frames.Add(new SwingReplayFrame(h.StartTime + spinner_hit_speed * req + 10));
 
                             break;
                         }
 
-                    case Tap hit:
-                        {
-                            SwingAction[] actions;
-
-                            if (hit.Type == HitType.Down)
-                            {
-                                actions = new[] { hitButton ? SwingAction.DownSwing : SwingAction.DownSwingAdditional };
-                            }
-                            else
-                            {
-                                actions = new[] { hitButton ? SwingAction.UpSwing : SwingAction.UpSwingAdditional };
-                            }
-
-                            Frames.Add(new SwingReplayFrame(h.StartTime, actions));
-
-                            var nextHitObject = GetNextObject(i); // Get the next object that requires pressing the same button
-
-                            bool canDelayKeyUp = nextHitObject == null || nextHitObject.StartTime > endTime + KEY_UP_DELAY;
-                            double calculatedDelay = canDelayKeyUp ? KEY_UP_DELAY : (nextHitObject.StartTime - endTime) * 0.9;
-                            Frames.Add(new SwingReplayFrame(endTime + calculatedDelay));
-
-                            break;
-                        }
+                    case Tap _:
+                        break;
 
                     default:
                         throw new InvalidOperationException("Unknown hit object type.");
