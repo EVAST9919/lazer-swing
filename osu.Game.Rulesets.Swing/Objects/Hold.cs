@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Judgements;
+using osu.Game.Rulesets.Swing.Objects.Drawables;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -58,12 +59,11 @@ namespace osu.Game.Rulesets.Swing.Objects
                 switch (e.Type)
                 {
                     case SliderEventType.Tick:
-                        //AddNested(new HoldTick
-                        //{
-                        //    SpanIndex = e.SpanIndex,
-                        //    SpanStartTime = e.SpanStartTime,
-                        //    StartTime = e.Time,
-                        //});
+                        AddNested(new HoldTick
+                        {
+                            Type = Type,
+                            StartTime = e.Time,
+                        });
                         break;
 
                     case SliderEventType.Head:
@@ -85,12 +85,12 @@ namespace osu.Game.Rulesets.Swing.Objects
                         break;
 
                     case SliderEventType.Repeat:
-                        //AddNested(new HoldRepeat
-                        //{
-                        //    RepeatIndex = e.SpanIndex,
-                        //    SpanDuration = SpanDuration,
-                        //    StartTime = StartTime + (e.SpanIndex + 1) * SpanDuration,
-                        //});
+                        AddNested(new HoldRepeat
+                        {
+                            RepeatIndex = e.SpanIndex,
+                            Type = Type,
+                            StartTime = e.Time
+                        });
                         break;
                 }
             }
@@ -120,11 +120,11 @@ namespace osu.Game.Rulesets.Swing.Objects
                 });
             }
 
-            //foreach (var tick in NestedHitObjects.OfType<HoldTick>())
-            //    tick.Samples = sampleList;
+            foreach (var tick in NestedHitObjects.OfType<HoldTick>())
+                tick.Samples = sampleList;
 
-            //foreach (var repeat in NestedHitObjects.OfType<HoldRepeat>())
-            //    repeat.Samples = getNodeSamples(repeat.RepeatIndex + 1);
+            foreach (var repeat in NestedHitObjects.OfType<HoldRepeat>())
+                repeat.Samples = getNodeSamples(repeat.RepeatIndex + 1);
 
             if (TailCircle != null)
                 TailCircle.Samples = getNodeSamples(0);

@@ -21,6 +21,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly Container<DrawableHoldHeadCircle> headContainer;
         private readonly Container<DrawableHoldHeadSound> headSoundContainer;
         private readonly Container<DrawableHoldTailCircle> tailContainer;
+        private readonly Container<DrawableHoldTick> ticksContainer;
+        private readonly Container<DrawableHoldRepeat> repeatsContainer;
 
         public DrawableHold(Hold h)
             : base(h)
@@ -31,6 +33,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 headContainer = new Container<DrawableHoldHeadCircle>(),
                 headSoundContainer = new Container<DrawableHoldHeadSound>(),
+                ticksContainer = new Container<DrawableHoldTick>(),
+                repeatsContainer = new Container<DrawableHoldRepeat>(),
                 tailContainer = new Container<DrawableHoldTailCircle>(),
             });
         }
@@ -56,6 +60,14 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     headSoundContainer.Child = headSound;
                     break;
 
+                case DrawableHoldTick tick:
+                    ticksContainer.Add(tick);
+                    break;
+
+                case DrawableHoldRepeat repeat:
+                    repeatsContainer.Add(repeat);
+                    break;
+
                 case DrawableHoldTailCircle tail:
                     tailContainer.Child = tail;
                     break;
@@ -66,6 +78,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.ClearNestedHitObjects();
             headContainer.Clear();
+            headSoundContainer.Clear();
+            ticksContainer.Clear();
+            repeatsContainer.Clear();
+            tailContainer.Clear();
         }
 
         protected override DrawableHitObject CreateNestedHitObject(HitObject hitObject)
@@ -77,6 +93,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 case HoldHeadSound headSound:
                     return new DrawableHoldHeadSound(headSound);
+
+                case HoldTick tick:
+                    return new DrawableHoldTick(tick);
+
+                case HoldRepeat repeat:
+                    return new DrawableHoldRepeat(repeat);
 
                 case HoldTailCircle tail:
                     return new DrawableHoldTailCircle(tail);
@@ -115,7 +137,15 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.Update();
 
-            TailCircle.IsTracking = HeadCircle.IsTracking;
+            var isTracking = HeadCircle.IsTracking;
+
+            TailCircle.IsTracking = isTracking;
+
+            foreach (var tick in ticksContainer)
+                tick.IsTracking = isTracking;
+
+            foreach (var repeat in repeatsContainer)
+                repeat.IsTracking = isTracking;
         }
     }
 }
