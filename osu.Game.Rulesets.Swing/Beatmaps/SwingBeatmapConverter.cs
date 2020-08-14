@@ -40,107 +40,73 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
             switch (obj)
             {
                 case IHasPathWithRepeats path:
-                    //yield return new Hold
-                    //{
-                    //    StartTime = obj.StartTime,
-                    //    Path = path,
-                    //    Type = !isRim ? HitType.Up : HitType.Down,
-                    //    Samples = obj.Samples,
-                    //    NewCombo = comboData?.NewCombo ?? false,
-                    //    ComboOffset = comboData?.ComboOffset ?? 0,
-                    //    IndexInBeatmap = index,
-                    //    LegacyLastTickOffset = (obj as IHasLegacyLastTickOffset)?.LegacyLastTickOffset
-                    //};
-                    //break;
-                    if (strong)
-                    {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Up,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
-                    else
-                    {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = !isRim ? HitType.Up : HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
-                    break;
+                    return convertHitObject(obj, comboData, strong, isRim);
 
                 case IHasDuration endTimeData:
                     {
                         double hitMultiplier = BeatmapDifficulty.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.OverallDifficulty, 3, 5, 7.5) * spinner_hit_multiplier;
 
-                        yield return new Spinner
+                        return new List<SwingHitObject>
                         {
-                            StartTime = obj.StartTime,
-                            Samples = obj.Samples,
-                            Duration = endTimeData.Duration,
-                            RequiredHits = (int)Math.Max(1, endTimeData.Duration / 1000 * hitMultiplier)
+                            new Spinner
+                            {
+                                StartTime = obj.StartTime,
+                                Samples = obj.Samples,
+                                Duration = endTimeData.Duration,
+                                RequiredHits = (int)Math.Max(1, endTimeData.Duration / 1000 * hitMultiplier)
+                            }
                         };
-                        break;
                     }
 
                 default:
-                    if (strong)
-                    {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Up,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
-                    else
-                    {
-                        yield return new Tap
-                        {
-                            StartTime = obj.StartTime,
-                            Type = !isRim ? HitType.Up : HitType.Down,
-                            Samples = obj.Samples,
-                            NewCombo = comboData?.NewCombo ?? false,
-                            ComboOffset = comboData?.ComboOffset ?? 0,
-                            IndexInBeatmap = index
-                        };
-                    }
-                    break;
+                    return convertHitObject(obj, comboData, strong, isRim);
             }
         }
 
         protected override Beatmap<SwingHitObject> CreateBeatmap() => new SwingBeatmap();
+
+        private List<Tap> convertHitObject(HitObject obj, IHasCombo comboData, bool isStrong, bool isRim)
+        {
+            var taps = new List<Tap>();
+
+            if (isStrong)
+            {
+                taps.AddRange(new[]
+                {
+                    new Tap
+                    {
+                        StartTime = obj.StartTime,
+                        Type = HitType.Up,
+                        Samples = obj.Samples,
+                        NewCombo = comboData?.NewCombo ?? false,
+                        ComboOffset = comboData?.ComboOffset ?? 0,
+                        IndexInBeatmap = index
+                    },
+                    new Tap
+                    {
+                        StartTime = obj.StartTime,
+                        Type = HitType.Down,
+                        Samples = obj.Samples,
+                        NewCombo = comboData?.NewCombo ?? false,
+                        ComboOffset = comboData?.ComboOffset ?? 0,
+                        IndexInBeatmap = index
+                    }
+                });
+            }
+            else
+            {
+                taps.Add(new Tap
+                {
+                    StartTime = obj.StartTime,
+                    Type = !isRim ? HitType.Up : HitType.Down,
+                    Samples = obj.Samples,
+                    NewCombo = comboData?.NewCombo ?? false,
+                    ComboOffset = comboData?.ComboOffset ?? 0,
+                    IndexInBeatmap = index
+                });
+            }
+
+            return taps;
+        }
     }
 }
