@@ -183,7 +183,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Hit:
                     tapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
                     tapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
-                    this.FadeOut(HitObject.TimePreempt / 3, Easing.OutQuint);
+                    this.FadeOut(300, Easing.OutQuint);
                     break;
             }
         }
