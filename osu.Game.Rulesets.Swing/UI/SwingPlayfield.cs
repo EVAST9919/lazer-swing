@@ -42,18 +42,20 @@ namespace osu.Game.Rulesets.Swing.UI
                     new Box
                     {
                         Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
-                        Width = 1,
+                        Origin = Anchor.BottomCentre,
+                        Y = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1,
+                        Height = FULL_SIZE.Y / 4,
+                        Width = 0.5f,
                         EdgeSmoothness = Vector2.One,
                         Colour = ColourInfo.GradientVertical(Color4.Black.Opacity(0), Color4.White)
                     },
                     new Box
                     {
                         Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.BottomCentre,
-                        Height = FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
-                        Width = 1,
+                        Origin = Anchor.TopCentre,
+                        Y = - (FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1),
+                        Height = FULL_SIZE.Y / 4,
+                        Width = 0.5f,
                         EdgeSmoothness = Vector2.One,
                         Colour = ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0))
                     },
