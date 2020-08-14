@@ -13,6 +13,17 @@ namespace osu.Game.Rulesets.Swing.Objects
     {
         public double TimePreempt;
 
+        public bool UseSpeedMultiplier
+        {
+            set
+            {
+                if (value)
+                    TimePreempt /= speedMultiplier;
+            }
+        }
+
+        private double speedMultiplier;
+
         public readonly Bindable<Vector2> PositionBindable = new Bindable<Vector2>();
 
         public virtual Vector2 Position
@@ -29,6 +40,7 @@ namespace osu.Game.Rulesets.Swing.Objects
             base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
             TimePreempt = (float)BeatmapDifficulty.DifficultyRange(difficulty.ApproachRate, 1800, 1200, 450);
+            speedMultiplier = controlPointInfo.DifficultyPointAt(StartTime).SpeedMultiplier;
         }
 
         protected override HitWindows CreateHitWindows() => new SwingHitWindows();
