@@ -36,7 +36,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 bar = new Box
                 {
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 + 1,
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
                     Width = 1,
                     EdgeSmoothness = Vector2.One,
                 },

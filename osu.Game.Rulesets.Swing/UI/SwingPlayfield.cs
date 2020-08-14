@@ -13,6 +13,7 @@ using osu.Framework.Extensions.Color4Extensions;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
+using osu.Game.Rulesets.Swing.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -137,6 +138,8 @@ namespace osu.Game.Rulesets.Swing.UI
                 }
             }
         }
+
+        public void Add(BarLine bar) => base.Add(new DrawableBarLine(bar));
 
         private class HalfRing : Container
         {
