@@ -167,9 +167,9 @@ namespace osu.Game.Rulesets.Swing.UI
                 }
             }
 
-            public void PressTopRing() => topRing.FadeColour(Color4.DeepSkyBlue, 100, Easing.Out);
+            public void PressTopRing() => topRing.FadeColour(Color4.DeepSkyBlue, 50, Easing.Out);
 
-            public void PressBottomRing() => bottomRing.FadeColour(Color4.Red, 100, Easing.Out);
+            public void PressBottomRing() => bottomRing.FadeColour(Color4.Red, 50, Easing.Out);
 
             public void ReleaseTopRing() => topRing.FadeColour(Color4.White, 300, Easing.Out);
 
