@@ -15,6 +15,8 @@ using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
 using System;
+using osu.Framework.Graphics.Effects;
+using osu.Game.Beatmaps;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -95,8 +97,13 @@ namespace osu.Game.Rulesets.Swing.UI
 
         private class Rings : CompositeDrawable
         {
+            [Resolved]
+            private Bindable<WorkingBeatmap> working { get; set; }
+
             private readonly HalfRing topRing;
             private readonly HalfRing bottomRing;
+            private readonly GlowingHalfRing topGlow;
+            private readonly GlowingHalfRing bottomGlow;
 
             public Rings()
             {
@@ -104,10 +111,23 @@ namespace osu.Game.Rulesets.Swing.UI
                 RelativeSizeAxes = Axes.Y;
                 InternalChildren = new Drawable[]
                 {
+                    topGlow = new GlowingHalfRing(Color4.DeepSkyBlue)
+                    {
+                        Anchor = Anchor.TopCentre,
+                        Origin = Anchor.TopCentre,
+                        Alpha = 0
+                    },
                     topRing = new HalfRing
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
+                    },
+                    bottomGlow = new GlowingHalfRing(Color4.Red)
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.TopCentre,
+                        Rotation = -180,
+                        Alpha = 0
                     },
                     bottomRing = new HalfRing
                     {
@@ -116,6 +136,35 @@ namespace osu.Game.Rulesets.Swing.UI
                         Rotation = -180
                     }
                 };
+            }
+
+            protected override void LoadComplete()
+            {
+                base.LoadComplete();
+
+                foreach (var effectPoint in working.Value.Beatmap.ControlPointInfo.EffectPoints)
+                {
+                    if (effectPoint.KiaiMode)
+                    {
+                        var bpmBeforeKiai = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
+
+                        using (topGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
+                            topGlow.FadeIn(bpmBeforeKiai, Easing.Out);
+
+                        using (bottomGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
+                            bottomGlow.FadeIn(bpmBeforeKiai, Easing.Out);
+                    }
+                    else
+                    {
+                        var bpmBeforeKiaiOff = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
+
+                        using (topGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
+                            topGlow.FadeOut(bpmBeforeKiaiOff, Easing.Out);
+
+                        using (bottomGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
+                            bottomGlow.FadeOut(bpmBeforeKiaiOff, Easing.Out);
+                    }
+                }
             }
 
             public void PressTopRing() => topRing.FadeColour(Color4.DeepSkyBlue, 100, Easing.Out);
@@ -172,16 +221,45 @@ namespace osu.Game.Rulesets.Swing.UI
         private class HalfRing : Container
         {
             private static readonly float size = FULL_SIZE.X - SwingHitObject.DEFAULT_SIZE;
+            private readonly float padding;
+
+            public HalfRing(float padding = 0)
+            {
+                this.padding = padding;
+            }
 
             [BackgroundDependencyLoader]
             private void load(TextureStore textures)
             {
-                Size = new Vector2(size, size / 2);
+                Size = new Vector2(size, size / 2 + padding);
                 Child = new Sprite
                 {
-                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Size = new Vector2(size, size / 2),
                     Texture = textures.Get("half-ring-gradient")
                 };
+            }
+        }
+
+        private class GlowingHalfRing : CompositeDrawable
+        {
+            private const float glow_radius = 7;
+
+            public GlowingHalfRing(Color4 colour)
+            {
+                Anchor = Anchor.TopCentre;
+                Origin = Anchor.TopCentre;
+                InternalChild = new HalfRing(glow_radius)
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                }.WithEffect(new GlowEffect
+                {
+                    Colour = colour,
+                    Strength = 10,
+                    BlurSigma = new Vector2(glow_radius)
+                });
             }
         }
     }
