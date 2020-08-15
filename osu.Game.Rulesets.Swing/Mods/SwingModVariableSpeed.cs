@@ -10,11 +10,11 @@ namespace osu.Game.Rulesets.Swing.Mods
 
         public override string Acronym => "VS";
 
-        public override double ScoreMultiplier => 1.5;
+        public override double ScoreMultiplier => 1;
 
         public override string Description => "Adds taiko-like behavior";
 
-        public override ModType Type => ModType.DifficultyIncrease;
+        public override ModType Type => ModType.Fun;
 
         public void ApplyToHitObject(HitObject hitObject)
         {

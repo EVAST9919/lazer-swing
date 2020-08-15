@@ -59,8 +59,7 @@ namespace osu.Game.Rulesets.Swing
                     return new Mod[]
                     {
                         new SwingModSuddenDeath(),
-                        new MultiMod(new SwingModDoubleTime(), new SwingModNightcore()),
-                        new SwingModVariableSpeed()
+                        new MultiMod(new SwingModDoubleTime(), new SwingModNightcore())
                     };
 
                 case ModType.Automation:
@@ -73,6 +72,7 @@ namespace osu.Game.Rulesets.Swing
                     return new Mod[]
                     {
                         new MultiMod(new ModWindUp(), new ModWindDown()),
+                        new SwingModVariableSpeed()
                     };
 
                 default:
