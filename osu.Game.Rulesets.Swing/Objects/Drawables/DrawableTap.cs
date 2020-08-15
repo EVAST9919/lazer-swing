@@ -19,6 +19,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableTap : DrawableSwingHitObject<Tap>
     {
+        protected readonly Bindable<HitType> Type = new Bindable<HitType>();
+
         private bool validActionPressed;
         private readonly double rotationTime;
         private readonly double appearTime;
@@ -26,8 +28,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly Box bar;
         private readonly Container contentContainer;
         private readonly DrawableTapCircle tapCircle;
-
-        protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         public DrawableTap(Tap h)
             : base(h)
@@ -56,11 +56,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             Type.BindTo(HitObject.TypeBindable);
             Type.BindValueChanged(_ => updateType(), true);
-
-            AccentColour.BindValueChanged(accent =>
-            {
-                tapCircle.Circle.Colour = accent.NewValue;
-            }, true);
         }
 
         private void updateType()
@@ -82,6 +77,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
 
             tapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
+            tapCircle.Circle.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;

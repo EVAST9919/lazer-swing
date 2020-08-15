@@ -20,17 +20,9 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
         public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
 
-        private int index = -1;
-
         protected override IEnumerable<SwingHitObject> ConvertHitObject(HitObject obj, IBeatmap beatmap)
         {
             var samples = obj.Samples;
-            var comboData = obj as IHasCombo;
-
-            if (comboData?.NewCombo ?? false)
-            {
-                index++;
-            }
 
             static bool isRimDefinition(HitSampleInfo s) => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE;
             bool isRim = samples.Any(isRimDefinition);
@@ -40,7 +32,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
             switch (obj)
             {
                 case IHasPathWithRepeats path:
-                    return convertHitObject(obj, comboData, strong, isRim);
+                    return convertHitObject(obj, samples, strong, isRim);
 
                 case IHasDuration endTimeData:
                     {
@@ -51,7 +43,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                             new Spinner
                             {
                                 StartTime = obj.StartTime,
-                                Samples = obj.Samples,
+                                Samples = samples,
                                 Duration = endTimeData.Duration,
                                 RequiredHits = (int)Math.Max(1, endTimeData.Duration / 1000 * hitMultiplier)
                             }
@@ -59,13 +51,13 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                     }
 
                 default:
-                    return convertHitObject(obj, comboData, strong, isRim);
+                    return convertHitObject(obj, samples, strong, isRim);
             }
         }
 
         protected override Beatmap<SwingHitObject> CreateBeatmap() => new SwingBeatmap();
 
-        private List<Tap> convertHitObject(HitObject obj, IHasCombo comboData, bool isStrong, bool isRim)
+        private List<Tap> convertHitObject(HitObject obj, IList<HitSampleInfo> samples, bool isStrong, bool isRim)
         {
             var taps = new List<Tap>();
 
@@ -77,19 +69,13 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                     {
                         StartTime = obj.StartTime,
                         Type = HitType.Up,
-                        Samples = obj.Samples,
-                        NewCombo = comboData?.NewCombo ?? false,
-                        ComboOffset = comboData?.ComboOffset ?? 0,
-                        IndexInBeatmap = index
+                        Samples = samples
                     },
                     new Tap
                     {
                         StartTime = obj.StartTime,
                         Type = HitType.Down,
-                        Samples = obj.Samples,
-                        NewCombo = comboData?.NewCombo ?? false,
-                        ComboOffset = comboData?.ComboOffset ?? 0,
-                        IndexInBeatmap = index
+                        Samples = samples
                     }
                 });
             }
@@ -99,10 +85,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                 {
                     StartTime = obj.StartTime,
                     Type = !isRim ? HitType.Up : HitType.Down,
-                    Samples = obj.Samples,
-                    NewCombo = comboData?.NewCombo ?? false,
-                    ComboOffset = comboData?.ComboOffset ?? 0,
-                    IndexInBeatmap = index
+                    Samples = samples
                 });
             }
 

@@ -2,8 +2,6 @@
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing;
 using osu.Game.Rulesets.Swing.Objects;
-using osuTK.Graphics;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
 {
@@ -26,9 +24,6 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
     public abstract class DrawableSwingHitObject<T> : DrawableSwingHitObject
         where T : SwingHitObject
     {
-        protected override Color4 GetComboColour(IReadOnlyList<Color4> comboColours) =>
-            comboColours[(HitObject.IndexInBeatmap + 1) % comboColours.Count];
-
         /// <summary>
         /// A list of keys which can result in hits for this HitObject.
         /// </summary>
