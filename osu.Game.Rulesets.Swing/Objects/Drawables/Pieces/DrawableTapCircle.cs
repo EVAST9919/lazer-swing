@@ -1,38 +1,37 @@
 ﻿using osu.Framework.Graphics.Containers;
 using osuTK;
 using osu.Framework.Graphics;
-using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
-using osu.Framework.Graphics.Effects;
-using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Allocation;
+using osu.Framework.Graphics.Sprites;
+using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class DrawableTapCircle : Container
     {
-        public Box Circle { get; private set; }
+        public Circle Circle { get; private set; }
 
         public DrawableTapCircle()
         {
             Origin = Anchor.Centre;
             Size = new Vector2(SwingHitObject.DEFAULT_SIZE);
-            Child = new CircularContainer
+            Add(Circle = new Circle
             {
-                RelativeSizeAxes = Axes.Both,
-                Masking = true,
-                BorderThickness = 4,
-                BorderColour = Color4.White,
-                Child = Circle = new Box
-                {
-                    RelativeSizeAxes = Axes.Both,
-                },
-                EdgeEffect = new EdgeEffectParameters
-                {
-                    Colour = Color4.Black.Opacity(0.25f),
-                    Type = EdgeEffectType.Shadow,
-                    Radius = 10
-                }
-            };
+                RelativeSizeAxes = Axes.Both
+            });
+        }
+
+        [BackgroundDependencyLoader]
+        private void load(TextureStore textures)
+        {
+            Add(new Sprite
+            {
+                Anchor = Anchor.Centre,
+                Origin = Anchor.Centre,
+                Size = new Vector2(SwingHitObject.DEFAULT_SIZE + 20),
+                Texture = textures.Get("tap-overlay")
+            });
         }
     }
 }
