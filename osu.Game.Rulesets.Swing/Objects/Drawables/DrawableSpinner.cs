@@ -1,6 +1,7 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
+using osu.Framework.Graphics.Effects;
+using osu.Framework.Graphics.UserInterface;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -8,65 +9,50 @@ using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
+using System;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableSpinner : DrawableSwingHitObject<Spinner>
     {
+        private readonly double glowDuration;
+
         private readonly Container<DrawableSpinnerTick> ticks;
-        private readonly Circle filler;
-        private readonly Box line;
-        private readonly FoldableHalfRing ring1;
-        private readonly FoldableHalfRing ring2;
+        private readonly CircularProgress filler;
+        private readonly FoldableHalfRing ring;
+        private readonly Glow glow;
 
         public DrawableSpinner(Spinner h)
             : base(h)
         {
-            RelativeSizeAxes = Axes.Y;
-            AutoSizeAxes = Axes.X;
+            glowDuration = Math.Min(50, h.Duration / 10);
+
+            Size = new Vector2(200);
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             AddRangeInternal(new Drawable[]
             {
-                line = new Box
+                filler = new CircularProgress
                 {
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Height = 0.5f,
-                    EdgeSmoothness = Vector2.One
-                },
-                filler = new Circle
-                {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Masking = true,
-                    Size = new Vector2(200),
-                    Scale = Vector2.Zero,
+                    RelativeSizeAxes = Axes.Both,
+                    InnerRadius = 0.75f,
                     Colour = Color4.BlueViolet,
                     Alpha = 0.6f
                 },
-                new Container
+                ring = new FoldableHalfRing(RingState.Closed)
                 {
+                    RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Size = new Vector2(200),
-                    Children = new Drawable[]
-                    {
-                        ring1 = new FoldableHalfRing(RingState.Closed)
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre
-                        },
-                        ring2 = new FoldableHalfRing(RingState.Closed)
-                        {
-                            RelativeSizeAxes = Axes.Both,
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre,
-                            Rotation = 180
-                        }
-                    }
+                    Rotation = 90
+                },
+                glow = new Glow
+                {
+                    Rotation = 90,
+                    Alpha = 0
                 }
             });
 
@@ -105,15 +91,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-
-            line.ResizeWidthTo(198, HitObject.TimePreempt / 2, Easing.Out).Then().RotateTo(180, HitObject.TimePreempt / 2, Easing.Out);
-
-            using (BeginDelayedSequence(HitObject.TimePreempt / 2, true))
-            {
-                ring1.Open(HitObject.TimePreempt / 2);
-                ring2.Open(HitObject.TimePreempt / 2);
-            };
+            ring.Open(HitObject.TimePreempt);
+            glow.Delay(HitObject.TimePreempt).FadeIn(glowDuration);
         }
+
+        private float completion;
 
         private Spinner spinnerObject => (Spinner)HitObject;
 
@@ -136,9 +118,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 var numHits = ticks.Count(r => r.IsHit);
 
-                var completion = (float)numHits / spinnerObject.RequiredHits;
+                completion = (float)numHits / spinnerObject.RequiredHits / 2;
 
-                filler.ScaleTo(completion, 260, Easing.OutQuint);
+                filler.FillTo(completion, 260, Easing.OutQuint);
 
                 if (numHits == spinnerObject.RequiredHits)
                     ApplyResult(r => r.Type = HitResult.Great);
@@ -169,10 +151,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action)
         {
-            if (Time.Current > HitObject.StartTime + spinnerObject.Duration)
+            if (Time.Current > spinnerObject.EndTime)
                 return false;
 
-            // Don't handle keys before the swell starts
             if (Time.Current < HitObject.StartTime)
                 return false;
 
@@ -180,7 +161,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             // Ensure alternating up and down hits
             if (lastWasUp == isUp)
-                return false;
+                return true;
 
             lastWasUp = isUp;
 
@@ -200,11 +181,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Miss:
                     using (BeginDelayedSequence(spinnerObject.Duration, true))
                     {
-                        line.RotateTo(0, transition_duration, Easing.Out);
-                        ring1.CloseBack(transition_duration);
-                        ring2.CloseBack(transition_duration);
+                        ring.CloseBack(transition_duration);
+                        filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                        glow.FadeOut(glowDuration, Easing.OutQuint);
                         this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
-                        this.FadeOut(transition_duration, Easing.Out);
+                        this.Delay(transition_duration).FadeOut();
                     }
 
                     break;
@@ -212,13 +193,44 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case ArmedState.Hit:
                     using (BeginDelayedSequence(spinnerObject.Duration, true))
                     {
-                        line.RotateTo(360, transition_duration, Easing.Out).Then().ResizeWidthTo(0, transition_duration, Easing.Out);
-                        ring1.Close(transition_duration);
-                        ring2.Close(transition_duration);
-                        this.Delay(transition_duration).FadeOut(transition_duration, Easing.Out);
+                        ring.Close(transition_duration);
+                        glow.FadeOut(glowDuration, Easing.OutQuint);
+                        filler.FlashColour(Color4.White, transition_duration, Easing.Out);
+                        filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                        filler.RotateTo(180, transition_duration, Easing.Out);
+                        this.Delay(transition_duration).FadeOut();
                     }
 
                     break;
+            }
+        }
+
+        private class Glow : CompositeDrawable
+        {
+            private const float glow_size = 5;
+
+            public Glow()
+            {
+                Origin = Anchor.BottomCentre;
+                Anchor = Anchor.Centre;
+                Size = new Vector2(200 + glow_size * 2, 100 + glow_size);
+                InternalChild = new Container
+                {
+                    RelativeSizeAxes = Axes.Both,
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.BottomCentre,
+                    Child = new BasicHalfRing
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.BottomCentre,
+                        Size = new Vector2(200, 100),
+                    }
+                }.WithEffect(new GlowEffect
+                {
+                    BlurSigma = new Vector2(glow_size),
+                    Strength = 20,
+                    Colour = Color4.BlueViolet
+                });
             }
         }
     }
