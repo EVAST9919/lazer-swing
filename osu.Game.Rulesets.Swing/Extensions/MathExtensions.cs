@@ -10,6 +10,11 @@ namespace osu.Game.Rulesets.Swing.Extensions
             return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
         }
 
+        public static double Map(double value, double lowerCurrent, double upperCurrent, double lowerTarget, double upperTarget)
+        {
+            return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
+        }
+
         public static float BulletDistribution(int bulletsPerObject, float angleRange, int index, float angleOffset = 0)
         {
             var angle = getAngleBuffer(bulletsPerObject, angleRange) + index * getPerBulletAngle(bulletsPerObject, angleRange) + angleOffset;
