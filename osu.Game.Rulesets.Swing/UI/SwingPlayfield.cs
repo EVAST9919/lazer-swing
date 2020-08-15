@@ -14,6 +14,7 @@ using osu.Framework.Graphics.Textures;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
+using System;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -29,6 +30,9 @@ namespace osu.Game.Rulesets.Swing.UI
         [BackgroundDependencyLoader]
         private void load()
         {
+            HitReceptor hitReceptor;
+            Rings rings;
+
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChild = new Container
@@ -65,14 +69,20 @@ namespace osu.Game.Rulesets.Swing.UI
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
-                    HitObjectContainer,
-                    new Rings
+                    rings = new Rings
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
+                    HitObjectContainer,
+                    hitReceptor = new HitReceptor()
                 }
             };
+
+            hitReceptor.UpKeyPressed += rings.PressTopRing;
+            hitReceptor.DownKeyPressed += rings.PressBottomRing;
+            hitReceptor.UpKeyReleased += rings.ReleaseTopRing;
+            hitReceptor.DownKeyReleased += rings.ReleaseBottomRing;
 
             config?.BindWith(SwingRulesetSetting.PlayfieldOrientation, orientation);
             orientation.BindValueChanged(u =>
@@ -81,7 +91,9 @@ namespace osu.Game.Rulesets.Swing.UI
             }, true);
         }
 
-        private class Rings : CompositeDrawable, IKeyBindingHandler<SwingAction>
+        public void Add(BarLine bar) => base.Add(new DrawableBarLine(bar));
+
+        private class Rings : CompositeDrawable
         {
             private readonly HalfRing topRing;
             private readonly HalfRing bottomRing;
@@ -106,18 +118,34 @@ namespace osu.Game.Rulesets.Swing.UI
                 };
             }
 
+            public void PressTopRing() => topRing.FadeColour(Color4.DeepSkyBlue, 100, Easing.Out);
+
+            public void PressBottomRing() => bottomRing.FadeColour(Color4.Red, 100, Easing.Out);
+
+            public void ReleaseTopRing() => topRing.FadeColour(Color4.White, 300, Easing.Out);
+
+            public void ReleaseBottomRing() => bottomRing.FadeColour(Color4.White, 300, Easing.Out);
+        }
+
+        private class HitReceptor : CompositeDrawable, IKeyBindingHandler<SwingAction>
+        {
+            public Action UpKeyPressed;
+            public Action DownKeyPressed;
+            public Action UpKeyReleased;
+            public Action DownKeyReleased;
+
             public bool OnPressed(SwingAction action)
             {
                 switch (action)
                 {
                     case SwingAction.UpSwing:
                     case SwingAction.UpSwingAdditional:
-                        topRing.FadeColour(Color4.DeepSkyBlue, 100, Easing.Out);
+                        UpKeyPressed?.Invoke();
                         break;
 
                     case SwingAction.DownSwing:
                     case SwingAction.DownSwingAdditional:
-                        bottomRing.FadeColour(Color4.Red, 100, Easing.Out);
+                        DownKeyPressed?.Invoke();
                         break;
                 }
 
@@ -130,18 +158,16 @@ namespace osu.Game.Rulesets.Swing.UI
                 {
                     case SwingAction.UpSwing:
                     case SwingAction.UpSwingAdditional:
-                        topRing.FadeColour(Color4.White, 300, Easing.Out);
+                        UpKeyReleased?.Invoke();
                         break;
 
                     case SwingAction.DownSwing:
                     case SwingAction.DownSwingAdditional:
-                        bottomRing.FadeColour(Color4.White, 300, Easing.Out);
+                        DownKeyReleased?.Invoke();
                         break;
                 }
             }
         }
-
-        public void Add(BarLine bar) => base.Add(new DrawableBarLine(bar));
 
         private class HalfRing : Container
         {
