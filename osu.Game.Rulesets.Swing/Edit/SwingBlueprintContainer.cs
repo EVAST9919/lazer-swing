@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Swing.Edit
         {
         }
 
-        //protected override SelectionHandler CreateSelectionHandler() => new TouhosuSelectionHandler();
+        protected override SelectionHandler CreateSelectionHandler() => new SwingSelectionHandler();
 
         public override OverlaySelectionBlueprint CreateBlueprintFor(DrawableHitObject hitObject)
         {
