@@ -17,10 +17,7 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
         public SpinnerPlacementBlueprint()
             : base(new Spinner())
         {
-            InternalChild = piece = new SpinnerPiece
-            {
-                X = -150
-            };
+            InternalChild = piece = new SpinnerPiece();
         }
 
         private bool isPlacingEnd;

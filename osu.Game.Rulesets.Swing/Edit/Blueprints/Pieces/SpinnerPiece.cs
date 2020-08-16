@@ -1,9 +1,9 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osu.Framework.Graphics;
 using osu.Game.Graphics;
+using osu.Framework.Graphics.Shapes;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces
 {
@@ -15,13 +15,26 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces
             Anchor = Anchor.Centre;
             Origin = Anchor.BottomCentre;
             Rotation = 90;
+            X = -150;
             Size = new Vector2(200, 100);
-            InternalChild = new BasicHalfRing
+            Masking = true;
+            InternalChildren = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both,
-                Anchor = Anchor.BottomCentre,
-                Origin = Anchor.BottomCentre,
-                Colour = colours.Yellow
+                new CircularContainer
+                {
+                    Origin = Anchor.Centre,
+                    Anchor = Anchor.BottomCentre,
+                    Size = new Vector2(200),
+                    Masking = true,
+                    BorderThickness = 4,
+                    BorderColour = colours.Yellow,
+                    Child = new Box
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Colour = colours.Yellow,
+                        Alpha = 0.4f
+                    }
+                }
             };
         }
     }
