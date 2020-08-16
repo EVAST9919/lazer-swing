@@ -16,11 +16,8 @@ namespace osu.Game.Rulesets.Swing.Edit
 
         protected override IReadOnlyList<HitObjectCompositionTool> CompositionTools => new HitObjectCompositionTool[]
         {
-            //new TickCompositionTool(),
-            //new AngeledProjectileCompositionTool(),
-            //new CircularExplosionCompositionTool(),
-            //new ShapedExplosionCompositionTool(),
-            new SpinnerCompositionTool()
+            new SpinnerCompositionTool(),
+            new TapCompositionTool()
         };
 
         protected override ComposeBlueprintContainer CreateBlueprintContainer(IEnumerable<DrawableHitObject> hitObjects)
