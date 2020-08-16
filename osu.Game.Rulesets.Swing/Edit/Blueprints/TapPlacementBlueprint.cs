@@ -1,7 +1,9 @@
-﻿using osu.Framework.Input.Events;
+﻿using osu.Framework.Allocation;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces;
 using osu.Game.Rulesets.Swing.Objects;
+using osu.Game.Rulesets.Swing.UI;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints
@@ -9,6 +11,9 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
     public class TapPlacementBlueprint : PlacementBlueprint
     {
         public new Tap HitObject => (Tap)base.HitObject;
+
+        [Resolved]
+        private IBeatSnapProvider beatSnapProvider { get; set; }
 
         private readonly TapPiece piece;
         private static Tap tap;
@@ -22,7 +27,16 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
         protected override void Update()
         {
             base.Update();
-            piece.UpdateFrom(HitObject);
+            piece.UpdateFrom(tap);
+        }
+
+        public override void UpdatePosition(SnapResult result)
+        {
+            base.UpdatePosition(result);
+
+            var localPosition = ToLocalSpace(result.ScreenSpacePosition);
+            tap.Type = localPosition.Y > SwingPlayfield.FULL_SIZE.Y / 2 ? HitType.Down : HitType.Up;
+            tap.StartTime = beatSnapProvider.SnapTime(EditorClock.CurrentTime + localPosition.X * 1.5f);
         }
 
         protected override bool OnMouseDown(MouseDownEvent e)
@@ -30,12 +44,6 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
             switch (e.Button)
             {
                 case MouseButton.Left:
-                    tap.Type = HitType.Up;
-                    EndPlacement(true);
-                    return true;
-
-                case MouseButton.Right:
-                    tap.Type = HitType.Down;
                     EndPlacement(true);
                     return true;
             }
