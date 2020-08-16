@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Swing.Edit
             //new AngeledProjectileCompositionTool(),
             //new CircularExplosionCompositionTool(),
             //new ShapedExplosionCompositionTool(),
-            //new SpinnerCompositionTool()
+            new SpinnerCompositionTool()
         };
 
         //protected override ComposeBlueprintContainer CreateBlueprintContainer(IEnumerable<DrawableHitObject> hitObjects)
