@@ -15,20 +15,6 @@ namespace osu.Game.Rulesets.Swing.Extensions
             return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
         }
 
-        public static float BulletDistribution(int bulletsPerObject, float angleRange, int index, float angleOffset = 0)
-        {
-            var angle = getAngleBuffer(bulletsPerObject, angleRange) + index * getPerBulletAngle(bulletsPerObject, angleRange) + angleOffset;
-
-            if (angle > 360)
-                angle %= 360;
-
-            return angle;
-
-            static float getAngleBuffer(int bulletsPerObject, float angleRange) => (360 - angleRange + getPerBulletAngle(bulletsPerObject, angleRange)) / 2f;
-
-            static float getPerBulletAngle(int bulletsPerObject, float angleRange) => angleRange / bulletsPerObject;
-        }
-
         public static double Distance(Vector2 input, Vector2 comparison) => Math.Sqrt(Pow(input.X - comparison.X) + Pow(input.Y - comparison.Y));
 
         public static double Pow(double input) => input * input;
@@ -52,16 +38,12 @@ namespace osu.Game.Rulesets.Swing.Extensions
             return angle;
         }
 
-        public static bool GetRandomTimedBool(double time)
+        public static Vector2 GetRotatedPosition(Vector2 input, Vector2 origin, float angle)
         {
-            var random = new Random((int)Math.Round(time * 100));
-            return random.NextDouble() > 0.5f;
-        }
+            double newX = origin.X + (input.X - origin.X) * Math.Cos(angle * Math.PI / 180) - ((input.Y - origin.Y) * Math.Sin(angle * Math.PI / 180));
+            double newY = origin.Y + (input.Y - origin.Y) * Math.Cos(angle * Math.PI / 180) - ((input.X - origin.X) * Math.Sin(angle * Math.PI / 180));
 
-        public static float GetRandomTimedAngleOffset(double time)
-        {
-            var random = new Random((int)Math.Round(time * 100));
-            return (float)random.NextDouble() * 360f;
+            return new Vector2((float)newX, (float)newY);
         }
     }
 }

@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
     {
         protected new T HitObject => (T)DrawableObject.HitObject;
 
-        protected override bool AlwaysShowWhenSelected => true;
+        protected override bool AlwaysShowWhenSelected => false;
 
         protected SwingSelectionBlueprint(DrawableHitObject drawableObject)
             : base(drawableObject)

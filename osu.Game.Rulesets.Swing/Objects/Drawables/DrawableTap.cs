@@ -26,11 +26,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private readonly Box bar;
         private readonly Container contentContainer;
-        private readonly DrawableTapCircle tapCircle;
+        public readonly DrawableTapCircle TapCircle;
 
         public DrawableTap(Tap h)
             : base(h)
         {
+            AutoSizeAxes = Axes.Both;
             AddRangeInternal(new Drawable[]
             {
                 bar = new Box
@@ -42,7 +43,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 contentContainer = new Container
                 {
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Child = tapCircle = new DrawableTapCircle()
+                    Child = TapCircle = new DrawableTapCircle()
                 }
             });
 
@@ -78,8 +79,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             contentContainer.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
 
-            tapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
-            tapCircle.Circle.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            TapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
+            TapCircle.Circle.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;
@@ -183,8 +184,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    tapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
-                    tapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
+                    TapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
+                    TapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
                     this.FadeOut(300, Easing.OutQuint);
                     break;
             }

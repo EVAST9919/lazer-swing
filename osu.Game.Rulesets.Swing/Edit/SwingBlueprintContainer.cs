@@ -23,11 +23,8 @@ namespace osu.Game.Rulesets.Swing.Edit
                 case DrawableSpinner spinner:
                     return new SpinnerSelectionBlueprint(spinner);
 
-                    //case DrawableExplosion explosion:
-                    //    return new ExplosionSelectionBlueprint(explosion);
-
-                    //case DrawableStandaloneProjectile projectile:
-                    //    return new ProjectileSelectionBlueprint(projectile);
+                case DrawableTap tap:
+                    return new TapSelectionBlueprint(tap);
             }
 
             return base.CreateBlueprintFor(hitObject);
