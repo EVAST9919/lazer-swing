@@ -2,13 +2,15 @@
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Objects;
+using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.Scoring;
+using osuTK;
 
 namespace osu.Game.Rulesets.Swing.Objects
 {
-    public abstract class SwingHitObject : HitObject
+    public abstract class SwingHitObject : HitObject, IHasPosition
     {
         public double TimePreempt;
 
@@ -48,5 +50,11 @@ namespace osu.Game.Rulesets.Swing.Objects
             get => TypeBindable.Value;
             set => TypeBindable.Value = value;
         }
+
+        public Vector2 Position => new Vector2(X, Y);
+
+        public float X { get; set; }
+
+        public float Y { get; set; }
     }
 }

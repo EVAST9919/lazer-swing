@@ -5,7 +5,6 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {

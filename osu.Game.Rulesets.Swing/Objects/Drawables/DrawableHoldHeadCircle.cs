@@ -11,7 +11,6 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Swing.UI;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 using System.Linq;

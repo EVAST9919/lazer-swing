@@ -1,9 +1,7 @@
 ﻿using osu.Framework.Input.Bindings;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Swing;
-using osu.Game.Rulesets.Swing.Objects;
 
-namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
+namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public abstract class DrawableSwingHitObject : DrawableHitObject<SwingHitObject>, IKeyBindingHandler<SwingAction>
     {
@@ -40,16 +38,5 @@ namespace osu.Game.Rulesets.Touhosu.Objects.Drawables
         }
 
         protected sealed override double InitialLifetimeOffset => HitObject.TimePreempt;
-
-        protected override void UpdateStateTransforms(ArmedState state)
-        {
-            switch (state)
-            {
-                case ArmedState.Idle:
-                    // Manually set to reduce the number of future alive objects to a bare minimum.
-                    LifetimeStart = HitObject.StartTime - HitObject.TimePreempt;
-                    break;
-            }
-        }
     }
 }

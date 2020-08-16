@@ -1,7 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using System;
 using System.Linq;
 

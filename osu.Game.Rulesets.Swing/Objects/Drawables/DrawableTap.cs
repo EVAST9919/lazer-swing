@@ -9,7 +9,6 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Swing.UI;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 using System;
@@ -23,7 +22,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private bool validActionPressed;
         private readonly double rotationTime;
-        private readonly double appearTime;
+        private double appearTime;
 
         private readonly Box bar;
         private readonly Container contentContainer;
@@ -48,7 +47,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             });
 
             rotationTime = h.TimePreempt * 2;
-            appearTime = HitObject.StartTime - HitObject.TimePreempt;
+            h.StartTimeBindable.BindValueChanged(time =>
+            {
+                appearTime = time.NewValue - HitObject.TimePreempt;
+            }, true);
         }
 
         [BackgroundDependencyLoader]
@@ -171,6 +173,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             switch (state)
             {
+                case ArmedState.Idle:
+                    this.FadeColour(Color4.White);
+                    break;
+
                 case ArmedState.Miss:
                     this.FadeColour(Color4.Red, 100, Easing.OutQuint);
                     this.FadeOut(HitObject.TimePreempt / 3, Easing.Out);

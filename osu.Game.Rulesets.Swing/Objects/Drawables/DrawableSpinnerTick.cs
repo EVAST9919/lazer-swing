@@ -1,5 +1,4 @@
 ﻿using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {

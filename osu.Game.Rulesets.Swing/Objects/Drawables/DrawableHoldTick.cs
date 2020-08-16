@@ -6,7 +6,6 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.UI;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
 using osuTK;
 using osuTK.Graphics;
 

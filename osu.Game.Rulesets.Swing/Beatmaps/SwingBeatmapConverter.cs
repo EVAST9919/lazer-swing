@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
         {
         }
 
-        public override bool CanConvert() => Beatmap.HitObjects.All(h => h is IHasPosition);
+        public override bool CanConvert() => true;
 
         protected override IEnumerable<SwingHitObject> ConvertHitObject(HitObject obj, IBeatmap beatmap)
         {

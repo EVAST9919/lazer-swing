@@ -3,7 +3,7 @@ using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.Replays;
-using osu.Game.Rulesets.Touhosu.Objects.Drawables;
+using osu.Game.Rulesets.Swing.Objects.Drawables;
 using osu.Game.Scoring;
 using osu.Game.Users;
 using System.Collections.Generic;
