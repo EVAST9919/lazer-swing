@@ -27,8 +27,8 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,
-                Alpha = 0,
-                AlwaysPresent = true
+                Alpha = 0.4f,
+                Colour = colours.Yellow
             };
         }
 

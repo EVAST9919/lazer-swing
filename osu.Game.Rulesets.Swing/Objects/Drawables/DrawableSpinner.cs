@@ -27,31 +27,37 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             glowDuration = Math.Min(50, h.Duration / 10);
 
-            Size = new Vector2(200);
+            Size = new Vector2(100, 200);
             Anchor = Anchor.Centre;
-            Origin = Anchor.Centre;
-            AddRangeInternal(new Drawable[]
+            Origin = Anchor.CentreLeft;
+            AddInternal(new Container
             {
-                filler = new CircularProgress
+                Size = new Vector2(200),
+                Anchor = Anchor.CentreLeft,
+                Origin = Anchor.Centre,
+                Children = new Drawable[]
                 {
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    RelativeSizeAxes = Axes.Both,
-                    InnerRadius = 0.75f,
-                    Colour = Color4.BlueViolet,
-                    Alpha = 0.6f
-                },
-                ring = new FoldableHalfRing(RingState.Closed)
-                {
-                    RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.Centre,
-                    Origin = Anchor.Centre,
-                    Rotation = 90
-                },
-                glow = new Glow
-                {
-                    Rotation = 90,
-                    Alpha = 0
+                    filler = new CircularProgress
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Both,
+                        InnerRadius = 0.75f,
+                        Colour = Color4.BlueViolet,
+                        Alpha = 0.6f
+                    },
+                    ring = new FoldableHalfRing(RingState.Closed)
+                    {
+                        RelativeSizeAxes = Axes.Both,
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        Rotation = 90
+                    },
+                    glow = new Glow
+                    {
+                        Rotation = 90,
+                        Alpha = 0
+                    }
                 }
             });
 

@@ -29,5 +29,7 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
         public override Quad SelectionQuad => Piece.ScreenSpaceDrawQuad;
 
         public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => Piece.ReceivePositionalInputAt(screenSpacePos);
+
+        public override Vector2 ScreenSpaceSelectionPoint => DrawableObject.TapCircle.ScreenSpaceDrawQuad.Centre;
     }
 }

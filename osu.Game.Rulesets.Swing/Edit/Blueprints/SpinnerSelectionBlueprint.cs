@@ -18,8 +18,8 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
             InternalChild = Piece = new SpinnerPiece();
         }
 
-        public override Quad SelectionQuad => Piece.ScreenSpaceDrawQuad;
+        public override Quad SelectionQuad => DrawableObject.ScreenSpaceDrawQuad;
 
-        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => Piece.ReceivePositionalInputAt(screenSpacePos);
+        public override bool ReceivePositionalInputAt(Vector2 screenSpacePos) => DrawableObject.ReceivePositionalInputAt(screenSpacePos);
     }
 }

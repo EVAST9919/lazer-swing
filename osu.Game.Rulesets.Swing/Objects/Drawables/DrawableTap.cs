@@ -31,7 +31,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public DrawableTap(Tap h)
             : base(h)
         {
-            AutoSizeAxes = Axes.Both;
             AddRangeInternal(new Drawable[]
             {
                 bar = new Box
