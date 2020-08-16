@@ -121,7 +121,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (Auto && timeOffset > 0)
+            if (Auto && timeOffset >= 0)
             {
                 ApplyResult(r => r.Type = r.Judgement.MaxResult);
                 return;

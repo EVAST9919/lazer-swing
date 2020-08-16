@@ -88,19 +88,43 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             return base.CreateNestedHitObject(hitObject);
         }
 
+        private float completion;
+
         protected override void UpdateInitialTransforms()
         {
             base.UpdateInitialTransforms();
-            ring.Open(HitObject.TimePreempt);
-            glow.Delay(HitObject.TimePreempt).FadeIn(glowDuration);
-        }
 
-        private float completion;
+            ring.Open(HitObject.TimePreempt);
+
+            using (BeginDelayedSequence(HitObject.TimePreempt, true))
+            {
+                glow.FadeIn(glowDuration);
+
+                if (Auto)
+                {
+                    completion = 0.5f;
+                    filler.FillTo(completion, spinnerObject.Duration * 0.9, Easing.OutQuint);
+                }
+            }
+        }
 
         private Spinner spinnerObject => (Spinner)HitObject;
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            if (Auto)
+            {
+                if (Time.Current > spinnerObject.StartTime + spinnerObject.Duration * 0.9f)
+                {
+                    foreach (var tick in ticks)
+                        tick.TriggerResult(HitResult.Great);
+
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                }
+
+                return;
+            }
+
             if (userTriggered)
             {
                 DrawableSpinnerTick nextTick = null;
@@ -120,10 +144,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 completion = (float)numHits / spinnerObject.RequiredHits / 2;
 
-                filler.FillTo(completion, 260, Easing.OutQuint);
+                filler.FillTo(completion, 100, Easing.OutQuint);
 
                 if (numHits == spinnerObject.RequiredHits)
-                    ApplyResult(r => r.Type = HitResult.Great);
+                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
             }
             else
             {
