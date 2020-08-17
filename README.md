@@ -1,5 +1,6 @@
 # Swing
 A custom game mode for osu!lazer project.
+Preview: https://www.youtube.com/watch?v=g1kmun0TWCE
 
 Support:
 https://www.patreon.com/evast
