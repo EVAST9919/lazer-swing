@@ -22,6 +22,10 @@ using osu.Game.Rulesets.Replays.Types;
 using osu.Game.Rulesets.Swing.Replays;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Swing.Edit;
+using osu.Game.Screens.Ranking.Statistics;
+using osu.Game.Scoring;
+using System.Linq;
+using osu.Game.Rulesets.Swing.Objects;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -98,5 +102,20 @@ namespace osu.Game.Rulesets.Swing
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SwingReplayFrame();
 
         public override HitObjectComposer CreateHitObjectComposer() => new SwingHitObjectComposer(this);
+
+        public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        {
+            new StatisticRow
+            {
+                Columns = new[]
+                {
+                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap).ToList())
+                    {
+                        RelativeSizeAxes = Axes.X,
+                        Height = 250
+                    }),
+                }
+            }
+        };
     }
 }
