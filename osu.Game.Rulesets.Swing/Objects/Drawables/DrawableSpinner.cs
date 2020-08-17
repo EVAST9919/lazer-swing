@@ -108,7 +108,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 if (Auto)
                 {
                     completion = 0.5f;
-                    filler.FillTo(completion, spinnerObject.Duration * 0.9, Easing.OutQuint);
+                    filler.FillTo(completion, spinnerObject.Duration * 0.9);
                 }
             }
         }
@@ -149,7 +149,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 completion = (float)numHits / spinnerObject.RequiredHits / 2;
 
-                filler.FillTo(completion, 100, Easing.OutQuint);
+                filler.FillTo(completion, 250, Easing.OutQuint);
 
                 if (numHits == spinnerObject.RequiredHits)
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
