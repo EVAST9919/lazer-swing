@@ -17,6 +17,9 @@ using osu.Game.Rulesets.Swing.Objects.Drawables;
 using System;
 using osu.Framework.Graphics.Effects;
 using osu.Game.Beatmaps;
+using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -28,6 +31,8 @@ namespace osu.Game.Rulesets.Swing.UI
         private SwingRulesetConfigManager config { get; set; }
 
         private readonly Bindable<PlayfieldOrientation> orientation = new Bindable<PlayfieldOrientation>(PlayfieldOrientation.Taiko);
+
+        private Container<HitExplosion> explosions;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -65,6 +70,11 @@ namespace osu.Game.Rulesets.Swing.UI
                         EdgeSmoothness = Vector2.One,
                         Colour = ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0))
                     },
+                    explosions = new Container<HitExplosion>
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                    },
                     new Ring
                     {
                         Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
@@ -91,6 +101,28 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
             }, true);
+        }
+
+        public override void Add(DrawableHitObject h)
+        {
+            base.Add(h);
+            h.OnNewResult += onNewResult;
+        }
+
+        private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
+        {
+            switch (judgedObject)
+            {
+                case DrawableTap tap:
+                    if (result.Type != HitResult.Miss)
+                        explosions.Add(new HitExplosion(tap));
+                    break;
+
+                case DrawableSpinner spinner:
+                    if (result.Type != HitResult.Miss)
+                        explosions.Add(new HitExplosion(spinner));
+                    break;
+            }
         }
 
         public void Add(BarLine bar) => base.Add(new DrawableBarLine(bar));
