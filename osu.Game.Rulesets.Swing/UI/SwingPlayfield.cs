@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Swing.UI
         private readonly Bindable<PlayfieldOrientation> orientation = new Bindable<PlayfieldOrientation>(PlayfieldOrientation.Taiko);
 
         private Container<HitExplosion> explosions;
+        private JudgementContainer<DrawableSwingJudgement> judgementContainer;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -87,6 +88,12 @@ namespace osu.Game.Rulesets.Swing.UI
                         Origin = Anchor.Centre
                     },
                     HitObjectContainer,
+                    judgementContainer = new JudgementContainer<DrawableSwingJudgement>
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        X = 250
+                    },
                     hitReceptor = new HitReceptor()
                 }
             };
@@ -100,6 +107,7 @@ namespace osu.Game.Rulesets.Swing.UI
             orientation.BindValueChanged(u =>
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
+                judgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
             }, true);
         }
 
@@ -121,6 +129,21 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableSpinner spinner:
                     if (result.Type != HitResult.Miss)
                         explosions.Add(new HitExplosion(spinner));
+                    break;
+            }
+
+            if (!DisplayJudgements.Value)
+                return;
+
+            switch (judgedObject)
+            {
+                case DrawableTap _:
+                case DrawableSpinner _:
+                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    });
                     break;
             }
         }
