@@ -11,17 +11,14 @@ namespace osu.Game.Rulesets.Swing.Judgements
         {
             switch (result)
             {
-                default:
-                    return 0;
-
-                case HitResult.Meh:
-                    return 50;
-
                 case HitResult.Good:
                     return 100;
 
                 case HitResult.Great:
                     return 300;
+
+                default:
+                    return 0;
             }
         }
     }

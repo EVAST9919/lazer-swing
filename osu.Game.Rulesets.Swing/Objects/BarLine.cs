@@ -1,6 +1,5 @@
 ﻿using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Swing.Judgements;
 
 namespace osu.Game.Rulesets.Swing.Objects
 {
@@ -8,7 +7,7 @@ namespace osu.Game.Rulesets.Swing.Objects
     {
         public bool Major { get; set; }
 
-        public override Judgement CreateJudgement() => new NullJudgement();
+        public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
     }

@@ -4,12 +4,11 @@ namespace osu.Game.Rulesets.Swing.Scoring
 {
     public class SwingHitWindows : HitWindows
     {
-        private static readonly DifficultyRange[] osu_ranges =
+        private static readonly DifficultyRange[] swing_ranges =
         {
-            new DifficultyRange(HitResult.Great, 80, 50, 20),
-            new DifficultyRange(HitResult.Good, 140, 100, 60),
-            new DifficultyRange(HitResult.Meh, 200, 150, 100),
-            new DifficultyRange(HitResult.Miss, 400, 400, 400),
+            new DifficultyRange(HitResult.Great, 50, 35, 20),
+            new DifficultyRange(HitResult.Good, 120, 80, 50),
+            new DifficultyRange(HitResult.Miss, 135, 95, 70),
         };
 
         public override bool IsHitResultAllowed(HitResult result)
@@ -18,7 +17,6 @@ namespace osu.Game.Rulesets.Swing.Scoring
             {
                 case HitResult.Great:
                 case HitResult.Good:
-                case HitResult.Meh:
                 case HitResult.Miss:
                     return true;
             }
@@ -26,6 +24,6 @@ namespace osu.Game.Rulesets.Swing.Scoring
             return false;
         }
 
-        protected override DifficultyRange[] GetRanges() => osu_ranges;
+        protected override DifficultyRange[] GetRanges() => swing_ranges;
     }
 }
