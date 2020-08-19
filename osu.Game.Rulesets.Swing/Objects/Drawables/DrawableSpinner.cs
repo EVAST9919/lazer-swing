@@ -157,7 +157,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             else
             {
                 if (timeOffset < 0)
+                {
+                    completion = Auto ? 0.5f : 0;
                     return;
+                }
 
                 int numHits = 0;
 
