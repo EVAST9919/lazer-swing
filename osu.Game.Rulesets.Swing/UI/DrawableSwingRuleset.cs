@@ -14,6 +14,7 @@ using System.Linq;
 using osu.Game.Rulesets.Objects;
 using osu.Framework.Utils;
 using System;
+using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -41,6 +42,14 @@ namespace osu.Game.Rulesets.Swing.UI
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SwingFramedReplayInputHandler(replay);
 
         protected override ReplayRecorder CreateReplayRecorder(Replay replay) => new SwingReplayRecorder(replay);
+
+        protected override ResumeOverlay CreateResumeOverlay() => new SwingResumeOverlay();
+
+        public override void RequestResume(Action continueResume)
+        {
+            ResumeOverlay.ResumeAction = continueResume;
+            ResumeOverlay.Show();
+        }
 
         public override DrawableHitObject<SwingHitObject> CreateDrawableRepresentation(SwingHitObject h)
         {
