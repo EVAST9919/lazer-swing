@@ -157,8 +157,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
             private readonly HalfRing topRing;
             private readonly HalfRing bottomRing;
-            private readonly GlowingHalfRing topGlow;
-            private readonly GlowingHalfRing bottomGlow;
+            private readonly Container glowContainer;
 
             public Rings()
             {
@@ -166,23 +165,31 @@ namespace osu.Game.Rulesets.Swing.UI
                 RelativeSizeAxes = Axes.Y;
                 InternalChildren = new Drawable[]
                 {
-                    topGlow = new GlowingHalfRing(Color4.DeepSkyBlue)
+                    glowContainer = new Container
                     {
-                        Anchor = Anchor.TopCentre,
-                        Origin = Anchor.TopCentre,
-                        Alpha = 0
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        RelativeSizeAxes = Axes.Y,
+                        Alpha = 0,
+                        Children = new Drawable[]
+                        {
+                            new GlowingHalfRing(Color4.DeepSkyBlue)
+                            {
+                                Anchor = Anchor.TopCentre,
+                                Origin = Anchor.TopCentre,
+                            },
+                            new GlowingHalfRing(Color4.Red)
+                            {
+                                Anchor = Anchor.BottomCentre,
+                                Origin = Anchor.TopCentre,
+                                Rotation = -180,
+                            }
+                        }
                     },
                     topRing = new HalfRing
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.TopCentre,
-                    },
-                    bottomGlow = new GlowingHalfRing(Color4.Red)
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.TopCentre,
-                        Rotation = -180,
-                        Alpha = 0
                     },
                     bottomRing = new HalfRing
                     {
@@ -203,21 +210,15 @@ namespace osu.Game.Rulesets.Swing.UI
                     {
                         var bpmBeforeKiai = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
 
-                        using (topGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
-                            topGlow.FadeIn(bpmBeforeKiai, Easing.Out);
-
-                        using (bottomGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
-                            bottomGlow.FadeIn(bpmBeforeKiai, Easing.Out);
+                        using (glowContainer.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
+                            glowContainer.FadeIn(bpmBeforeKiai, Easing.Out);
                     }
                     else
                     {
                         var bpmBeforeKiaiOff = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
 
-                        using (topGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
-                            topGlow.FadeOut(bpmBeforeKiaiOff, Easing.Out);
-
-                        using (bottomGlow.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
-                            bottomGlow.FadeOut(bpmBeforeKiaiOff, Easing.Out);
+                        using (glowContainer.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
+                            glowContainer.FadeOut(bpmBeforeKiaiOff, Easing.Out);
                     }
                 }
             }
