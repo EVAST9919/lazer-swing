@@ -239,13 +239,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private class Glow : CompositeDrawable
         {
-            private const float glow_size = 5;
+            private const float glow_size = 4;
 
             public Glow()
             {
                 Origin = Anchor.BottomCentre;
                 Anchor = Anchor.Centre;
-                Size = new Vector2(200 + glow_size * 2, 100 + glow_size);
+                Size = new Vector2(200 + (glow_size + 5) * 2, 100 + glow_size + 5);
                 InternalChild = new Container
                 {
                     RelativeSizeAxes = Axes.Both,
