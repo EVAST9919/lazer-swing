@@ -60,6 +60,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Type.BindValueChanged(_ => updateType(), true);
         }
 
+        private Color4 tapCircleColour;
+
         private void updateType()
         {
             HitActions =
@@ -79,7 +81,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
 
             TapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
-            TapCircle.Circle.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            TapCircle.Circle.Colour = tapCircleColour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;
@@ -175,6 +177,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 case ArmedState.Idle:
                     this.FadeColour(Color4.White);
+                    TapCircle.Circle.ClearTransforms();
+                    TapCircle.Circle.Colour = tapCircleColour;
                     break;
 
                 case ArmedState.Miss:
