@@ -157,7 +157,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
             private readonly HalfRing topRing;
             private readonly HalfRing bottomRing;
-            private readonly Container glowContainer;
+            private readonly GlowContainer glowContainer;
 
             public Rings()
             {
@@ -165,27 +165,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 RelativeSizeAxes = Axes.Y;
                 InternalChildren = new Drawable[]
                 {
-                    glowContainer = new Container
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        RelativeSizeAxes = Axes.Y,
-                        Alpha = 0,
-                        Children = new Drawable[]
-                        {
-                            new GlowingHalfRing(Color4.DeepSkyBlue)
-                            {
-                                Anchor = Anchor.TopCentre,
-                                Origin = Anchor.TopCentre,
-                            },
-                            new GlowingHalfRing(Color4.Red)
-                            {
-                                Anchor = Anchor.BottomCentre,
-                                Origin = Anchor.TopCentre,
-                                Rotation = -180,
-                            }
-                        }
-                    },
+                    glowContainer = new GlowContainer(),
                     topRing = new HalfRing
                     {
                         Anchor = Anchor.TopCentre,
@@ -230,6 +210,32 @@ namespace osu.Game.Rulesets.Swing.UI
             public void ReleaseTopRing() => topRing.FadeColour(Color4.White, 300, Easing.Out);
 
             public void ReleaseBottomRing() => bottomRing.FadeColour(Color4.White, 300, Easing.Out);
+
+            private class GlowContainer : Container
+            {
+                public GlowContainer()
+                {
+                    Anchor = Anchor.Centre;
+                    Origin = Anchor.Centre;
+                    RelativeSizeAxes = Axes.Y;
+                    Alpha = 0;
+
+                    AddRange(new[]
+                    {
+                        new GlowingHalfRing(Color4.DeepSkyBlue)
+                        {
+                            Anchor = Anchor.TopCentre,
+                            Origin = Anchor.TopCentre,
+                        },
+                        new GlowingHalfRing(Color4.Red)
+                        {
+                            Anchor = Anchor.BottomCentre,
+                            Origin = Anchor.TopCentre,
+                            Rotation = -180,
+                        }
+                    });
+                }
+            }
         }
 
         private class HitReceptor : CompositeDrawable, IKeyBindingHandler<SwingAction>
@@ -306,7 +312,7 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Anchor = Anchor.TopCentre;
                 Origin = Anchor.TopCentre;
-                InternalChild = new HalfRing(glow_radius)
+                InternalChild = new HalfRing(glow_radius + 5)
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
