@@ -232,6 +232,8 @@ namespace osu.Game.Rulesets.Swing.UI
 
             private class GlowContainer : Container
             {
+                public override bool RemoveCompletedTransforms => false;
+
                 public GlowContainer()
                 {
                     Anchor = Anchor.Centre;
