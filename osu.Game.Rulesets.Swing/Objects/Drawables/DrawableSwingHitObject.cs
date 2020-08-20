@@ -34,11 +34,25 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected new T HitObject => (T)base.HitObject;
 
+        protected virtual bool RequiresTimedUpdate { get; } = false;
+
         protected DrawableSwingHitObject(T hitObject)
             : base(hitObject)
         {
         }
 
         protected sealed override double InitialLifetimeOffset => HitObject.TimePreempt;
+
+        protected override void Update()
+        {
+            base.Update();
+
+            if (RequiresTimedUpdate)
+                Update(Time.Current);
+        }
+
+        protected virtual void Update(double currentTime)
+        {
+        }
     }
 }

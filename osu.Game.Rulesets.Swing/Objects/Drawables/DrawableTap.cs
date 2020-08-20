@@ -18,6 +18,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableTap : DrawableSwingHitObject<Tap>
     {
+        protected override bool RequiresTimedUpdate => true;
+
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         private bool validActionPressed;
@@ -86,12 +88,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;
 
-        protected override void Update()
+        protected override void Update(double currentTime)
         {
-            base.Update();
-
-            var currentTime = Time.Current;
-
             if (currentTime < appearTime)
             {
                 bar.Rotation = contentContainer.Rotation = Type.Value == HitType.Up ? -90 : 90;

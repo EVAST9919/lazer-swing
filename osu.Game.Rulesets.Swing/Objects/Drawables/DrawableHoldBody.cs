@@ -14,6 +14,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableHoldBody : DrawableSwingHitObject<HoldBody>
     {
+        protected override bool RequiresTimedUpdate => true;
+
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         private readonly SmoothCircularProgress progress;
@@ -99,12 +101,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action) => false;
 
-        protected override void Update()
+        protected override void Update(double currentTime)
         {
-            base.Update();
-
-            var currentTime = Time.Current;
-
             updateHeadRotation(currentTime);
             updateTailRotation(currentTime);
 

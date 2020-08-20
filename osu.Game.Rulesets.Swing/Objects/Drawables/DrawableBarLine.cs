@@ -10,7 +10,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
     {
         private readonly double rotationDuration;
         private readonly double fadeDuration;
-        private readonly double appearTime;
 
         private readonly Container topContainer;
         private readonly Container bottomContainer;
@@ -33,6 +32,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1,
+                    Rotation = -90,
                     Child = new EquilateralTriangle
                     {
                         Anchor = Anchor.BottomCentre,
@@ -46,6 +46,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1,
+                    Rotation = 90,
                     Child = new EquilateralTriangle
                     {
                         Anchor = Anchor.TopCentre,
@@ -59,26 +60,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             fadeDuration = h.TimePreempt / 2;
             rotationDuration = h.TimePreempt * 2;
-            appearTime = HitObject.StartTime - HitObject.TimePreempt;
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            var currentTime = Time.Current;
-
-            if (currentTime < appearTime)
-            {
-                topContainer.Rotation = -90;
-                bottomContainer.Rotation = 90;
-            }
-            else
-            {
-                var rotationOffset = (currentTime - appearTime) / rotationDuration * 180;
-                topContainer.Rotation = (float)(-90 + rotationOffset);
-                bottomContainer.Rotation = (float)(90 - rotationOffset);
-            }
         }
 
         protected override void UpdateInitialTransforms()
@@ -86,6 +67,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             base.UpdateInitialTransforms();
 
             this.FadeInFromZero(fadeDuration);
+            topContainer.RotateTo(90, rotationDuration);
+            bottomContainer.RotateTo(-90, rotationDuration);
             this.Delay(rotationDuration - fadeDuration).FadeOut(fadeDuration).Expire(true);
         }
 
