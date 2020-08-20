@@ -29,13 +29,6 @@ namespace osu.Game.Rulesets.Swing.Objects
         {
             base.CreateNestedHitObjects();
 
-            AddNested(new HoldBody
-            {
-                StartTime = StartTime,
-                Duration = Duration,
-                Type = Type
-            });
-
             AddNested(HeadCircle = new HoldHead
             {
                 StartTime = StartTime,

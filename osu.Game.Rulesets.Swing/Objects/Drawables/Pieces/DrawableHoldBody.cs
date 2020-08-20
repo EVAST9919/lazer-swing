@@ -3,20 +3,18 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Screens.Ranking.Expanded.Accuracy;
 using osuTK;
 using osuTK.Graphics;
 
-namespace osu.Game.Rulesets.Swing.Objects.Drawables
+namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public class DrawableHoldBody : DrawableSwingHitObject<HoldBody>
+    public class DrawableHoldBody : CompositeDrawable
     {
-        protected override bool RequiresTimedUpdate => true;
-
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
+        protected readonly Hold HitObject;
 
         private readonly SmoothCircularProgress progress;
         private readonly Container headContainer;
@@ -28,9 +26,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly double finalFillValue;
         private readonly double unfoldTime;
 
-        public DrawableHoldBody(HoldBody h)
-            : base(h)
+        public DrawableHoldBody(Hold h)
         {
+            HitObject = h;
+
             var thickness = SwingHitObject.DEFAULT_SIZE / 2;
             var size = SwingPlayfield.FULL_SIZE.X + thickness;
             var innerRadius = thickness * 2 / size;
@@ -93,16 +92,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             progress.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
-        protected override void UpdateInitialTransforms()
+        protected override void Update()
         {
-            base.UpdateInitialTransforms();
-            this.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
-        }
+            base.Update();
 
-        public override bool OnPressed(SwingAction action) => false;
+            var currentTime = Time.Current;
 
-        protected override void Update(double currentTime)
-        {
             updateHeadRotation(currentTime);
             updateTailRotation(currentTime);
 
@@ -210,20 +205,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }
 
             tailContainer.Rotation = 0;
-        }
-
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
-        {
-            if (timeOffset < HitObject.Duration)
-                return;
-
-            ApplyResult(r => r.Type = r.Judgement.MaxResult);
-        }
-
-        protected override void UpdateStateTransforms(ArmedState state)
-        {
-            base.UpdateStateTransforms(state);
-            this.Delay(HitObject.Duration).FadeOut(300, Easing.OutQuint).Expire(true);
         }
     }
 }

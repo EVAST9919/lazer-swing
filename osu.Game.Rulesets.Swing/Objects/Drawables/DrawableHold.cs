@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
@@ -11,17 +12,16 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
     {
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        public DrawableHoldBody Body => holdBodyContainer.Child;
+        public readonly DrawableHoldBody Body;
 
         private readonly Container<DrawableHoldHead> headContainer;
-        private readonly Container<DrawableHoldBody> holdBodyContainer;
 
         public DrawableHold(Hold h)
             : base(h)
         {
             AddRangeInternal(new Drawable[]
             {
-                holdBodyContainer = new Container<DrawableHoldBody>(),
+                Body = new DrawableHoldBody(h),
                 headContainer = new Container<DrawableHoldHead>()
             });
         }
@@ -50,9 +50,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 case HoldHead head:
                     return new DrawableHoldHead(head);
-
-                case HoldBody body:
-                    return new DrawableHoldBody(body);
             }
 
             return base.CreateNestedHitObject(hitObject);
@@ -67,10 +64,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case DrawableHoldHead head:
                     headContainer.Child = head;
                     break;
-
-                case DrawableHoldBody body:
-                    holdBodyContainer.Child = body;
-                    break;
             }
         }
 
@@ -78,14 +71,19 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.ClearNestedHitObjects();
             headContainer.Clear();
-            holdBodyContainer.Clear();
         }
 
         public override bool OnPressed(SwingAction action) => false;
 
+        protected override void UpdateInitialTransforms()
+        {
+            base.UpdateInitialTransforms();
+            Body.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
+        }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (timeOffset < HitObject.Duration)
+            if (Time.Current < HitObject.EndTime)
                 return;
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
@@ -94,7 +92,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
-            this.Delay(HitObject.Duration + 300).Expire(true);
+
+            using (BeginDelayedSequence(HitObject.Duration, true))
+                this.FadeOut(300, Easing.OutQuint);
         }
     }
 }
