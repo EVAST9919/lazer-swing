@@ -85,6 +85,7 @@ namespace osu.Game.Rulesets.Swing
                 case ModType.Conversion:
                     return new Mod[]
                     {
+                        new SwingModDifficultyAdjust(),
                         new SwingModSliders()
                     };
 
