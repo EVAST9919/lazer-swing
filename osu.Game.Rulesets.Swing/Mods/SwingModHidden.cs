@@ -28,9 +28,14 @@ namespace osu.Game.Rulesets.Swing.Mods
             {
                 case DrawableTap tap:
                     // fade out immediately after fade in.
-                    using (drawable.BeginAbsoluteSequence(fadeOutStartTime, true))
+                    using (tap.BeginAbsoluteSequence(fadeOutStartTime, true))
                         tap.FadeOut(fadeOutDuration);
 
+                    break;
+
+                case DrawableHold hold:
+                    using (hold.BeginAbsoluteSequence(hold.HitObject.StartTime, true))
+                        hold.FadeOut(hold.HitObject.Duration);
                     break;
             }
         }

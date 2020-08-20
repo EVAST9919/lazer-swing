@@ -11,6 +11,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
     {
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
+        public DrawableHoldBody Body => holdBodyContainer.Child;
+
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldBody> holdBodyContainer;
 

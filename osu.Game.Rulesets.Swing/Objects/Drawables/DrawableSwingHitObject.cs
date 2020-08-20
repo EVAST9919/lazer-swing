@@ -32,7 +32,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         /// </summary>
         public SwingAction? HitAction { get; protected set; }
 
-        protected new T HitObject => (T)base.HitObject;
+        public new T HitObject => (T)base.HitObject;
 
         protected virtual bool RequiresTimedUpdate { get; } = false;
 
