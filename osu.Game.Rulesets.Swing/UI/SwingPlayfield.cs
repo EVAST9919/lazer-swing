@@ -20,6 +20,7 @@ using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
+using osu.Framework.Extensions.IEnumerableExtensions;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -114,6 +115,18 @@ namespace osu.Game.Rulesets.Swing.UI
         public override void Add(DrawableHitObject h)
         {
             base.Add(h);
+
+            switch (h)
+            {
+                case DrawableHold hold:
+                    hold.NestedHitObjects.ForEach(nested =>
+                    {
+                        if (nested is DrawableHoldHead head)
+                            head.OnNewResult += onNewResult;
+                    });
+                    return;
+            }
+
             h.OnNewResult += onNewResult;
         }
 
@@ -124,6 +137,11 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableTap tap:
                     if (result.Type != HitResult.Miss)
                         explosions.Add(new HitExplosion(tap));
+                    break;
+
+                case DrawableHoldHead head:
+                    if (result.Type != HitResult.Miss)
+                        explosions.Add(new HitExplosion(head));
                     break;
 
                 case DrawableSpinner spinner:
@@ -138,6 +156,7 @@ namespace osu.Game.Rulesets.Swing.UI
             switch (judgedObject)
             {
                 case DrawableTap _:
+                case DrawableHoldHead _:
                 case DrawableSpinner _:
                     judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
                     {

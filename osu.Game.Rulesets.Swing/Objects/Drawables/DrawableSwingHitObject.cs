@@ -32,6 +32,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         /// </summary>
         public SwingAction? HitAction { get; protected set; }
 
+        protected new T HitObject => (T)base.HitObject;
+
         protected DrawableSwingHitObject(T hitObject)
             : base(hitObject)
         {

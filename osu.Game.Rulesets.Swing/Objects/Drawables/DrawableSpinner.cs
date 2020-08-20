@@ -108,18 +108,16 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 if (Auto)
                 {
                     completion = 0.5f;
-                    filler.FillTo(completion, spinnerObject.Duration * 0.9);
+                    filler.FillTo(completion, HitObject.Duration * 0.9);
                 }
             }
         }
-
-        private Spinner spinnerObject => (Spinner)HitObject;
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Auto)
             {
-                if (Time.Current > spinnerObject.StartTime + spinnerObject.Duration * 0.9f)
+                if (Time.Current > HitObject.StartTime + HitObject.Duration * 0.9f)
                 {
                     foreach (var tick in ticks)
                         tick.TriggerResult(HitResult.Great);
@@ -147,11 +145,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 var numHits = ticks.Count(r => r.IsHit);
 
-                completion = (float)numHits / spinnerObject.RequiredHits / 2;
+                completion = (float)numHits / HitObject.RequiredHits / 2;
 
                 filler.FillTo(completion, 250, Easing.OutQuint);
 
-                if (numHits == spinnerObject.RequiredHits)
+                if (numHits == HitObject.RequiredHits)
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
             }
             else
@@ -175,7 +173,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     tick.TriggerResult(HitResult.Miss);
                 }
 
-                ApplyResult(r => r.Type = numHits > spinnerObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
+                ApplyResult(r => r.Type = numHits > HitObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
             }
         }
 
@@ -183,7 +181,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action)
         {
-            if (Time.Current > spinnerObject.EndTime)
+            if (Time.Current > HitObject.EndTime)
                 return false;
 
             if (Time.Current < HitObject.StartTime)
@@ -211,7 +209,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence(spinnerObject.Duration, true))
+                    using (BeginDelayedSequence(HitObject.Duration, true))
                     {
                         ring.CloseBack(transition_duration);
                         filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
@@ -223,7 +221,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    using (BeginDelayedSequence(spinnerObject.Duration, true))
+                    using (BeginDelayedSequence(HitObject.Duration, true))
                     {
                         ring.Close(transition_duration);
                         glow.FadeOut(glowDuration, Easing.OutQuint);

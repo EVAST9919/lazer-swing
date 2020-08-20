@@ -32,7 +32,16 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
             switch (obj)
             {
                 case IHasPathWithRepeats path:
-                    return convertHitObject(obj, samples, strong, isRim);
+                    return new List<SwingHitObject>
+                    {
+                        new Hold
+                        {
+                            StartTime = obj.StartTime,
+                            Samples = samples,
+                            Duration = path.Duration,
+                            Type = !isRim ? HitType.Up : HitType.Down
+                        }
+                    };
 
                 case IHasDuration endTimeData:
                     {

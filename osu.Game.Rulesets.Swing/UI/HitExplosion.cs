@@ -24,6 +24,10 @@ namespace osu.Game.Rulesets.Swing.UI
                     colour = tap.HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
                     break;
 
+                case DrawableHoldHead head:
+                    colour = head.HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+                    break;
+
                 case DrawableSpinner _:
                     colour = Color4.BlueViolet;
                     break;

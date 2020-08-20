@@ -55,6 +55,9 @@ namespace osu.Game.Rulesets.Swing.UI
         {
             switch (h)
             {
+                case Hold hold:
+                    return new DrawableHold(hold);
+
                 case Spinner spinner:
                     return new DrawableSpinner(spinner);
 
