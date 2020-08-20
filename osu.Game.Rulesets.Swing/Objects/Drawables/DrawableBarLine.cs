@@ -86,7 +86,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             base.UpdateInitialTransforms();
 
             this.FadeInFromZero(fadeDuration);
-            this.Delay(rotationDuration - fadeDuration).FadeOut(fadeDuration);
+            this.Delay(rotationDuration - fadeDuration).FadeOut(fadeDuration).Expire(true);
         }
 
         public override bool OnPressed(SwingAction action) => false;

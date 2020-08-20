@@ -65,7 +65,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             validActionPressed = HitActions.Contains(action);
 
             // Only count this as handled if the new judgement is a hit
-            var result = UpdateResult(true);
+            UpdateResult(true);
+
             if (IsHit)
                 HitAction = action;
 

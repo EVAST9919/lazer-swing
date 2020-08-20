@@ -183,13 +183,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 case ArmedState.Miss:
                     this.FadeColour(Color4.Red, 100, Easing.OutQuint);
-                    this.FadeOut(HitObject.TimePreempt / 3, Easing.Out);
+                    this.FadeOut(HitObject.TimePreempt / 3, Easing.Out).Expire(true);
                     break;
 
                 case ArmedState.Hit:
                     TapCircle.ScaleTo(1.2f, 150, Easing.OutQuint);
                     TapCircle.Circle.FlashColour(Color4.White, 300, Easing.Out);
-                    this.FadeOut(300, Easing.OutQuint);
+                    this.FadeOut(300, Easing.OutQuint).Expire(true);
                     break;
             }
         }

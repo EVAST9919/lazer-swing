@@ -225,7 +225,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void UpdateStateTransforms(ArmedState state)
         {
             base.UpdateStateTransforms(state);
-            this.Delay(HitObject.Duration).FadeOut(300, Easing.OutQuint);
+            this.Delay(HitObject.Duration).FadeOut(300, Easing.OutQuint).Expire(true);
         }
     }
 }

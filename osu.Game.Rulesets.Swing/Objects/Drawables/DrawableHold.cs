@@ -88,5 +88,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
+
+        protected override void UpdateStateTransforms(ArmedState state)
+        {
+            base.UpdateStateTransforms(state);
+            this.Delay(HitObject.Duration + 300).Expire(true);
+        }
     }
 }

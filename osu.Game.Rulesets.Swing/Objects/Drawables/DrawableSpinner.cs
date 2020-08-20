@@ -215,7 +215,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                         filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
                         glow.FadeOut(glowDuration, Easing.OutQuint);
                         this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
-                        this.Delay(transition_duration).FadeOut();
+                        this.Delay(transition_duration).FadeOut().Expire(true);
                     }
 
                     break;
@@ -228,7 +228,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                         filler.FlashColour(Color4.White, transition_duration, Easing.Out);
                         filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
                         filler.RotateTo(180, transition_duration, Easing.Out);
-                        this.Delay(transition_duration).FadeOut();
+                        this.Delay(transition_duration).FadeOut().Expire(true);
                     }
 
                     break;
