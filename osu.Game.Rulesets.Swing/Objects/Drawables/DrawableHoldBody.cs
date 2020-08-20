@@ -1,9 +1,12 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.Shapes;
+using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
+using osu.Game.Screens.Ranking.Expanded.Accuracy;
 using osuTK;
 using osuTK.Graphics;
 
@@ -13,7 +16,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
     {
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        private readonly CircularProgress progress;
+        private readonly SmoothCircularProgress progress;
+        private readonly Container headContainer;
+        private readonly Container tailContainer;
+        private readonly Circle head;
+        private readonly Circle tail;
 
         private readonly bool canFitOnTheScreen;
         private readonly double finalFillValue;
@@ -24,15 +31,41 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             var thickness = SwingHitObject.DEFAULT_SIZE / 2;
             var size = SwingPlayfield.FULL_SIZE.X + thickness;
+            var innerRadius = thickness * 2 / size;
 
             AddRangeInternal(new Drawable[]
             {
-                progress = new CircularProgress
+                progress = new SmoothCircularProgress
                 {
+                    Anchor = Anchor.TopCentre,
                     Origin = Anchor.Centre,
                     Size = new Vector2(size),
-                    InnerRadius = thickness * 2 / size,
-                    Current = { Value = 0 }
+                    InnerRadius = innerRadius,
+                    Current = { Value = 0 },
+                },
+                headContainer = new Container
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                    Child = head = new Circle
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(thickness - 1)
+                    }
+                },
+                tailContainer = new Container
+                {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                    Child = tail = new Circle
+                    {
+                        Anchor = Anchor.BottomCentre,
+                        Origin = Anchor.Centre,
+                        Size = new Vector2(thickness - 1)
+                    }
                 }
             });
 
@@ -55,7 +88,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
-            progress.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            progress.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         protected override void UpdateInitialTransforms()
@@ -71,6 +104,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             base.Update();
 
             var currentTime = Time.Current;
+
+            updateHeadRotation(currentTime);
+            updateTailRotation(currentTime);
 
             if (currentTime < unfoldTime)
             {
@@ -133,12 +169,63 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }
         }
 
+        private void updateHeadRotation(double currentTime)
+        {
+            if (currentTime < unfoldTime)
+            {
+                headContainer.Rotation = -90;
+                return;
+            }
+
+            if (currentTime < HitObject.StartTime)
+            {
+                headContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, -90, 0);
+                return;
+            }
+
+            headContainer.Rotation = 0;
+        }
+
+        private void updateTailRotation(double currentTime)
+        {
+            if (currentTime < unfoldTime + HitObject.Duration)
+            {
+                tailContainer.Rotation = -90;
+                return;
+            }
+
+            if (canFitOnTheScreen)
+            {
+                if (currentTime < HitObject.StartTime + HitObject.Duration)
+                {
+                    tailContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.StartTime + HitObject.Duration, -90, 0);
+                    return;
+                }
+            }
+            else
+            {
+                if (currentTime < HitObject.EndTime)
+                {
+                    tailContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, -90, 0);
+                    return;
+                }
+            }
+
+            tailContainer.Rotation = 0;
+        }
+
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (timeOffset < HitObject.Duration)
                 return;
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
+        }
+
+        protected override void UpdateStateTransforms(ArmedState state)
+        {
+            base.UpdateStateTransforms(state);
+            this.Delay(HitObject.Duration).FadeOut(300, Easing.OutQuint);
         }
     }
 }
