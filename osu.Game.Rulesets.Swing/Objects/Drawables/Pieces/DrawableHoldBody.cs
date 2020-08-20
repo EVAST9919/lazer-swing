@@ -2,10 +2,8 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Shapes;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
-using osu.Game.Screens.Ranking.Expanded.Accuracy;
 using osuTK;
 using osuTK.Graphics;
 
@@ -16,11 +14,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
         protected readonly Hold HitObject;
 
-        private readonly SmoothCircularProgress progress;
+        private readonly SnakingHoldBody snakingBody;
         private readonly Container headContainer;
         private readonly Container tailContainer;
-        private readonly Circle head;
-        private readonly Circle tail;
+        private readonly HoldBodyEnd head;
+        private readonly HoldBodyEnd tail;
 
         private readonly bool canFitOnTheScreen;
         private readonly double finalFillValue;
@@ -30,30 +28,19 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         {
             HitObject = h;
 
-            var thickness = SwingHitObject.DEFAULT_SIZE / 2;
-            var size = SwingPlayfield.FULL_SIZE.X + thickness;
-            var innerRadius = thickness * 2 / size;
-
             AddRangeInternal(new Drawable[]
             {
-                progress = new SmoothCircularProgress
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(size),
-                    InnerRadius = innerRadius,
-                    Current = { Value = 0 },
-                },
+                snakingBody = new SnakingHoldBody(),
                 headContainer = new Container
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Child = head = new Circle
+                    Child = head = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.Centre,
-                        Size = new Vector2(thickness - 1)
+                        X = 0.3f, // temporary
+                        Rotation = 180
                     }
                 },
                 tailContainer = new Container
@@ -61,18 +48,17 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Child = tail = new Circle
+                    Child = tail = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.Centre,
-                        Size = new Vector2(thickness - 1)
+                        X = -0.1f
                     }
                 }
             });
 
             canFitOnTheScreen = h.Duration < h.TimePreempt;
             if (canFitOnTheScreen)
-                finalFillValue = MathExtensions.Map(h.Duration, 0, h.TimePreempt, 0, 0.25f);
+                finalFillValue = MathExtensions.Map(h.Duration, 0, h.TimePreempt, 0, 90);
 
             unfoldTime = h.StartTime - h.TimePreempt;
         }
@@ -89,7 +75,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
-            progress.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            snakingBody.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         protected override void Update()
@@ -103,8 +89,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             if (currentTime < unfoldTime)
             {
-                progress.Current.Value = 0;
-                progress.Rotation = 90;
+                snakingBody.UnfoldDegree = 0;
+                snakingBody.Rotation = 0;
                 return;
             }
 
@@ -112,53 +98,53 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 if (currentTime < unfoldTime + HitObject.Duration)
                 {
-                    progress.Rotation = 90;
-                    progress.Current.Value = MathExtensions.Map(currentTime, unfoldTime, unfoldTime + HitObject.Duration, 0, finalFillValue);
+                    snakingBody.Rotation = 0;
+                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, unfoldTime + HitObject.Duration, 0, finalFillValue);
                     return;
                 }
 
                 if (currentTime < HitObject.StartTime)
                 {
-                    progress.Current.Value = finalFillValue;
-                    progress.Rotation = 90 + (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.StartTime, 0, (0.25 - finalFillValue) * 360);
+                    snakingBody.UnfoldDegree = finalFillValue;
+                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.StartTime, 0, 90 - finalFillValue);
                     return;
                 }
 
                 if (currentTime < HitObject.StartTime + HitObject.Duration)
                 {
-                    progress.Rotation = 90 + (float)MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, (0.25 - finalFillValue) * 360, 90);
-                    progress.Current.Value = finalFillValue - MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, 0, finalFillValue);
+                    snakingBody.UnfoldDegree = finalFillValue - MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, 0, finalFillValue);
+                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, (90 - finalFillValue), 90);
                     return;
                 }
 
-                progress.Rotation = 180;
-                progress.Current.Value = 0;
+                snakingBody.Rotation = 90;
+                snakingBody.UnfoldDegree = 0;
             }
             else
             {
                 if (currentTime < HitObject.StartTime)
                 {
-                    progress.Rotation = 90;
-                    progress.Current.Value = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 0.25);
+                    snakingBody.Rotation = 0;
+                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
                     return;
                 }
 
                 if (currentTime < unfoldTime + HitObject.Duration)
                 {
-                    progress.Rotation = 90;
-                    progress.Current.Value = 0.25;
+                    snakingBody.Rotation = 0;
+                    snakingBody.UnfoldDegree = 90;
                     return;
                 }
 
                 if (currentTime < HitObject.EndTime)
                 {
-                    progress.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 90, 180);
-                    progress.Current.Value = 0.25 - MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 0, 0.25);
+                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 0, 90);
+                    snakingBody.UnfoldDegree = 90 - MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 0, 90);
                     return;
                 }
 
-                progress.Rotation = 180;
-                progress.Current.Value = 0;
+                snakingBody.Rotation = 90;
+                snakingBody.UnfoldDegree = 0;
             }
         }
 
