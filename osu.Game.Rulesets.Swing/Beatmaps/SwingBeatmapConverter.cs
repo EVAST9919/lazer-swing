@@ -13,6 +13,8 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
     {
         private const float spinner_hit_multiplier = 1.65f;
 
+        public bool ConvertSliders { get; set; }
+
         public SwingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
@@ -32,16 +34,21 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
             switch (obj)
             {
                 case IHasPathWithRepeats path:
-                    return new List<SwingHitObject>
-                    {
-                        new Hold
+                    if (ConvertSliders)
+                        return new List<SwingHitObject>
                         {
-                            StartTime = obj.StartTime,
-                            Samples = samples,
-                            Duration = path.Duration,
-                            Type = !isRim ? HitType.Up : HitType.Down
-                        }
-                    };
+                            new Hold
+                            {
+                                StartTime = obj.StartTime,
+                                Samples = samples,
+                                Duration = path.Duration,
+                                Type = !isRim ? HitType.Up : HitType.Down
+                            }
+                        };
+                    else
+                    {
+                        return convertHitObject(obj, samples, strong, isRim);
+                    }
 
                 case IHasDuration endTimeData:
                     {

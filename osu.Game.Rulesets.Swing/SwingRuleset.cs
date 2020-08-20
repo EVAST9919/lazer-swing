@@ -82,6 +82,12 @@ namespace osu.Game.Rulesets.Swing
                         new SwingModVariableSpeed()
                     };
 
+                case ModType.Conversion:
+                    return new Mod[]
+                    {
+                        new SwingModSliders()
+                    };
+
                 default:
                     return Array.Empty<Mod>();
             }
