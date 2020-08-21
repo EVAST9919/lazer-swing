@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
     {
         private const float spinner_hit_multiplier = 1.65f;
 
-        public bool ConvertSliders { get; set; } = true;
+        public bool ConvertSliders { get; set; }
 
         public SwingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
