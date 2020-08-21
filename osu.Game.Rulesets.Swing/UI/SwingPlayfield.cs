@@ -121,8 +121,12 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHold hold:
                     hold.NestedHitObjects.ForEach(nested =>
                     {
-                        if (nested is DrawableHoldHead head)
-                            head.OnNewResult += onNewResult;
+                        if (nested is DrawableHoldHead || nested is DrawableHoldTick || nested is DrawableHoldRepeat)
+                        {
+                            nested.OnNewResult += onNewResult;
+                            return;
+                        }
+
                     });
                     return;
             }
@@ -134,19 +138,13 @@ namespace osu.Game.Rulesets.Swing.UI
         {
             switch (judgedObject)
             {
-                case DrawableTap tap:
+                case DrawableTap _:
+                case DrawableHoldHead _:
+                case DrawableHoldTick _:
+                case DrawableHoldRepeat _:
+                case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
-                        explosions.Add(new HitExplosion(tap));
-                    break;
-
-                case DrawableHoldHead head:
-                    if (result.Type != HitResult.Miss)
-                        explosions.Add(new HitExplosion(head));
-                    break;
-
-                case DrawableSpinner spinner:
-                    if (result.Type != HitResult.Miss)
-                        explosions.Add(new HitExplosion(spinner));
+                        explosions.Add(new HitExplosion((DrawableSwingHitObject)judgedObject));
                     break;
             }
 
@@ -157,6 +155,8 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 case DrawableTap _:
                 case DrawableHoldHead _:
+                case DrawableHoldTick _:
+                case DrawableHoldRepeat _:
                 case DrawableSpinner _:
                     judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
                     {

@@ -1,9 +1,13 @@
 ﻿using osu.Game.Audio;
+using osu.Game.Beatmaps;
+using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Swing.Objects
 {
@@ -17,23 +21,69 @@ namespace osu.Game.Rulesets.Swing.Objects
 
         public double Duration { get; set; }
 
-        public List<IList<HitSampleInfo>> NodeSamples { get; set; } = new List<IList<HitSampleInfo>>();
+        public IHasPathWithRepeats Path { get; set; }
 
-        public HoldHead HeadCircle;
+        public double SpanDuration => Path.Duration / Path.SpanCount();
+
+        public double Velocity { get; private set; }
+
+        public double TickDistance { get; private set; }
+
+        public List<IList<HitSampleInfo>> NodeSamples { get; set; } = new List<IList<HitSampleInfo>>();
 
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
 
-        protected override void CreateNestedHitObjects()
+        protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
         {
-            base.CreateNestedHitObjects();
+            base.ApplyDefaultsToSelf(controlPointInfo, difficulty);
 
-            AddNested(HeadCircle = new HoldHead
+            TimingControlPoint timingPoint = controlPointInfo.TimingPointAt(StartTime);
+            DifficultyControlPoint difficultyPoint = controlPointInfo.DifficultyPointAt(StartTime);
+
+            double scoringDistance = 100 * difficulty.SliderMultiplier * difficultyPoint.SpeedMultiplier;
+
+            Velocity = scoringDistance / timingPoint.BeatLength;
+            TickDistance = scoringDistance / difficulty.SliderTickRate;
+        }
+
+        public HoldHead HeadCircle;
+
+        protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
+        {
+            base.CreateNestedHitObjects(cancellationToken);
+
+            foreach (var e in SliderEventGenerator.Generate(StartTime, SpanDuration, Velocity, TickDistance, Path.Distance, Path.SpanCount(), null, cancellationToken))
             {
-                StartTime = StartTime,
-                Type = Type
-            });
+                switch (e.Type)
+                {
+                    case SliderEventType.Head:
+                        AddNested(HeadCircle = new HoldHead
+                        {
+                            StartTime = e.Time,
+                            Type = Type
+                        });
+                        break;
+
+                    case SliderEventType.Tick:
+                        AddNested(new HoldTick
+                        {
+                            StartTime = e.Time,
+                            Type = Type
+                        });
+                        break;
+
+                    case SliderEventType.Repeat:
+                        AddNested(new HoldRepeat
+                        {
+                            RepeatIndex = e.SpanIndex,
+                            StartTime = e.Time,
+                            Type = Type
+                        });
+                        break;
+                }
+            }
 
             updateNestedSamples();
         }
@@ -56,6 +106,12 @@ namespace osu.Game.Rulesets.Swing.Objects
 
             if (HeadCircle != null)
                 HeadCircle.Samples = getNodeSamples(0);
+
+            foreach (var tick in NestedHitObjects.OfType<HoldTick>())
+                tick.Samples = sampleList;
+
+            foreach (var repeat in NestedHitObjects.OfType<HoldRepeat>())
+                repeat.Samples = getNodeSamples(repeat.RepeatIndex + 1);
         }
 
         private IList<HitSampleInfo> getNodeSamples(int nodeIndex) =>

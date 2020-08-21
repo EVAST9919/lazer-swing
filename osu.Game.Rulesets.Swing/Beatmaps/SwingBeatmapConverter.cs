@@ -39,6 +39,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                         {
                             new Hold
                             {
+                                Path = path,
                                 StartTime = obj.StartTime,
                                 Samples = samples,
                                 Duration = path.Duration,

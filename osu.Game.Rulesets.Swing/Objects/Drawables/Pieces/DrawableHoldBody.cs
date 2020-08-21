@@ -4,7 +4,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
@@ -29,6 +28,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         {
             HitObject = h;
 
+            Anchor = Anchor.TopCentre;
+            Origin = Anchor.TopCentre;
             AddRangeInternal(new Drawable[]
             {
                 snakingBody = new SnakingHoldBody(),
@@ -72,9 +73,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
         private void updateType()
         {
-            Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-            Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-            Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
             snakingBody.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
