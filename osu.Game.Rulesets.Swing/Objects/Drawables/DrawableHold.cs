@@ -4,6 +4,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
+using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osuTK;
 using System.Linq;
@@ -17,6 +18,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public readonly DrawableHoldBody Body;
 
         private DrawableHoldTail tail => tailContainer.Child;
+        private DrawableHoldHead head => headContainer.Child;
 
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTail> tailContainer;
@@ -132,14 +134,58 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             foreach (var t in ticksContainer)
                 t.Tracking = tracking;
-
-            tail.Tracking = tracking;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
             if (Time.Current < HitObject.EndTime)
                 return;
+
+            bool allTicksMisses = true;
+            bool allTicksPerfect = true;
+
+            if (ticksContainer.Count == 0)
+            {
+                allTicksPerfect = true;
+                allTicksMisses = false;
+            }
+            else
+            {
+                foreach (var t in ticksContainer)
+                {
+                    if (t.Result.Type == HitResult.Miss)
+                    {
+                        allTicksPerfect = false;
+                        break;
+                    }
+                }
+
+                if (!allTicksPerfect)
+                {
+                    foreach (var t in ticksContainer)
+                    {
+                        if (t.Result.Type == HitResult.Great)
+                        {
+                            allTicksMisses = false;
+                            break;
+                        }
+                    }
+                }
+                else
+                    allTicksMisses = false;
+            }
+
+            var headResult = head.Result.Type;
+
+            bool headIsPerfect = headResult == HitResult.Great;
+            bool headIsMiss = headResult == HitResult.Miss;
+
+            if (allTicksPerfect && headIsPerfect)
+                tail.TriggerResult(HitResult.Great);
+            else if (allTicksMisses && headIsMiss)
+                tail.TriggerResult(HitResult.Miss);
+            else
+                tail.TriggerResult(HitResult.Good);
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }

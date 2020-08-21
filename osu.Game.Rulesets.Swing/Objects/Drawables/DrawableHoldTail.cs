@@ -4,8 +4,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableHoldTail : DrawableSwingHitObject<HoldTail>
     {
-        public bool Tracking { get; set; }
-
         public DrawableHoldTail(HoldTail h)
             : base(h)
         {
@@ -14,10 +12,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action) => false;
 
-        protected override void CheckForResult(bool userTriggered, double timeOffset)
-        {
-            if (timeOffset >= 0)
-                ApplyResult(r => r.Type = Tracking ? r.Judgement.MaxResult : HitResult.Miss);
-        }
+        public void TriggerResult(HitResult result) => ApplyResult(r => r.Type = result);
     }
 }
