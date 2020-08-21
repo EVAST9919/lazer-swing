@@ -117,7 +117,7 @@ namespace osu.Game.Rulesets.Swing
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap).ToList())
+                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap || e.HitObject is HoldHead).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
