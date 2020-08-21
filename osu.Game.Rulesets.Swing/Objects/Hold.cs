@@ -75,7 +75,7 @@ namespace osu.Game.Rulesets.Swing.Objects
                         break;
 
                     case SliderEventType.Repeat:
-                        AddNested(new HoldRepeat
+                        AddNested(new HoldTick
                         {
                             RepeatIndex = e.SpanIndex,
                             StartTime = e.Time,
@@ -108,10 +108,7 @@ namespace osu.Game.Rulesets.Swing.Objects
                 HeadCircle.Samples = getNodeSamples(0);
 
             foreach (var tick in NestedHitObjects.OfType<HoldTick>())
-                tick.Samples = sampleList;
-
-            foreach (var repeat in NestedHitObjects.OfType<HoldRepeat>())
-                repeat.Samples = getNodeSamples(repeat.RepeatIndex + 1);
+                tick.Samples = tick.UsesRepeatSound ? getNodeSamples(tick.RepeatIndex + 1) : sampleList;
         }
 
         private IList<HitSampleInfo> getNodeSamples(int nodeIndex) =>

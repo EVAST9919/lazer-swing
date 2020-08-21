@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTick> ticksContainer;
-        private readonly Container<DrawableHoldRepeat> repeatsContainer;
 
         public DrawableHold(Hold h)
             : base(h)
@@ -27,7 +26,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 Body = new DrawableHoldBody(h),
                 ticksContainer = new Container<DrawableHoldTick>(),
-                repeatsContainer = new Container<DrawableHoldRepeat>(),
                 headContainer = new Container<DrawableHoldHead>()
             });
         }
@@ -65,9 +63,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 case HoldTick tick:
                     return new DrawableHoldTick(tick);
-
-                case HoldRepeat repeat:
-                    return new DrawableHoldRepeat(repeat);
             }
 
             return base.CreateNestedHitObject(hitObject);
@@ -86,10 +81,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case DrawableHoldTick tick:
                     ticksContainer.Add(tick);
                     break;
-
-                case DrawableHoldRepeat repeat:
-                    repeatsContainer.Add(repeat);
-                    break;
             }
         }
 
@@ -99,7 +90,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             headContainer.Clear();
             ticksContainer.Clear();
-            repeatsContainer.Clear();
         }
 
         private bool tracking => HitAction != null || Auto;
@@ -130,9 +120,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             foreach (var t in ticksContainer)
                 t.Tracking = tracking;
-
-            foreach (var r in repeatsContainer)
-                r.Tracking = tracking;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

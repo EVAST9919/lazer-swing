@@ -6,6 +6,10 @@ namespace osu.Game.Rulesets.Swing.Objects
 {
     public class HoldTick : SwingHitObject
     {
+        public bool UsesRepeatSound { get; set; }
+
+        public int RepeatIndex { get; set; }
+
         public override Judgement CreateJudgement() => new HoldTickJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
