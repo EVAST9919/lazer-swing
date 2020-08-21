@@ -31,7 +31,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     {
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.Centre,
-                        Size = new Vector2(10)
+                        Size = new Vector2(11)
                     }
                 }
             });
@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             switch (state)
             {
                 case ArmedState.Miss:
-                    this.FadeColour(Color4.Red, 200, Easing.Out);
+                    this.FadeColour(Color4.Red, 50, Easing.Out);
                     this.FadeOut(200, Easing.Out);
                     break;
 
