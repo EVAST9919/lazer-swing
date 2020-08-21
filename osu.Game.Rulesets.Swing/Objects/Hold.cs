@@ -49,6 +49,7 @@ namespace osu.Game.Rulesets.Swing.Objects
         }
 
         public HoldHead HeadCircle;
+        public HoldTail Tail;
 
         protected override void CreateNestedHitObjects(CancellationToken cancellationToken)
         {
@@ -85,6 +86,12 @@ namespace osu.Game.Rulesets.Swing.Objects
                 }
             }
 
+            AddNested(Tail = new HoldTail
+            {
+                StartTime = EndTime,
+                Type = Type
+            });
+
             updateNestedSamples();
         }
 
@@ -106,6 +113,9 @@ namespace osu.Game.Rulesets.Swing.Objects
 
             if (HeadCircle != null)
                 HeadCircle.Samples = getNodeSamples(0);
+
+            if (Tail != null)
+                Tail.Samples = Samples;
 
             foreach (var tick in NestedHitObjects.OfType<HoldTick>())
                 tick.Samples = tick.UsesRepeatSound ? getNodeSamples(tick.RepeatIndex + 1) : sampleList;

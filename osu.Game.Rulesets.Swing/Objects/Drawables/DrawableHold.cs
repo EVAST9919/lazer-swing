@@ -16,7 +16,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public readonly DrawableHoldBody Body;
 
+        private DrawableHoldTail tail => tailContainer.Child;
+
         private readonly Container<DrawableHoldHead> headContainer;
+        private readonly Container<DrawableHoldTail> tailContainer;
         private readonly Container<DrawableHoldTick> ticksContainer;
 
         public DrawableHold(Hold h)
@@ -26,6 +29,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 Body = new DrawableHoldBody(h),
                 ticksContainer = new Container<DrawableHoldTick>(),
+                tailContainer = new Container<DrawableHoldTail>(),
                 headContainer = new Container<DrawableHoldHead>()
             });
         }
@@ -61,6 +65,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case HoldHead head:
                     return new DrawableHoldHead(head);
 
+                case HoldTail tail:
+                    return new DrawableHoldTail(tail);
+
                 case HoldTick tick:
                     return new DrawableHoldTick(tick);
             }
@@ -78,6 +85,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     headContainer.Child = head;
                     break;
 
+                case DrawableHoldTail tail:
+                    tailContainer.Child = tail;
+                    break;
+
                 case DrawableHoldTick tick:
                     ticksContainer.Add(tick);
                     break;
@@ -89,6 +100,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             base.ClearNestedHitObjects();
 
             headContainer.Clear();
+            tailContainer.Clear();
             ticksContainer.Clear();
         }
 
@@ -120,6 +132,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             foreach (var t in ticksContainer)
                 t.Tracking = tracking;
+
+            tail.Tracking = tracking;
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

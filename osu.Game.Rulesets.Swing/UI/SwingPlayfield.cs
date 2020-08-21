@@ -121,7 +121,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHold hold:
                     hold.NestedHitObjects.ForEach(nested =>
                     {
-                        if (nested is DrawableHoldHead || nested is DrawableHoldTick)
+                        if (nested is DrawableHoldHead || nested is DrawableHoldTick || nested is DrawableHoldTail)
                         {
                             nested.OnNewResult += onNewResult;
                             return;
@@ -140,27 +140,20 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 case DrawableTap _:
                 case DrawableHoldHead _:
+                case DrawableHoldTail _:
                 case DrawableHoldTick _:
                 case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
                         explosions.Add(new HitExplosion((DrawableSwingHitObject)judgedObject));
-                    break;
-            }
 
-            if (!DisplayJudgements.Value)
-                return;
-
-            switch (judgedObject)
-            {
-                case DrawableTap _:
-                case DrawableHoldHead _:
-                case DrawableHoldTick _:
-                case DrawableSpinner _:
-                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
+                    if (DisplayJudgements.Value)
                     {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    });
+                        judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
+                        {
+                            Anchor = Anchor.Centre,
+                            Origin = Anchor.Centre
+                        });
+                    }
                     break;
             }
         }
