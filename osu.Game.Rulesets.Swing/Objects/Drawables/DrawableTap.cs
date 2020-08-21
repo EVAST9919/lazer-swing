@@ -97,21 +97,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             else
             {
                 var rotationOffset = (currentTime - appearTime) / rotationTime * 180;
+                var typedOffset = (float)(Type.Value == HitType.Up ? -90 + rotationOffset : 90 - rotationOffset);
 
-                if (Type.Value == HitType.Up)
-                {
-                    if (!hasNonMissResult)
-                        contentContainer.Rotation = (float)(-90 + rotationOffset);
+                if (!hasNonMissResult)
+                    contentContainer.Rotation = typedOffset;
 
-                    bar.Rotation = (float)(-90 + rotationOffset);
-                }
-                else
-                {
-                    if (!hasNonMissResult)
-                        contentContainer.Rotation = (float)(90 - rotationOffset);
-
-                    bar.Rotation = (float)(90 - rotationOffset);
-                }
+                bar.Rotation = typedOffset;
             }
         }
 

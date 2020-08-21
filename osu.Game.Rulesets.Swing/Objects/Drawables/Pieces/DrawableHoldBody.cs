@@ -23,6 +23,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         private readonly bool canFitOnTheScreen;
         private readonly double finalFillValue;
         private readonly double unfoldTime;
+        private readonly double foldTime;
 
         public DrawableHoldBody(Hold h)
         {
@@ -39,7 +40,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Child = head = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre,
-                        X = 0.3f, // temporary
                         Rotation = 180
                     }
                 },
@@ -50,8 +50,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
                     Child = tail = new HoldBodyEnd
                     {
-                        Anchor = Anchor.BottomCentre,
-                        X = -0.1f
+                        Anchor = Anchor.BottomCentre
                     }
                 }
             });
@@ -61,6 +60,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 finalFillValue = MathExtensions.Map(h.Duration, 0, h.TimePreempt, 0, 90);
 
             unfoldTime = h.StartTime - h.TimePreempt;
+            foldTime = unfoldTime + h.Duration;
         }
 
         [BackgroundDependencyLoader]
@@ -96,29 +96,26 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             if (canFitOnTheScreen)
             {
-                if (currentTime < unfoldTime + HitObject.Duration)
+                if (currentTime < foldTime)
                 {
                     snakingBody.Rotation = 0;
-                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, unfoldTime + HitObject.Duration, 0, finalFillValue);
+                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, foldTime, 0, finalFillValue);
                     return;
                 }
 
                 if (currentTime < HitObject.StartTime)
                 {
                     snakingBody.UnfoldDegree = finalFillValue;
-                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.StartTime, 0, 90 - finalFillValue);
+                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.StartTime, 0, 90 - finalFillValue);
                     return;
                 }
 
-                if (currentTime < HitObject.StartTime + HitObject.Duration)
+                if (currentTime < HitObject.EndTime)
                 {
-                    snakingBody.UnfoldDegree = finalFillValue - MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, 0, finalFillValue);
-                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.StartTime + HitObject.Duration, (90 - finalFillValue), 90);
+                    snakingBody.UnfoldDegree = finalFillValue - MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.EndTime, 0, finalFillValue);
+                    snakingBody.Rotation = 90 - (float)MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.EndTime, finalFillValue, 0);
                     return;
                 }
-
-                snakingBody.Rotation = 90;
-                snakingBody.UnfoldDegree = 0;
             }
             else
             {
@@ -129,7 +126,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     return;
                 }
 
-                if (currentTime < unfoldTime + HitObject.Duration)
+                if (currentTime < foldTime)
                 {
                     snakingBody.Rotation = 0;
                     snakingBody.UnfoldDegree = 90;
@@ -138,14 +135,14 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
                 if (currentTime < HitObject.EndTime)
                 {
-                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 0, 90);
-                    snakingBody.UnfoldDegree = 90 - MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, 0, 90);
+                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
+                    snakingBody.UnfoldDegree = 90 - MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
                     return;
                 }
-
-                snakingBody.Rotation = 90;
-                snakingBody.UnfoldDegree = 0;
             }
+
+            snakingBody.Rotation = 90;
+            snakingBody.UnfoldDegree = 0;
         }
 
         private void updateHeadRotation(double currentTime)
@@ -167,27 +164,16 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
         private void updateTailRotation(double currentTime)
         {
-            if (currentTime < unfoldTime + HitObject.Duration)
+            if (currentTime < foldTime)
             {
                 tailContainer.Rotation = -90;
                 return;
             }
 
-            if (canFitOnTheScreen)
+            if (currentTime < HitObject.EndTime)
             {
-                if (currentTime < HitObject.StartTime + HitObject.Duration)
-                {
-                    tailContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.StartTime + HitObject.Duration, -90, 0);
-                    return;
-                }
-            }
-            else
-            {
-                if (currentTime < HitObject.EndTime)
-                {
-                    tailContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime + HitObject.Duration, HitObject.EndTime, -90, 0);
-                    return;
-                }
+                tailContainer.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, -90, 0);
+                return;
             }
 
             tailContainer.Rotation = 0;
