@@ -16,6 +16,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
         public readonly DrawableHoldBody Body;
+        public readonly HoldBall Ball;
 
         private DrawableHoldTail tail => tailContainer.Child;
         private DrawableHoldHead head => headContainer.Child;
@@ -32,7 +33,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 Body = new DrawableHoldBody(h),
                 ticksContainer = new Container<DrawableHoldTick>(),
                 tailContainer = new Container<DrawableHoldTail>(),
-                headContainer = new Container<DrawableHoldHead>()
+                headContainer = new Container<DrawableHoldHead>(),
+                Ball = new HoldBall()
             });
         }
 
@@ -106,7 +108,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             ticksContainer.Clear();
         }
 
-        private bool tracking => HitAction != null || Auto;
+        private bool tracking => (HitAction != null || Auto) && Time.Current < HitObject.EndTime;
 
         public override bool OnPressed(SwingAction action)
         {
@@ -126,18 +128,20 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             base.UpdateInitialTransforms();
             Body.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
-        }
-
-        protected override void Update()
-        {
-            base.Update();
-
-            foreach (var t in ticksContainer)
-                t.Tracking = tracking;
+            Ball.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
+            Ball.RotateTo(0, HitObject.TimePreempt);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
+            if (Time.Current > HitObject.StartTime)
+            {
+                foreach (var t in ticksContainer)
+                    t.Tracking = tracking;
+
+                Ball.Tracking.Value = tracking;
+            }
+
             if (Time.Current < HitObject.EndTime)
                 return;
 
@@ -182,7 +186,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             if (allTicksPerfect && headIsPerfect)
                 tail.TriggerResult(HitResult.Great);
-            else if (allTicksMisses && headIsMiss)
+            else if ((allTicksMisses || ticksContainer.Count == 0) && headIsMiss)
                 tail.TriggerResult(HitResult.Miss);
             else
                 tail.TriggerResult(HitResult.Good);
@@ -195,7 +199,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             base.UpdateStateTransforms(state);
 
             using (BeginDelayedSequence(HitObject.Duration, true))
+            {
                 this.FadeOut(300, Easing.OutQuint);
+                Ball.EndAnimation(300);
+            }
         }
     }
 }

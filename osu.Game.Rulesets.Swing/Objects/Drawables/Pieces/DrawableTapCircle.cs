@@ -5,12 +5,19 @@ using osu.Framework.Graphics.Shapes;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class DrawableTapCircle : Container
     {
-        public Circle Circle { get; private set; }
+        public new Color4 Colour
+        {
+            get => Circle.Colour;
+            set => Circle.Colour = value;
+        }
+
+        public readonly Circle Circle;
 
         public DrawableTapCircle()
         {

@@ -21,18 +21,15 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public DrawableHoldTick(HoldTick h)
             : base(h)
         {
-            AddRangeInternal(new Drawable[]
+            AddInternal(contentContainer = new Container
             {
-                contentContainer = new Container
+                Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                Rotation = -90,
+                Child = sprite = new Sprite
                 {
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Rotation = -90,
-                    Child = sprite = new Sprite
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.Centre,
-                        Size = new Vector2(11)
-                    }
+                    Anchor = Anchor.BottomCentre,
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(11)
                 }
             });
         }
