@@ -35,6 +35,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
         private Container<HitExplosion> explosions;
         private JudgementContainer<DrawableSwingJudgement> judgementContainer;
+        private JudgementContainer<DrawableSwingJudgement> smallJudgementContainer;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -95,6 +96,13 @@ namespace osu.Game.Rulesets.Swing.UI
                         Origin = Anchor.Centre,
                         X = 250
                     },
+                    smallJudgementContainer = new JudgementContainer<DrawableSwingJudgement>
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre,
+                        X = -50,
+                        Scale = new Vector2(0.5f)
+                    },
                     hitReceptor = new HitReceptor()
                 }
             };
@@ -109,6 +117,7 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
                 judgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
+                smallJudgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
             }, true);
         }
 
@@ -145,15 +154,31 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
                         explosions.Add(new HitExplosion((DrawableSwingHitObject)judgedObject));
+                    break;
+            }
 
-                    if (DisplayJudgements.Value)
+            if (!DisplayJudgements.Value)
+                return;
+
+            switch (judgedObject)
+            {
+                case DrawableTap _:
+                case DrawableHoldHead _:
+                case DrawableHoldTail _:
+                case DrawableSpinner _:
+                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
                     {
-                        judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
-                        {
-                            Anchor = Anchor.Centre,
-                            Origin = Anchor.Centre
-                        });
-                    }
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    });
+                    break;
+
+                case DrawableHoldTick _:
+                    smallJudgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    });
                     break;
             }
         }
