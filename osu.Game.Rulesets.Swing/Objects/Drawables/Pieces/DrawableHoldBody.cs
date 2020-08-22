@@ -27,6 +27,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         public DrawableHoldBody(Hold h)
         {
             HitObject = h;
+            AutoSizeAxes = Axes.Both;
 
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
@@ -41,7 +42,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Child = head = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre,
-                        Rotation = 180
+                        Rotation = 180,
+                        X = 0.5f
                     }
                 },
                 tailContainer = new Container

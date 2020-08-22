@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class SnakingHoldBody : CompositeDrawable
     {
-        private const float size = 268.5f;
+        private const float size = 281;
 
         public double UnfoldDegree
         {

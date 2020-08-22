@@ -9,7 +9,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class HoldBodyEnd : CompositeDrawable
     {
-        private const int size = 25;
+        private const int size = 50;
 
         [BackgroundDependencyLoader]
         private void load(TextureStore textures)
