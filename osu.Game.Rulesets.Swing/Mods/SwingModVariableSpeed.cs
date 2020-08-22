@@ -1,4 +1,5 @@
-﻿using osu.Game.Rulesets.Mods;
+﻿using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Swing.Objects;
 
@@ -18,9 +19,13 @@ namespace osu.Game.Rulesets.Swing.Mods
 
         public void ApplyToHitObject(HitObject hitObject)
         {
-            if (hitObject is SwingHitObject)
+            if (hitObject is SwingHitObject swingObject)
             {
-                ((SwingHitObject)hitObject).UseSpeedMultiplier = true;
+                swingObject.UseSpeedMultiplier = true;
+                swingObject.NestedHitObjects.ForEach(n =>
+                {
+                    ((SwingHitObject)n).UseSpeedMultiplier = true;
+                });
             }
         }
     }
