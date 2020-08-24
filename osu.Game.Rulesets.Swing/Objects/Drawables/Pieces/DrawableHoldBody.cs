@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK.Graphics;
+using System;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
@@ -19,16 +20,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         private readonly HoldBodyEnd head;
         private readonly HoldBodyEnd tail;
 
-        private readonly bool canFitOnTheScreen;
-        private readonly double finalFillValue;
-        private readonly double unfoldTime;
-        private readonly double foldTime;
-
         public DrawableHoldBody(Hold h)
         {
             HitObject = h;
-            AutoSizeAxes = Axes.Both;
 
+            AutoSizeAxes = Axes.Both;
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
             AddRangeInternal(new Drawable[]
@@ -39,6 +35,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                    Rotation = -90,
                     Child = head = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre,
@@ -51,19 +48,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
+                    Rotation = -90,
                     Child = tail = new HoldBodyEnd
                     {
                         Anchor = Anchor.BottomCentre
                     }
                 }
             });
-
-            canFitOnTheScreen = h.Duration < h.TimePreempt;
-            if (canFitOnTheScreen)
-                finalFillValue = MathExtensions.Map(h.Duration, 0, h.TimePreempt, 0, 90);
-
-            unfoldTime = h.StartTime - h.TimePreempt;
-            foldTime = unfoldTime + h.Duration;
         }
 
         [BackgroundDependencyLoader]
@@ -78,105 +69,20 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             snakingBody.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
-        protected override void Update()
+        public void StartTransform()
         {
-            base.Update();
+            headContainer.RotateTo(0, HitObject.TimePreempt);
+            tailContainer.Delay(HitObject.Duration).RotateTo(0, HitObject.TimePreempt);
 
-            var currentTime = Time.Current;
+            var foldDuration = Math.Min(HitObject.TimePreempt, HitObject.Duration);
+            var canFitOnScreen = HitObject.Duration < HitObject.TimePreempt;
+            var maxFoldDegree = canFitOnScreen ? (float)MathExtensions.Map(HitObject.Duration, 0, HitObject.TimePreempt, 0, 90) : 90;
 
-            updateHeadRotation(currentTime);
-            updateTailRotation(currentTime);
+            snakingBody.Delay(HitObject.Duration).RotateTo(90, HitObject.TimePreempt);
+            snakingBody.UnfoldToDegree(maxFoldDegree, foldDuration);
 
-            if (currentTime < unfoldTime)
-            {
-                snakingBody.UnfoldDegree = 0;
-                snakingBody.Rotation = 0;
-                return;
-            }
-
-            if (canFitOnTheScreen)
-            {
-                if (currentTime < foldTime)
-                {
-                    snakingBody.Rotation = 0;
-                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, foldTime, 0, finalFillValue);
-                    return;
-                }
-
-                if (currentTime < HitObject.StartTime)
-                {
-                    snakingBody.UnfoldDegree = finalFillValue;
-                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.StartTime, 0, 90 - finalFillValue);
-                    return;
-                }
-
-                if (currentTime < HitObject.EndTime)
-                {
-                    snakingBody.UnfoldDegree = finalFillValue - MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.EndTime, 0, finalFillValue);
-                    snakingBody.Rotation = 90 - (float)MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.EndTime, finalFillValue, 0);
-                    return;
-                }
-            }
-            else
-            {
-                if (currentTime < HitObject.StartTime)
-                {
-                    snakingBody.Rotation = 0;
-                    snakingBody.UnfoldDegree = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
-                    return;
-                }
-
-                if (currentTime < foldTime)
-                {
-                    snakingBody.Rotation = 0;
-                    snakingBody.UnfoldDegree = 90;
-                    return;
-                }
-
-                if (currentTime < HitObject.EndTime)
-                {
-                    snakingBody.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
-                    snakingBody.UnfoldDegree = 90 - MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
-                    return;
-                }
-            }
-
-            snakingBody.Rotation = 90;
-            snakingBody.UnfoldDegree = 0;
-        }
-
-        private void updateHeadRotation(double currentTime)
-        {
-            if (currentTime < unfoldTime)
-            {
-                headContainer.Rotation = -90;
-                return;
-            }
-
-            if (currentTime < HitObject.StartTime)
-            {
-                headContainer.Rotation = (float)MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, -90, 0);
-                return;
-            }
-
-            headContainer.Rotation = 0;
-        }
-
-        private void updateTailRotation(double currentTime)
-        {
-            if (currentTime < foldTime)
-            {
-                tailContainer.Rotation = -90;
-                return;
-            }
-
-            if (currentTime < HitObject.EndTime)
-            {
-                tailContainer.Rotation = (float)MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, -90, 0);
-                return;
-            }
-
-            tailContainer.Rotation = 0;
+            using (BeginDelayedSequence(Math.Max(HitObject.TimePreempt, HitObject.Duration), true))
+                snakingBody.UnfoldToDegree(0, foldDuration);
         }
     }
 }

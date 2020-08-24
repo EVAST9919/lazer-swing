@@ -130,6 +130,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Body.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
             Ball.FadeInFromZero(HitObject.TimePreempt / 3, Easing.Out);
             Ball.RotateTo(0, HitObject.TimePreempt);
+            Body.StartTransform();
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
