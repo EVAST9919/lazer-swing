@@ -78,8 +78,7 @@ namespace osu.Game.Rulesets.Swing
                 case ModType.Fun:
                     return new Mod[]
                     {
-                        new MultiMod(new ModWindUp(), new ModWindDown()),
-                        new SwingModVariableSpeed()
+                        new MultiMod(new ModWindUp(), new ModWindDown())
                     };
 
                 case ModType.Conversion:
