@@ -3,7 +3,6 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Swing.Extensions;
-using osu.Game.Rulesets.Swing.UI;
 using osuTK.Graphics;
 using System;
 
@@ -15,10 +14,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         protected readonly Hold HitObject;
 
         private readonly SnakingHoldBody snakingBody;
-        private readonly Container headContainer;
-        private readonly Container tailContainer;
-        private readonly HoldBodyEnd head;
-        private readonly HoldBodyEnd tail;
 
         public DrawableHoldBody(Hold h)
         {
@@ -29,31 +24,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             Origin = Anchor.TopCentre;
             AddRangeInternal(new Drawable[]
             {
-                snakingBody = new SnakingHoldBody(),
-                headContainer = new Container
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Rotation = -90,
-                    Child = head = new HoldBodyEnd
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Rotation = 180,
-                        X = 0.5f
-                    }
-                },
-                tailContainer = new Container
-                {
-                    Anchor = Anchor.TopCentre,
-                    Origin = Anchor.TopCentre,
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Rotation = -90,
-                    Child = tail = new HoldBodyEnd
-                    {
-                        Anchor = Anchor.BottomCentre
-                    }
-                }
+                snakingBody = new SnakingHoldBody()
             });
         }
 
@@ -66,14 +37,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
         private void updateType()
         {
-            snakingBody.Colour = head.Colour = tail.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            snakingBody.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         public void StartTransform()
         {
-            headContainer.RotateTo(0, HitObject.TimePreempt);
-            tailContainer.Delay(HitObject.Duration).RotateTo(0, HitObject.TimePreempt);
-
             var foldDuration = Math.Min(HitObject.TimePreempt, HitObject.Duration);
             var canFitOnScreen = HitObject.Duration < HitObject.TimePreempt;
             var maxFoldDegree = canFitOnScreen ? (float)MathExtensions.Map(HitObject.Duration, 0, HitObject.TimePreempt, 0, 90) : 90;
