@@ -1,14 +1,11 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
     public class FoldableHalfRing : CompositeDrawable
     {
-        private readonly Sprite ring;
+        private readonly BasicHalfRing ring;
 
         public FoldableHalfRing(RingState state)
         {
@@ -19,7 +16,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 Anchor = Anchor.Centre,
                 Origin = Anchor.BottomCentre,
                 Masking = true,
-                Child = ring = new Sprite
+                Child = ring = new BasicHalfRing
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
@@ -27,12 +24,6 @@ namespace osu.Game.Rulesets.Swing.UI
                     Rotation = state == RingState.Closed ? 180 : 0
                 }
             };
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            ring.Texture = textures.Get("ring");
         }
 
         public void Open(double time)
