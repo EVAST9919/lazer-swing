@@ -2,7 +2,6 @@
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics;
 using osuTK;
-using osuTK.Graphics;
 using osu.Game.Rulesets.Swing.UI;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
@@ -12,7 +11,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         public readonly BindableBool Tracking = new BindableBool();
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        private readonly DrawableTapCircle circle;
+        private readonly TapCircleOverlay circle;
 
         public HoldBall()
         {
@@ -21,12 +20,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
 
-                Child = circle = new DrawableTapCircle
+                Child = circle = new TapCircleOverlay
                 {
                     Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.Centre,
-                    Scale = new Vector2(0.5f),
-                    Colour = Color4.Transparent
+                    Scale = new Vector2(0.5f)
                 }
             });
         }

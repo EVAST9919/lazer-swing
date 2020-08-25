@@ -1,10 +1,5 @@
 ﻿using osu.Framework.Graphics.Containers;
-using osuTK;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Shapes;
-using osu.Framework.Allocation;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
@@ -17,28 +12,23 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             set => Circle.Colour = value;
         }
 
-        public readonly Circle Circle;
+        public readonly TapCircle Circle;
 
         public DrawableTapCircle()
         {
             Origin = Anchor.Centre;
-            Size = new Vector2(SwingHitObject.DEFAULT_SIZE);
-            Add(Circle = new Circle
+            AutoSizeAxes = Axes.Both;
+            Children = new Drawable[]
             {
-                RelativeSizeAxes = Axes.Both
-            });
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            Add(new Sprite
-            {
-                Anchor = Anchor.Centre,
-                Origin = Anchor.Centre,
-                Size = new Vector2(SwingHitObject.DEFAULT_SIZE + 20),
-                Texture = textures.Get("tap-overlay")
-            });
+                Circle = new TapCircle
+                {
+                    Anchor = Anchor.Centre
+                },
+                new TapCircleOverlay
+                {
+                    Anchor = Anchor.Centre
+                }
+            };
         }
     }
 }

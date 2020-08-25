@@ -33,6 +33,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public DrawableTap(Tap h)
             : base(h)
         {
+            Alpha = 0;
             AddRangeInternal(new Drawable[]
             {
                 bar = new Box

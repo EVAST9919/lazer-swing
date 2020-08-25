@@ -1,12 +1,9 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Graphics;
+﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Sprites;
-using osu.Framework.Graphics.Textures;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Swing.UI;
-using osuTK;
 using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
@@ -16,7 +13,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public bool Tracking { get; set; }
 
         private readonly Container contentContainer;
-        private readonly Sprite sprite;
+        private readonly TickElement tickElement;
 
         public DrawableHoldTick(HoldTick h)
             : base(h)
@@ -25,19 +22,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
                 Rotation = -90,
-                Child = sprite = new Sprite
+                Child = tickElement = new TickElement
                 {
                     Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.Centre,
-                    Size = new Vector2(11)
                 }
             });
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            sprite.Texture = textures.Get("tick");
         }
 
         protected override void UpdateInitialTransforms()
@@ -65,7 +54,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
 
                 case ArmedState.Hit:
-                    sprite.ScaleTo(1.3f, 200, Easing.Out);
+                    tickElement.ScaleTo(1.3f, 200, Easing.Out);
                     this.FadeOut(200, Easing.Out);
                     break;
             }

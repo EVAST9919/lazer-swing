@@ -1,16 +1,19 @@
-﻿using osu.Framework.Allocation;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Textures;
+﻿using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics;
 using osuTK;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Transforms;
+using osu.Game.Rulesets.Swing.Skinning;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public class SnakingHoldBody : CompositeDrawable
+    public class SnakingHoldBody : SwingSkinnableDrawable
     {
         private const float size = 281;
+
+        protected override string TextureName => "hold-body";
+
+        protected override Sprite SpriteToSkin => sprite;
 
         private readonly Sprite sprite;
         private readonly Container headContainer;
@@ -62,12 +65,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                     }
                 },
             };
-        }
-
-        [BackgroundDependencyLoader]
-        private void load(TextureStore textures)
-        {
-            sprite.Texture = textures.Get("hold-body");
         }
 
         private TransformSequence<Drawable> rotateSprite(float newValue, double duration = 0, Easing easing = Easing.None) => ((Drawable)sprite).RotateTo(newValue, duration, easing);
