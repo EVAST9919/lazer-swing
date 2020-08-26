@@ -18,7 +18,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             : base(h)
         {
             RelativeSizeAxes = Axes.Y;
-            AutoSizeAxes = Axes.X;
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             Depth = -float.MaxValue;
@@ -31,7 +30,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     Anchor = Anchor.TopCentre,
                     Origin = Anchor.TopCentre,
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1,
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 2,
                     Rotation = -90,
                     Child = new EquilateralTriangle
                     {
@@ -45,7 +44,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.BottomCentre,
-                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 1,
+                    Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 2,
                     Rotation = 90,
                     Child = new EquilateralTriangle
                     {
@@ -58,7 +57,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 }
             });
 
-            fadeDuration = h.TimePreempt / 2;
+            fadeDuration = h.TimePreempt;
             rotationDuration = h.TimePreempt * 2;
         }
 
