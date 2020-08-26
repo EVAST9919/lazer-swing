@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
         protected readonly Hold HitObject;
 
-        private readonly SnakingHoldBody snakingBody;
+        private readonly PathSliderBody snakingBody;
 
         public DrawableHoldBody(Hold h)
         {
@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             Origin = Anchor.TopCentre;
             AddRangeInternal(new Drawable[]
             {
-                snakingBody = new SnakingHoldBody()
+                snakingBody = new PathSliderBody()
             });
         }
 
@@ -47,10 +47,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             var maxFoldDegree = canFitOnScreen ? (float)MathExtensions.Map(HitObject.Duration, 0, HitObject.TimePreempt, 0, 90) : 90;
 
             snakingBody.Delay(HitObject.Duration).RotateTo(90, HitObject.TimePreempt);
-            snakingBody.UnfoldToDegree(maxFoldDegree, foldDuration);
+            snakingBody.ProgressToDegree(maxFoldDegree, foldDuration);
 
             using (BeginDelayedSequence(Math.Max(HitObject.TimePreempt, HitObject.Duration), true))
-                snakingBody.UnfoldToDegree(0, foldDuration);
+                snakingBody.ProgressToDegree(0, foldDuration);
         }
     }
 }
