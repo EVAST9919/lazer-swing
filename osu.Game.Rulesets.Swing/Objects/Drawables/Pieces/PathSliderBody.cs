@@ -13,7 +13,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class PathSliderBody : CompositeDrawable
     {
-        private const float radius = SwingHitObject.DEFAULT_SIZE / 4;
+        private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4;
+        private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
 
         public new Color4 Colour
         {
@@ -31,19 +32,19 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                AutoSizeAxes = Axes.Both,
+                Size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2),
                 Scale = new Vector2(-1, 1),
                 Y = -radius,
-                Child = sliderPath = new DrawableSliderPath(radius),
+                Child = sliderPath = new DrawableSliderPath(radius)
             };
         }
+
+        public void SetProgressDegree(double headDegree, double tailDegree) => sliderPath.SetProgressDegree(headDegree / 180, tailDegree / 180);
 
         public TransformSequence<DrawableSliderPath> ProgressToDegree(double value, double duration = 0, Easing easing = Easing.None) => sliderPath.ProgressTo(value / 180, duration, easing);
 
         public class DrawableSliderPath : SmoothPath
         {
-            private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
-
             private Color4 accentColour = Color4.White;
 
             public Color4 AccentColour
@@ -77,8 +78,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             public DrawableSliderPath(float radius)
             {
-                AutoSizeAxes = Axes.None;
-                Size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2);
                 PathRadius = radius;
 
                 Vector2[] points = new[]
@@ -94,6 +93,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             private void setProgress(double progress)
             {
                 path.GetPathToProgress(newVertices, 0, progress);
+                Vertices = newVertices;
+            }
+
+            public void SetProgressDegree(double start, double end)
+            {
+                path.GetPathToProgress(newVertices, end, start);
                 Vertices = newVertices;
             }
 
