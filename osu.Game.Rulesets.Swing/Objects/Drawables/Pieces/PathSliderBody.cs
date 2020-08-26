@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         {
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
-            AutoSizeAxes = Axes.Both;
             InternalChild = new Container
             {
                 Anchor = Anchor.TopCentre,

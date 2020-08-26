@@ -2,7 +2,6 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
-using osu.Game.Rulesets.Swing.Extensions;
 using osuTK.Graphics;
 using System;
 
@@ -19,7 +18,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         {
             HitObject = h;
 
-            AutoSizeAxes = Axes.Both;
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
             AddRangeInternal(new Drawable[]
@@ -43,10 +41,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         public void StartTransform()
         {
             var foldDuration = Math.Min(HitObject.TimePreempt, HitObject.Duration);
-            var canFitOnScreen = HitObject.Duration < HitObject.TimePreempt;
-            var maxFoldDegree = canFitOnScreen ? (float)MathExtensions.Map(HitObject.Duration, 0, HitObject.TimePreempt, 0, 90) : 90;
+            var maxFoldDegree = (float)Math.Min(HitObject.Duration, HitObject.TimePreempt) / HitObject.TimePreempt * 90;
 
-            snakingBody.Delay(HitObject.Duration).RotateTo(90, HitObject.TimePreempt);
             snakingBody.ProgressToDegree(maxFoldDegree, foldDuration);
 
             using (BeginDelayedSequence(Math.Max(HitObject.TimePreempt, HitObject.Duration), true))
