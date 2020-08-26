@@ -4,7 +4,6 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Swing.Extensions;
 using osuTK.Graphics;
-using System;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
@@ -15,8 +14,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
         private readonly PathSliderBody snakingBody;
 
-        private readonly bool canFitOnTheScreen;
-        private readonly double maxFoldDegree;
         private readonly double unfoldTime;
         private readonly double foldTime;
 
@@ -28,9 +25,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             Origin = Anchor.TopCentre;
             InternalChild = snakingBody = new PathSliderBody();
 
-            canFitOnTheScreen = h.Duration < h.TimePreempt;
-            maxFoldDegree = (float)Math.Min(HitObject.Duration, HitObject.TimePreempt) / HitObject.TimePreempt * 90;
-
             unfoldTime = h.StartTime - h.TimePreempt;
             foldTime = unfoldTime + h.Duration;
         }
@@ -41,55 +35,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             var currentTime = Time.Current;
 
-            if (currentTime < unfoldTime)
-            {
-                snakingBody.SetProgressDegree(0, 0);
-                return;
-            }
+            var tailValue = MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
+            var headValue = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
 
-            if (canFitOnTheScreen)
-            {
-                if (currentTime < foldTime)
-                {
-                    snakingBody.SetProgressDegree(MathExtensions.Map(currentTime, unfoldTime, foldTime, 0, maxFoldDegree), 0);
-                    return;
-                }
-
-                if (currentTime < HitObject.StartTime)
-                {
-                    var end = (float)MathExtensions.Map(currentTime, foldTime, HitObject.StartTime, 0, 90 - maxFoldDegree);
-                    snakingBody.SetProgressDegree(end + maxFoldDegree, end);
-                    return;
-                }
-
-                if (currentTime < HitObject.EndTime)
-                {
-                    snakingBody.SetProgressDegree(90, MathExtensions.Map(currentTime, HitObject.StartTime, HitObject.EndTime, 90 - maxFoldDegree, 90));
-                    return;
-                }
-            }
-            else
-            {
-                if (currentTime < HitObject.StartTime)
-                {
-                    snakingBody.SetProgressDegree(MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90), 0);
-                    return;
-                }
-
-                if (currentTime < foldTime)
-                {
-                    snakingBody.SetProgressDegree(90, 0);
-                    return;
-                }
-
-                if (currentTime < HitObject.EndTime)
-                {
-                    snakingBody.SetProgressDegree(90, MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90));
-                    return;
-                }
-            }
-
-            snakingBody.SetProgressDegree(90, 90);
+            snakingBody.SetProgressDegree(headValue, tailValue);
         }
 
         [BackgroundDependencyLoader]

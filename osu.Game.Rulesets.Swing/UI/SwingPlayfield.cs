@@ -128,15 +128,7 @@ namespace osu.Game.Rulesets.Swing.UI
             switch (h)
             {
                 case DrawableHold hold:
-                    hold.NestedHitObjects.ForEach(nested =>
-                    {
-                        if (nested is DrawableHoldHead || nested is DrawableHoldTick || nested is DrawableHoldTail)
-                        {
-                            nested.OnNewResult += onNewResult;
-                            return;
-                        }
-
-                    });
+                    hold.NestedHitObjects.ForEach(n => n.OnNewResult += onNewResult);
                     return;
             }
 

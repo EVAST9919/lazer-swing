@@ -7,11 +7,13 @@ namespace osu.Game.Rulesets.Swing.Extensions
     {
         public static float Map(float value, float lowerCurrent, float upperCurrent, float lowerTarget, float upperTarget)
         {
+            value = Math.Clamp(value, lowerCurrent, upperCurrent);
             return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
         }
 
         public static double Map(double value, double lowerCurrent, double upperCurrent, double lowerTarget, double upperTarget)
         {
+            value = Math.Clamp(value, lowerCurrent, upperCurrent);
             return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
         }
 
