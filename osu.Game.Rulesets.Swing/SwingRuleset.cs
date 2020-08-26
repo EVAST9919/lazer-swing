@@ -85,7 +85,7 @@ namespace osu.Game.Rulesets.Swing
                     return new Mod[]
                     {
                         new SwingModDifficultyAdjust(),
-                        new SwingModSliders()
+                        new SwingModNoSliders()
                     };
 
                 default:

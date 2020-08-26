@@ -4,21 +4,21 @@ using osu.Game.Rulesets.Swing.Beatmaps;
 
 namespace osu.Game.Rulesets.Swing.Mods
 {
-    public class SwingModSliders : Mod, IApplicableToBeatmapConverter
+    public class SwingModNoSliders : Mod, IApplicableToBeatmapConverter
     {
-        public override string Name => "Sliders";
+        public override string Name => "No Sliders";
 
-        public override string Acronym => "SL";
+        public override string Acronym => "NS";
 
         public override double ScoreMultiplier => 1;
 
-        public override string Description => "Adds proper sliders conversion";
+        public override string Description => "Only circles matter.";
 
         public override ModType Type => ModType.Conversion;
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
-            ((SwingBeatmapConverter)beatmapConverter).ConvertSliders = true;
+            ((SwingBeatmapConverter)beatmapConverter).ConvertSliders = false;
         }
     }
 }
