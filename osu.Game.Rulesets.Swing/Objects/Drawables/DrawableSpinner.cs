@@ -1,4 +1,5 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
@@ -62,7 +63,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                             Height = 100 - SwingHitObject.DEFAULT_SIZE / 2,
                             Width = 0.5f,
                             EdgeSmoothness = Vector2.One,
-                            Colour = Color4.White
+                            Colour = Color4.White.Opacity(0.5f)
                         }
                     },
                     ring = new FoldableHalfRing(RingState.Closed)
