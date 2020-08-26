@@ -32,7 +32,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
                 Size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2),
-                Scale = new Vector2(-1, 1),
                 Y = -radius,
                 Child = sliderPath = new DrawableSliderPath(radius)
             };
@@ -81,9 +80,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
                 Vector2[] points = new[]
                 {
-                    new Vector2(0, 0),
-                    new Vector2(half_playfiled, half_playfiled),
                     new Vector2(half_playfiled * 2, 0),
+                    new Vector2(half_playfiled, half_playfiled),
+                    new Vector2(0, 0),
                 };
 
                 path = new SliderPath(PathType.PerfectCurve, points);
