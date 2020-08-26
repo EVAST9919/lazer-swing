@@ -37,7 +37,7 @@ namespace osu.Game.Rulesets.Swing.Tests
         {
             base.LoadComplete();
 
-            body.ProgressToDegree(90);
+            body.SetProgressDegree(90, 0);
 
             startDegree.BindValueChanged(_ => updatePath());
             endDegree.BindValueChanged(_ => updatePath());

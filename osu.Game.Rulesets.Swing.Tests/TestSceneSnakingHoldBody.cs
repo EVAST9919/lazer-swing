@@ -75,22 +75,7 @@ namespace osu.Game.Rulesets.Swing.Tests
             AddSliderStep<float>("Unfold value", 0, 90, 0, newValue =>
             {
                 oldBody.UnfoldToDegree(newValue);
-                newBody.ProgressToDegree(newValue);
-            });
-
-            AddSliderStep<float>("Rotation", 0, 90, 0, newValue =>
-            {
-                oldBody.Rotation = newValue;
-                newBody.Rotation = newValue;
-            });
-
-            AddStep("Animation test", () =>
-            {
-                oldBody.UnfoldToDegree(0);
-                newBody.ProgressToDegree(0);
-
-                oldBody.UnfoldToDegree(90, 2000, Easing.OutQuint);
-                newBody.ProgressToDegree(90, 2000, Easing.OutQuint);
+                newBody.SetProgressDegree(newValue, 0);
             });
         }
     }

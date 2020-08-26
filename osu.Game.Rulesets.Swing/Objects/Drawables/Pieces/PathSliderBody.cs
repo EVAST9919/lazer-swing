@@ -1,7 +1,6 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Lines;
-using osu.Framework.Graphics.Transforms;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Swing.UI;
@@ -41,9 +40,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
         public void SetProgressDegree(double headDegree, double tailDegree) => sliderPath.SetProgressDegree(headDegree / 180, tailDegree / 180);
 
-        public TransformSequence<DrawableSliderPath> ProgressToDegree(double value, double duration = 0, Easing easing = Easing.None) => sliderPath.ProgressTo(value / 180, duration, easing);
-
-        public class DrawableSliderPath : SmoothPath
+        private class DrawableSliderPath : SmoothPath
         {
             private Color4 accentColour = Color4.White;
 
@@ -79,6 +76,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             public DrawableSliderPath(float radius)
             {
                 PathRadius = radius;
+                AutoSizeAxes = Axes.None;
+                RelativeSizeAxes = Axes.Both;
 
                 Vector2[] points = new[]
                 {
@@ -100,9 +99,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 path.GetPathToProgress(newVertices, end, start);
                 Vertices = newVertices;
+                OriginPosition = PositionInBoundingBox(Vector2.Zero) - new Vector2(radius);
             }
-
-            public TransformSequence<DrawableSliderPath> ProgressTo(double value, double duration, Easing easing) => this.TransformTo(nameof(Progress), value, duration, easing);
 
             protected const float BORDER_PORTION = 0.256f;
             protected const float GRADIENT_PORTION = 1 - BORDER_PORTION;
