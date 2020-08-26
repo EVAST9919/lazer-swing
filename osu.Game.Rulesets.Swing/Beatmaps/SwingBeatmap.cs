@@ -11,19 +11,26 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
         public override IEnumerable<BeatmapStatistic> GetStatistics()
         {
             int taps = HitObjects.Count(s => s is Tap);
+            int holds = HitObjects.Count(s => s is Hold);
             int spinners = HitObjects.Count(s => s is Spinner);
 
             return new[]
             {
                 new BeatmapStatistic
                 {
-                    Name = @"Tap Count",
+                    Name = @"Taps",
                     Content = taps.ToString(),
                     Icon = FontAwesome.Regular.Circle
                 },
                 new BeatmapStatistic
                 {
-                    Name = @"Spinner Count",
+                    Name = @"Holds",
+                    Content = holds.ToString(),
+                    Icon = FontAwesome.Regular.Circle
+                },
+                new BeatmapStatistic
+                {
+                    Name = @"Spinners",
                     Content = spinners.ToString(),
                     Icon = FontAwesome.Regular.Circle
                 }
