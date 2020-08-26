@@ -57,18 +57,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 }
             }
 
-            private double progress;
-
-            public double Progress
-            {
-                get => progress;
-                set
-                {
-                    progress = value;
-                    setProgress(value);
-                }
-            }
-
             private readonly SliderPath path;
             private readonly List<Vector2> newVertices = new List<Vector2>();
 
@@ -88,17 +76,20 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 path = new SliderPath(PathType.PerfectCurve, points);
             }
 
-            private void setProgress(double progress)
-            {
-                path.GetPathToProgress(newVertices, 0, progress);
-                Vertices = newVertices;
-            }
+            private double lastStart = -1;
+            private double lastEnd = -1;
 
             public void SetProgressDegree(double start, double end)
             {
+                if (lastStart == start && lastEnd == end)
+                    return;
+
                 path.GetPathToProgress(newVertices, end, start);
                 Vertices = newVertices;
                 OriginPosition = PositionInBoundingBox(Vector2.Zero) - new Vector2(radius);
+
+                lastStart = start;
+                lastEnd = end;
             }
 
             protected const float BORDER_PORTION = 0.256f;
