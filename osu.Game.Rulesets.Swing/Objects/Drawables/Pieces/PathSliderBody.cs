@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osuTK.Graphics;
+using System;
 using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
@@ -15,29 +16,84 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4;
         private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
 
+        private Color4 colour;
+
         public new Color4 Colour
         {
-            get => sliderPath.AccentColour;
-            set => sliderPath.AccentColour = value;
+            get => colour;
+            set
+            {
+                colour = value;
+                if (sliderPath != null)
+                    sliderPath.AccentColour = value;
+            }
         }
 
-        private readonly DrawableSliderPath sliderPath;
+        private readonly List<Vector2> currentCurve = new List<Vector2>();
+
+        private readonly Container pathContainer;
+        private readonly SliderPath verticesController;
+
+        private DrawableSliderPath sliderPath;
+        private readonly Vector2 size;
 
         public PathSliderBody()
         {
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
-            InternalChild = new Container
+            InternalChild = pathContainer = new Container
             {
                 Anchor = Anchor.TopCentre,
                 Origin = Anchor.TopCentre,
-                Size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2),
-                Y = -radius,
-                Child = sliderPath = new DrawableSliderPath(radius)
+                Size = size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2),
+                Y = -radius
             };
+
+            verticesController = new SliderPath(PathType.PerfectCurve, new[]
+            {
+                new Vector2(half_playfiled * 2, 0),
+                new Vector2(half_playfiled, half_playfiled),
+                new Vector2(0, 0),
+            });
+
+            RecyclePath();
         }
 
-        public void SetProgressDegree(double headDegree, double tailDegree) => sliderPath.SetProgressDegree(headDegree / 180, tailDegree / 180);
+        private double lastStartDegree = -1;
+        private double lastEndDegree = -1;
+
+        public void SetProgressDegree(double headDegree, double tailDegree)
+        {
+            if (headDegree == lastStartDegree && tailDegree == lastEndDegree)
+                return;
+
+            var start = headDegree / 180;
+            var end = tailDegree / 180;
+
+            verticesController.GetPathToProgress(currentCurve, end, start);
+
+            if (sliderPath != null)
+            {
+                sliderPath.Vertices = currentCurve;
+                sliderPath.OriginPosition = sliderPath.PositionInBoundingBox(Vector2.Zero) - new Vector2(radius);
+            }
+
+            lastStartDegree = headDegree;
+            lastEndDegree = tailDegree;
+        }
+
+        public void RecyclePath()
+        {
+            pathContainer.Child = sliderPath = new DrawableSliderPath().With(p =>
+            {
+                p.AccentColour = sliderPath?.AccentColour ?? Color4.White;
+                p.Vertices = sliderPath?.Vertices ?? Array.Empty<Vector2>();
+                p.PathRadius = sliderPath?.PathRadius ?? radius;
+            });
+
+            sliderPath.AutoSizeAxes = Axes.None;
+            sliderPath.Size = size;
+        }
 
         private class DrawableSliderPath : SmoothPath
         {
@@ -55,41 +111,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
                     InvalidateTexture();
                 }
-            }
-
-            private readonly SliderPath path;
-            private readonly List<Vector2> newVertices = new List<Vector2>();
-
-            public DrawableSliderPath(float radius)
-            {
-                PathRadius = radius;
-                AutoSizeAxes = Axes.None;
-                RelativeSizeAxes = Axes.Both;
-
-                Vector2[] points = new[]
-                {
-                    new Vector2(half_playfiled * 2, 0),
-                    new Vector2(half_playfiled, half_playfiled),
-                    new Vector2(0, 0),
-                };
-
-                path = new SliderPath(PathType.PerfectCurve, points);
-            }
-
-            private double lastStart = -1;
-            private double lastEnd = -1;
-
-            public void SetProgressDegree(double start, double end)
-            {
-                if (lastStart == start && lastEnd == end)
-                    return;
-
-                path.GetPathToProgress(newVertices, end, start);
-                Vertices = newVertices;
-                OriginPosition = PositionInBoundingBox(Vector2.Zero) - new Vector2(radius);
-
-                lastStart = start;
-                lastEnd = end;
             }
 
             protected const float BORDER_PORTION = 0.256f;

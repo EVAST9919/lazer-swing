@@ -26,10 +26,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             Anchor = Anchor.TopCentre;
             Origin = Anchor.TopCentre;
-            AddRangeInternal(new Drawable[]
-            {
-                snakingBody = new PathSliderBody()
-            });
+            InternalChild = snakingBody = new PathSliderBody();
 
             canFitOnTheScreen = h.Duration < h.TimePreempt;
             maxFoldDegree = (float)Math.Min(HitObject.Duration, HitObject.TimePreempt) / HitObject.TimePreempt * 90;
@@ -105,6 +102,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         private void updateType()
         {
             snakingBody.Colour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+        }
+
+        public void Kill()
+        {
+            snakingBody?.RecyclePath();
         }
     }
 }

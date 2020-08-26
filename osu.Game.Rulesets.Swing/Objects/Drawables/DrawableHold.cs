@@ -204,5 +204,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 Ball.EndAnimation(300);
             }
         }
+
+        public override void OnKilled()
+        {
+            base.OnKilled();
+            Body?.Kill();
+        }
     }
 }
