@@ -150,7 +150,6 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableTap _:
                 case DrawableHoldHead _:
                 case DrawableHoldTail _:
-                case DrawableHoldTick _:
                 case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
                         explosions.Add(new HitExplosion((DrawableSwingHitObject)judgedObject));
