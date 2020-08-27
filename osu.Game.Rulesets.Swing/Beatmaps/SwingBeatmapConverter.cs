@@ -15,6 +15,8 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
         public bool ConvertSliders { get; set; } = true;
 
+        public bool Alternate { get; set; }
+
         public SwingBeatmapConverter(IBeatmap beatmap, Ruleset ruleset)
             : base(beatmap, ruleset)
         {
@@ -22,14 +24,16 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
         public override bool CanConvert() => true;
 
+        private bool isTop;
+
         protected override IEnumerable<SwingHitObject> ConvertHitObject(HitObject obj, IBeatmap beatmap)
         {
             var samples = obj.Samples;
 
             static bool isRimDefinition(HitSampleInfo s) => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE;
-            bool isRim = samples.Any(isRimDefinition);
 
-            bool strong = obj.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+            bool isRim = Alternate ? isTop = !isTop : samples.Any(isRimDefinition);
+            bool strong = Alternate ? false : obj.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
             switch (obj)
             {
@@ -43,7 +47,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                                 StartTime = obj.StartTime,
                                 Samples = samples,
                                 Duration = path.Duration,
-                                Type = !isRim ? HitType.Up : HitType.Down
+                                Type = isRim ? HitType.Down : HitType.Up
                             }
                         };
                     else
@@ -101,7 +105,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                 taps.Add(new Tap
                 {
                     StartTime = obj.StartTime,
-                    Type = !isRim ? HitType.Up : HitType.Down,
+                    Type = isRim ? HitType.Down : HitType.Up,
                     Samples = samples
                 });
             }
