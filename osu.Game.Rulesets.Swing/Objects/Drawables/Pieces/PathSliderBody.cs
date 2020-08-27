@@ -1,6 +1,7 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Lines;
+using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Swing.UI;
@@ -11,21 +12,20 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public class PathSliderBody : CompositeDrawable
+    public class PathSliderBody : CompositeDrawable, IHasAccentColour
     {
         private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4;
         private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
 
-        private Color4 colour;
+        private Color4 accentColour;
 
-        public new Color4 Colour
+        public Color4 AccentColour
         {
-            get => colour;
+            get => accentColour;
             set
             {
-                colour = value;
-                if (sliderPath != null)
-                    sliderPath.AccentColour = value;
+                accentColour = value;
+                sliderPath.AccentColour = value;
             }
         }
 
@@ -86,7 +86,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         {
             pathContainer.Child = sliderPath = new DrawableSliderPath().With(p =>
             {
-                p.AccentColour = sliderPath?.AccentColour ?? Color4.White;
+                p.AccentColour = sliderPath?.AccentColour ?? accentColour;
                 p.Vertices = sliderPath?.Vertices ?? Array.Empty<Vector2>();
                 p.PathRadius = sliderPath?.PathRadius ?? radius;
             });

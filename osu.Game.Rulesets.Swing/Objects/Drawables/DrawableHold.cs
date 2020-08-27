@@ -5,17 +5,21 @@ using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osuTK;
+using osuTK.Graphics;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
     public class DrawableHold : DrawableSwingHitObject<Hold>
     {
+        protected override bool RequiresTimedUpdate => true;
+
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        public readonly DrawableHoldBody Body;
+        public readonly PathSliderBody Body;
         public readonly HoldBall Ball;
 
         private DrawableHoldTail tail => tailContainer.Child;
@@ -25,17 +29,23 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly Container<DrawableHoldTail> tailContainer;
         private readonly Container<DrawableHoldTick> ticksContainer;
 
+        private readonly double unfoldTime;
+        private readonly double foldTime;
+
         public DrawableHold(Hold h)
             : base(h)
         {
             AddRangeInternal(new Drawable[]
             {
-                Body = new DrawableHoldBody(h),
+                Body = new PathSliderBody(),
                 ticksContainer = new Container<DrawableHoldTick>(),
                 tailContainer = new Container<DrawableHoldTail>(),
                 headContainer = new Container<DrawableHoldHead>(),
                 Ball = new HoldBall()
             });
+
+            unfoldTime = h.StartTime - h.TimePreempt;
+            foldTime = unfoldTime + h.Duration;
         }
 
         [BackgroundDependencyLoader]
@@ -55,6 +65,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
+            Body.AccentColour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
         protected override void LoadSamples()
@@ -205,10 +216,20 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }
         }
 
+        protected override void Update(double currentTime)
+        {
+            base.Update(currentTime);
+
+            var tailValue = MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
+            var headValue = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
+
+            Body.SetProgressDegree(headValue, tailValue);
+        }
+
         public override void OnKilled()
         {
             base.OnKilled();
-            Body?.Kill();
+            Body?.RecyclePath();
         }
     }
 }
