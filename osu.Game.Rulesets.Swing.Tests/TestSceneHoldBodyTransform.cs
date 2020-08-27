@@ -24,10 +24,13 @@ namespace osu.Game.Rulesets.Swing.Tests
                 Margin = new MarginPadding { Top = 30 },
                 Children = new Drawable[]
                 {
-                    body = new PathSliderBody(),
+                    body = new PathSliderBody
+                    {
+                        AccentColour = Color4.DeepSkyBlue
+                    },
                     adjustableBody = new PathSliderBody
                     {
-                        Colour = Color4.Black
+                        AccentColour = Color4.Red
                     }
                 }
             });

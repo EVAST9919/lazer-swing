@@ -1,9 +1,11 @@
-﻿using osu.Framework.Graphics;
+﻿using osu.Framework.Extensions.Color4Extensions;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Lines;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
+using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -14,7 +16,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class PathSliderBody : CompositeDrawable, IHasAccentColour
     {
-        private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4;
+        private const float shadow_radius = 7;
+        private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4 + shadow_radius;
         private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
 
         private Color4 accentColour;
@@ -113,21 +116,26 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 }
             }
 
-            protected const float BORDER_PORTION = 0.256f;
-            protected const float GRADIENT_PORTION = 1 - BORDER_PORTION;
+            private static readonly float shadow_portion = shadow_radius / radius;
+            private static readonly float border_portion = 0.15f + shadow_portion;
+            private static readonly float inner_shadow_portion = border_portion + shadow_portion;
 
-            private const float opacity_at_centre = 0.3f;
-            private const float opacity_at_edge = 0.8f;
+            private const float opacity_at_centre = 0.4f;
 
             protected override Color4 ColourAt(float position)
             {
-                if (BORDER_PORTION != 0f && position <= BORDER_PORTION)
+                if (position <= shadow_portion)
+                    return new Color4(0, 0, 0, 0 - (-opacity_at_centre) * position / shadow_portion);
+
+                //return new Color4(AccentColour.R, AccentColour.G, AccentColour.B, MathExtensions.Map(position, 0, shadow_portion, 0, opacity_at_centre)); - glow
+
+                if (position <= border_portion)
                     return Color4.White;
 
-                return AccentColour;
+                if (position <= inner_shadow_portion)
+                    return AccentColour.Darken(MathExtensions.Map(position, border_portion, inner_shadow_portion, opacity_at_centre, 0));
 
-                //position -= BORDER_PORTION;
-                //return new Color4(AccentColour.R, AccentColour.G, AccentColour.B, (opacity_at_edge - (opacity_at_edge - opacity_at_centre) * position / GRADIENT_PORTION) * AccentColour.A);
+                return AccentColour;
             }
         }
     }
