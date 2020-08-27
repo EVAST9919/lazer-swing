@@ -26,13 +26,13 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                 {
                     Name = @"Holds",
                     Content = holds.ToString(),
-                    Icon = FontAwesome.Regular.Circle
+                    Icon = FontAwesome.Solid.ToggleOn
                 },
                 new BeatmapStatistic
                 {
                     Name = @"Spinners",
                     Content = spinners.ToString(),
-                    Icon = FontAwesome.Regular.Circle
+                    Icon = FontAwesome.Solid.Redo
                 }
             };
         }

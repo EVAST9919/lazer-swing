@@ -1,4 +1,5 @@
-﻿using osu.Game.Beatmaps;
+﻿using osu.Framework.Graphics.Sprites;
+using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Swing.Beatmaps;
 
@@ -15,6 +16,8 @@ namespace osu.Game.Rulesets.Swing.Mods
         public override string Description => "Only circles matter.";
 
         public override ModType Type => ModType.Conversion;
+
+        public override IconUsage? Icon => FontAwesome.Solid.Ban;
 
         public void ApplyToBeatmapConverter(IBeatmapConverter beatmapConverter)
         {
