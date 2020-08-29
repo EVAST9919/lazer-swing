@@ -201,10 +201,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         public override bool OnPressed(SwingAction action)
         {
-            if (Time.Current > HitObject.EndTime)
+            var currentTime = Time.Current;
+
+            if (currentTime > HitObject.EndTime || Result.HasResult)
                 return false;
 
-            if (Time.Current < HitObject.StartTime)
+            if (currentTime < HitObject.StartTime)
                 return false;
 
             var isUp = action == SwingAction.UpSwing || action == SwingAction.UpSwingAdditional;
