@@ -7,11 +7,11 @@ namespace osu.Game.Rulesets.Swing.UI
 {
     public class Ring : CircularContainer
     {
-        public Ring()
+        public Ring(float thickness = 2)
         {
             Masking = true;
             BorderColour = Color4.White;
-            BorderThickness = 2;
+            BorderThickness = thickness;
             Child = new Box
             {
                 RelativeSizeAxes = Axes.Both,

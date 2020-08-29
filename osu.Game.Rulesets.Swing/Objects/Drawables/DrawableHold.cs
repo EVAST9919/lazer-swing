@@ -213,8 +213,14 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             using (BeginDelayedSequence(HitObject.Duration, true))
             {
+                if (tail.Result.Type == HitResult.Miss)
+                {
+                    Ball.FadeColour(Color4.Red, 50, Easing.OutQuint);
+                    Body.FadeColour(Color4.Red, 50, Easing.OutQuint);
+                }
+
                 this.FadeOut(300, Easing.OutQuint);
-                Ball.EndAnimation(300);
+                Ball.Ring.ScaleTo(2f, 300, Easing.Out);
             }
         }
 

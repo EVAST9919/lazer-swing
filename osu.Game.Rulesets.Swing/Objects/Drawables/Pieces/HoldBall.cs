@@ -8,10 +8,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
     public class HoldBall : CompositeDrawable
     {
+        private readonly static float size = SwingHitObject.DEFAULT_SIZE / 2;
+
         public readonly BindableBool Tracking = new BindableBool();
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
-        private readonly TapCircleOverlay circle;
+        public readonly Ring Ring;
 
         public HoldBall()
         {
@@ -19,11 +21,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             AddInternal(new Container
             {
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
-
-                Child = circle = new TapCircleOverlay
+                Child = Ring = new Ring(3.5f)
                 {
                     Anchor = Anchor.BottomCentre,
-                    Scale = new Vector2(0.5f)
+                    Origin = Anchor.Centre,
+                    Size = new Vector2(size)
                 }
             });
         }
@@ -36,18 +38,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 if (tracking.NewValue)
                 {
-                    circle.ScaleTo(0.75f, 75, Easing.Out);
+                    Ring.ResizeTo(new Vector2(size * 1.5f), 75, Easing.Out);
                 }
                 else
                 {
-                    circle.ScaleTo(0.5f, 150, Easing.Out);
+                    Ring.ResizeTo(new Vector2(size), 150, Easing.Out);
                 }
-            }, true);
-        }
-
-        public void EndAnimation(double duration)
-        {
-            circle.ScaleTo(1, duration, Easing.Out);
+            });
         }
     }
 }
