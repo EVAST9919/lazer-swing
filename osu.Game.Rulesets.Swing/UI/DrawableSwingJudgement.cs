@@ -3,6 +3,7 @@ using osu.Game.Graphics;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
+using osu.Framework.Graphics;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -11,6 +12,8 @@ namespace osu.Game.Rulesets.Swing.UI
         public DrawableSwingJudgement(JudgementResult result, DrawableHitObject judgedObject)
             : base(result, judgedObject)
         {
+            Anchor = Anchor.Centre;
+            Origin = Anchor.Centre;
         }
 
         [BackgroundDependencyLoader]

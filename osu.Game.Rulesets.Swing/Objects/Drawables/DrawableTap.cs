@@ -38,14 +38,22 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 bar = new Box
                 {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2,
                     Width = 1,
                     EdgeSmoothness = Vector2.One,
+                    Colour = ColourInfo.GradientVertical(Color4.Black.Opacity(0), Color4.White)
                 },
                 contentContainer = new Container
                 {
+                    Anchor = Anchor.TopCentre,
+                    Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                    Child = TapCircle = new DrawableTapCircle()
+                    Child = TapCircle = new DrawableTapCircle
+                    {
+                        Anchor = Anchor.BottomCentre
+                    }
                 }
             });
 
@@ -74,16 +82,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
+            Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
 
-            bar.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-            bar.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-
-            bar.Colour = Type.Value == HitType.Up ? ColourInfo.GradientVertical(Color4.Black.Opacity(0), Color4.White) : ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0));
-
-            contentContainer.Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-            contentContainer.Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
-
-            TapCircle.Anchor = Type.Value == HitType.Up ? Anchor.BottomCentre : Anchor.TopCentre;
             TapCircle.Colour = tapCircleColour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
         }
 
@@ -93,18 +93,16 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             if (currentTime < appearTime)
             {
-                bar.Rotation = contentContainer.Rotation = Type.Value == HitType.Up ? -90 : 90;
+                bar.Rotation = contentContainer.Rotation = -90;
+                return;
             }
-            else
-            {
-                var rotationOffset = (currentTime - appearTime) / rotationTime * 180;
-                var typedOffset = (float)(Type.Value == HitType.Up ? -90 + rotationOffset : 90 - rotationOffset);
 
-                if (!hasNonMissResult)
-                    contentContainer.Rotation = typedOffset;
+            var rotationOffset = (float)(-90 + (currentTime - appearTime) / rotationTime * 180);
 
-                bar.Rotation = typedOffset;
-            }
+            if (!hasNonMissResult)
+                contentContainer.Rotation = rotationOffset;
+
+            bar.Rotation = rotationOffset;
         }
 
         protected override void UpdateInitialTransforms()

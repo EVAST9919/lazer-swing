@@ -53,6 +53,11 @@ namespace osu.Game.Rulesets.Swing.UI
                 X = -150,
                 Children = new Drawable[]
                 {
+                    rings = new Rings
+                    {
+                        Anchor = Anchor.Centre,
+                        Origin = Anchor.Centre
+                    },
                     new Box
                     {
                         Anchor = Anchor.TopCentre,
@@ -81,11 +86,6 @@ namespace osu.Game.Rulesets.Swing.UI
                     new Ring
                     {
                         Size = new Vector2(SwingHitObject.DEFAULT_SIZE),
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    },
-                    rings = new Rings
-                    {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
@@ -157,19 +157,11 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldHead _:
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
-                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    });
+                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
                     break;
 
                 case DrawableHoldTick _:
-                    smallJudgementContainer.Add(new DrawableSwingJudgement(result, judgedObject)
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre
-                    });
+                    smallJudgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
                     break;
             }
         }
@@ -210,18 +202,20 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 base.LoadComplete();
 
-                foreach (var effectPoint in working.Value.Beatmap.ControlPointInfo.EffectPoints)
+                var controlPoints = working.Value.Beatmap.ControlPointInfo;
+
+                foreach (var effectPoint in controlPoints.EffectPoints)
                 {
                     if (effectPoint.KiaiMode)
                     {
-                        var bpmBeforeKiai = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
+                        var bpmBeforeKiai = controlPoints.TimingPointAt(effectPoint.Time - 1).BeatLength;
 
                         using (glowContainer.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiai))
                             glowContainer.FadeIn(bpmBeforeKiai, Easing.Out);
                     }
                     else
                     {
-                        var bpmBeforeKiaiOff = working.Value.Beatmap.ControlPointInfo.TimingPointAt(effectPoint.Time - 1).BeatLength;
+                        var bpmBeforeKiaiOff = controlPoints.TimingPointAt(effectPoint.Time - 1).BeatLength;
 
                         using (glowContainer.BeginAbsoluteSequence(effectPoint.Time - bpmBeforeKiaiOff))
                             glowContainer.FadeOut(bpmBeforeKiaiOff, Easing.Out);

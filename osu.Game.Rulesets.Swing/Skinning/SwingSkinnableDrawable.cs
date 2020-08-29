@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Allocation;
+using osu.Framework.Graphics;
 using osu.Framework.Graphics.Sprites;
 using osu.Framework.Graphics.Textures;
 using osu.Game.Skinning;
@@ -9,15 +10,23 @@ namespace osu.Game.Rulesets.Swing.Skinning
     {
         protected abstract string TextureName { get; }
 
-        protected abstract Sprite SpriteToSkin { get; }
-
         [Resolved]
         private TextureStore textures { get; set; }
+
+        private readonly Sprite sprite;
+
+        public SwingSkinnableDrawable()
+        {
+            InternalChild = sprite = new Sprite
+            {
+                RelativeSizeAxes = Axes.Both
+            };
+        }
 
         protected override void SkinChanged(ISkinSource skin, bool allowFallback)
         {
             base.SkinChanged(skin, allowFallback);
-            SpriteToSkin.Texture = skin.GetTexture(TextureName) ?? textures.Get(TextureName);
+            sprite.Texture = skin.GetTexture(TextureName) ?? textures.Get(TextureName);
         }
     }
 }

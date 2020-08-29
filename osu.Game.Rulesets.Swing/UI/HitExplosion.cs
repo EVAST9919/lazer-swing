@@ -16,7 +16,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
         public HitExplosion(DrawableSwingHitObject h)
         {
-            var colour = Color4.White;
+            Color4 colour;
 
             switch (h)
             {

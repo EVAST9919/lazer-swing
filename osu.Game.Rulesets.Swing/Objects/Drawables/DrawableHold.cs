@@ -145,7 +145,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)
         {
-            if (Time.Current > HitObject.StartTime)
+            var currentTime = Time.Current;
+
+            if (currentTime > HitObject.StartTime)
             {
                 foreach (var t in ticksContainer)
                     t.Tracking = tracking;
@@ -153,7 +155,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 Ball.Tracking.Value = tracking;
             }
 
-            if (Time.Current < HitObject.EndTime)
+            if (currentTime < HitObject.EndTime)
                 return;
 
             bool allTicksMisses = true;
