@@ -36,6 +36,8 @@ namespace osu.Game.Rulesets.Swing.UI
         private Container<HitExplosion> explosions;
         private JudgementContainer<DrawableSwingJudgement> judgementContainer;
         private JudgementContainer<DrawableSwingJudgement> smallJudgementContainer;
+        private ProxyContainer spinnerProxies;
+        private ProxyContainer sliderProxies;
 
         [BackgroundDependencyLoader]
         private void load()
@@ -89,6 +91,8 @@ namespace osu.Game.Rulesets.Swing.UI
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre
                     },
+                    spinnerProxies = new ProxyContainer(),
+                    sliderProxies = new ProxyContainer(),
                     HitObjectContainer,
                     judgementContainer = new JudgementContainer<DrawableSwingJudgement>
                     {
@@ -127,12 +131,20 @@ namespace osu.Game.Rulesets.Swing.UI
 
             switch (h)
             {
+                case DrawableSpinner _:
+                    spinnerProxies.Add(h.CreateProxy());
+                    h.OnNewResult += onNewResult;
+                    break;
+
                 case DrawableHold hold:
                     hold.NestedHitObjects.ForEach(n => n.OnNewResult += onNewResult);
-                    return;
-            }
+                    sliderProxies.Add(h.CreateProxy());
+                    break;
 
-            h.OnNewResult += onNewResult;
+                default:
+                    h.OnNewResult += onNewResult;
+                    break;
+            }
         }
 
         private void onNewResult(DrawableHitObject judgedObject, JudgementResult result)
@@ -345,6 +357,16 @@ namespace osu.Game.Rulesets.Swing.UI
                     BlurSigma = new Vector2(glow_radius)
                 });
             }
+        }
+
+        private class ProxyContainer : LifetimeManagementContainer
+        {
+            public ProxyContainer()
+            {
+                RelativeSizeAxes = Axes.Both;
+            }
+
+            public void Add(Drawable h) => AddInternal(h);
         }
     }
 }
