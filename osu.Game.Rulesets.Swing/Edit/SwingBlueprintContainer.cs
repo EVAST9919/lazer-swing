@@ -3,14 +3,13 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Edit.Blueprints;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
 using osu.Game.Screens.Edit.Compose.Components;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Swing.Edit
 {
     public class SwingBlueprintContainer : ComposeBlueprintContainer
     {
-        public SwingBlueprintContainer(IEnumerable<DrawableHitObject> drawableHitObjects)
-            : base(drawableHitObjects)
+        public SwingBlueprintContainer(SwingHitObjectComposer composer)
+            : base(composer)
         {
         }
 

@@ -18,7 +18,7 @@ namespace osu.Game.Rulesets.Swing.Edit
 
         public override bool HandleMovement(MoveSelectionEvent moveEvent)
         {
-            var selected = SelectedHitObjects.OfType<SwingHitObject>();
+            var selected = EditorBeatmap.SelectedHitObjects.OfType<SwingHitObject>();
             var currentTime = editorClock.CurrentTime;
 
             foreach (var h in selected)
