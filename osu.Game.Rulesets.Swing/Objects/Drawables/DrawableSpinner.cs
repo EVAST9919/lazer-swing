@@ -163,7 +163,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     }
                 }
 
-                nextTick?.TriggerResult(HitResult.Great);
+                nextTick?.TriggerResult(HitResult.IgnoreHit);
 
                 var numHits = ticks.Count(r => r.IsHit);
 
