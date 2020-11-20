@@ -10,13 +10,8 @@ namespace osu.Game.Rulesets.Swing.Objects
 
         public int RepeatIndex { get; set; }
 
-        public override Judgement CreateJudgement() => new HoldTickJudgement();
+        public override Judgement CreateJudgement() => new SwingJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
-
-        public class HoldTickJudgement : SwingJudgement
-        {
-            protected override int NumericResultFor(HitResult result) => result == MaxResult ? 10 : 0;
-        }
     }
 }

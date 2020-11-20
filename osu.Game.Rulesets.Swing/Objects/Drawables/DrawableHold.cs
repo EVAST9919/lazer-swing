@@ -207,21 +207,18 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
 
-            using (BeginDelayedSequence(HitObject.Duration, true))
+            if (tail.Result.Type == HitResult.Miss)
             {
-                if (tail.Result.Type == HitResult.Miss)
-                {
-                    Ball.FadeColour(Color4.Red, 50, Easing.OutQuint);
-                    Body.FadeColour(Color4.Red, 50, Easing.OutQuint);
-                }
-
-                this.FadeOut(300, Easing.OutQuint);
-                Ball.Ring.ScaleTo(2f, 300, Easing.Out);
+                Ball.FadeColour(Color4.Red, 50, Easing.OutQuint);
+                Body.FadeColour(Color4.Red, 50, Easing.OutQuint);
             }
+
+            this.FadeOut(300, Easing.OutQuint);
+            Ball.Ring.ScaleTo(2f, 300, Easing.Out);
         }
 
         protected override void Update(double currentTime)

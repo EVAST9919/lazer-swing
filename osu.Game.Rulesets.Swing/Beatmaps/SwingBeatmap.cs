@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using osu.Framework.Graphics.Sprites;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Swing.Objects;
 
@@ -20,19 +19,19 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
                 {
                     Name = @"Taps",
                     Content = taps.ToString(),
-                    Icon = FontAwesome.Regular.Circle
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles)
                 },
                 new BeatmapStatistic
                 {
                     Name = @"Holds",
                     Content = holds.ToString(),
-                    Icon = FontAwesome.Solid.ToggleOn
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders)
                 },
                 new BeatmapStatistic
                 {
                     Name = @"Spinners",
                     Content = spinners.ToString(),
-                    Icon = FontAwesome.Solid.Redo
+                    CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners)
                 }
             };
         }

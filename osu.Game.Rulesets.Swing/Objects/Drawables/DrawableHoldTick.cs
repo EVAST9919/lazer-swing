@@ -42,9 +42,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 ApplyResult(r => r.Type = Tracking ? r.Judgement.MaxResult : HitResult.Miss);
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
 
             switch (state)
             {

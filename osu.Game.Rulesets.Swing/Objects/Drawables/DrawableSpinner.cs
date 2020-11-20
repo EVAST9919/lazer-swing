@@ -222,38 +222,32 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             return true;
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
 
             const double transition_duration = 300;
 
             switch (state)
             {
                 case ArmedState.Miss:
-                    using (BeginDelayedSequence(HitObject.Duration, true))
-                    {
-                        ring.CloseBack(transition_duration);
-                        filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
-                        progressLine.RotateTo(completion * 360).Then().RotateTo(0, transition_duration, Easing.Out);
-                        glow.FadeOut(glowDuration, Easing.OutQuint);
-                        this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
-                        this.Delay(transition_duration).FadeOut(100).Expire(true);
-                    }
+                    ring.CloseBack(transition_duration);
+                    filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                    progressLine.RotateTo(completion * 360).Then().RotateTo(0, transition_duration, Easing.Out);
+                    glow.FadeOut(glowDuration, Easing.OutQuint);
+                    this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
+                    this.Delay(transition_duration).FadeOut(100).Expire(true);
 
                     break;
 
                 case ArmedState.Hit:
-                    using (BeginDelayedSequence(HitObject.Duration, true))
-                    {
-                        ring.Close(transition_duration);
-                        glow.FadeOut(glowDuration, Easing.OutQuint);
-                        filler.FlashColour(Color4.White, transition_duration, Easing.Out);
-                        filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
-                        progressLine.RotateTo(completion * 360).Then().RotateTo(180, transition_duration, Easing.Out);
-                        filler.RotateTo(180, transition_duration, Easing.Out);
-                        this.Delay(transition_duration).FadeOut(100).Expire(true);
-                    }
+                    ring.Close(transition_duration);
+                    glow.FadeOut(glowDuration, Easing.OutQuint);
+                    filler.FlashColour(Color4.White, transition_duration, Easing.Out);
+                    filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                    progressLine.RotateTo(completion * 360).Then().RotateTo(180, transition_duration, Easing.Out);
+                    filler.RotateTo(180, transition_duration, Easing.Out);
+                    this.Delay(transition_duration).FadeOut(100).Expire(true);
 
                     break;
             }

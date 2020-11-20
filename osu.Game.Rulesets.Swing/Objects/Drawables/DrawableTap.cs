@@ -157,9 +157,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 HitAction = null;
         }
 
-        protected override void UpdateStateTransforms(ArmedState state)
+        protected override void UpdateHitStateTransforms(ArmedState state)
         {
-            base.UpdateStateTransforms(state);
+            base.UpdateHitStateTransforms(state);
 
             switch (state)
             {

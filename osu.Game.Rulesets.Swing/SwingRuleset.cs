@@ -66,7 +66,7 @@ namespace osu.Game.Rulesets.Swing
                     {
                         new SwingModSuddenDeath(),
                         new MultiMod(new SwingModDoubleTime(), new SwingModNightcore()),
-                        new SwingModHidden()
+                        //new SwingModHidden()
                     };
 
                 case ModType.Automation:

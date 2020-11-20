@@ -24,7 +24,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 new SettingsEnumDropdown<PlayfieldOrientation>
                 {
                     LabelText = "Playfield orientation",
-                    Bindable = config.GetBindable<PlayfieldOrientation>(SwingRulesetSetting.PlayfieldOrientation)
+                    Current = config.GetBindable<PlayfieldOrientation>(SwingRulesetSetting.PlayfieldOrientation)
                 },
             };
         }

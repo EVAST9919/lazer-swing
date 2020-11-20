@@ -7,7 +7,5 @@ namespace osu.Game.Rulesets.Swing.Scoring
         protected override double DefaultAccuracyPortion => 0.75;
 
         protected override double DefaultComboPortion => 0.25;
-
-        public override HitWindows CreateHitWindows() => new SwingHitWindows();
     }
 }

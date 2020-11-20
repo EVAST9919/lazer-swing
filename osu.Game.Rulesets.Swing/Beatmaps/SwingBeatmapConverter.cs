@@ -6,6 +6,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Audio;
 using System;
+using System.Threading;
 
 namespace osu.Game.Rulesets.Swing.Beatmaps
 {
@@ -26,14 +27,14 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
         private bool isTop;
 
-        protected override IEnumerable<SwingHitObject> ConvertHitObject(HitObject obj, IBeatmap beatmap)
+        protected override IEnumerable<SwingHitObject> ConvertHitObject(HitObject obj, IBeatmap beatmap, CancellationToken cancellationToken)
         {
             var samples = obj.Samples;
 
             static bool isRimDefinition(HitSampleInfo s) => s.Name == HitSampleInfo.HIT_CLAP || s.Name == HitSampleInfo.HIT_WHISTLE;
 
             bool isRim = Alternate ? isTop = !isTop : samples.Any(isRimDefinition);
-            bool strong = Alternate ? false : obj.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
+            bool strong = !Alternate && obj.Samples.Any(s => s.Name == HitSampleInfo.HIT_FINISH);
 
             switch (obj)
             {
