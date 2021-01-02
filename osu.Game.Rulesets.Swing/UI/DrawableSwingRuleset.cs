@@ -15,6 +15,7 @@ using osu.Game.Rulesets.Objects;
 using osu.Framework.Utils;
 using System;
 using osu.Game.Screens.Play;
+using osu.Game.Scoring;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -41,7 +42,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
         protected override ReplayInputHandler CreateReplayInputHandler(Replay replay) => new SwingFramedReplayInputHandler(replay);
 
-        protected override ReplayRecorder CreateReplayRecorder(Replay replay) => new SwingReplayRecorder(replay);
+        protected override ReplayRecorder CreateReplayRecorder(Score score) => new SwingReplayRecorder(score);
 
         protected override ResumeOverlay CreateResumeOverlay() => new SwingResumeOverlay();
 

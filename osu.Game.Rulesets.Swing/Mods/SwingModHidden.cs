@@ -12,32 +12,32 @@ namespace osu.Game.Rulesets.Swing.Mods
 
         private const double fade_out_duration_multiplier = 0.3;
 
-        protected override bool IsFirstHideableObject(DrawableHitObject hitObject) => !(hitObject is DrawableSpinner);
+        //protected override bool IsFirstHideableObject(DrawableHitObject hitObject) => !(hitObject is DrawableSpinner);
 
-        protected override void ApplyHiddenState(DrawableHitObject drawable, ArmedState state)
-        {
-            if (!(drawable is DrawableSwingHitObject d))
-                return;
+        //protected override void ApplyHiddenState(DrawableHitObject drawable, ArmedState state)
+        //{
+        //    if (!(drawable is DrawableSwingHitObject d))
+        //        return;
 
-            var h = d.HitObject;
+        //    var h = d.HitObject;
 
-            var fadeOutStartTime = h.StartTime - h.TimePreempt + h.TimePreempt / 3;
-            var fadeOutDuration = h.TimePreempt * fade_out_duration_multiplier;
+        //    var fadeOutStartTime = h.StartTime - h.TimePreempt + h.TimePreempt / 3;
+        //    var fadeOutDuration = h.TimePreempt * fade_out_duration_multiplier;
 
-            switch (drawable)
-            {
-                case DrawableTap tap:
-                    // fade out immediately after fade in.
-                    using (tap.BeginAbsoluteSequence(fadeOutStartTime, true))
-                        tap.FadeOut(fadeOutDuration);
+        //    switch (drawable)
+        //    {
+        //        case DrawableTap tap:
+        //            // fade out immediately after fade in.
+        //            using (tap.BeginAbsoluteSequence(fadeOutStartTime, true))
+        //                tap.FadeOut(fadeOutDuration);
 
-                    break;
+        //            break;
 
-                case DrawableHold hold:
-                    using (hold.BeginAbsoluteSequence(hold.HitObject.StartTime, true))
-                        hold.FadeOut(hold.HitObject.Duration);
-                    break;
-            }
-        }
+        //        case DrawableHold hold:
+        //            using (hold.BeginAbsoluteSequence(hold.HitObject.StartTime, true))
+        //                hold.FadeOut(hold.HitObject.Duration);
+        //            break;
+        //    }
+        //}
     }
 }

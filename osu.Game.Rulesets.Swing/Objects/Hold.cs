@@ -103,12 +103,7 @@ namespace osu.Game.Rulesets.Swing.Objects
 
             if (firstSample != null)
             {
-                sampleList.Add(new HitSampleInfo
-                {
-                    Bank = firstSample.Bank,
-                    Volume = firstSample.Volume,
-                    Name = @"slidertick",
-                });
+                sampleList.Add(new HitSampleInfo("slidertick", firstSample.Bank, null, firstSample.Volume));
             }
 
             if (HeadCircle != null)

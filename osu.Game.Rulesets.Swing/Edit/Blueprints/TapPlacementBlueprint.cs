@@ -30,9 +30,9 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
             piece.UpdateFrom(tap);
         }
 
-        public override void UpdatePosition(SnapResult result)
+        public override void UpdateTimeAndPosition(SnapResult result)
         {
-            base.UpdatePosition(result);
+            base.UpdateTimeAndPosition(result);
 
             var localPosition = ToLocalSpace(result.ScreenSpacePosition);
             tap.Type = localPosition.Y > SwingPlayfield.FULL_SIZE.Y / 2 ? HitType.Down : HitType.Up;

@@ -17,19 +17,19 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
             {
                 new BeatmapStatistic
                 {
-                    Name = @"Taps",
+                    Name = @"Tap count",
                     Content = taps.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Circles)
                 },
                 new BeatmapStatistic
                 {
-                    Name = @"Holds",
+                    Name = @"Hold count",
                     Content = holds.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Sliders)
                 },
                 new BeatmapStatistic
                 {
-                    Name = @"Spinners",
+                    Name = @"Spinner count",
                     Content = spinners.ToString(),
                     CreateIcon = () => new BeatmapStatisticIcon(BeatmapStatisticsIconType.Spinners)
                 }
