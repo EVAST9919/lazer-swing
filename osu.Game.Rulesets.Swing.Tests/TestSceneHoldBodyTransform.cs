@@ -1,4 +1,5 @@
-﻿using osu.Framework.Bindables;
+﻿using NUnit.Framework;
+using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
@@ -7,6 +8,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Tests
 {
+    [TestFixture]
     public class TestSceneHoldBodyTransform : OsuTestScene
     {
         private readonly PathSliderBody body;
