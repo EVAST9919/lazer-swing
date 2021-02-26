@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Swing.Mods
 {
     public class SwingModAutoplay : ModAutoplay<SwingHitObject>, IApplicableToDrawableHitObjects
     {
-        public override Score CreateReplayScore(IBeatmap beatmap) => new Score
+        public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
             ScoreInfo = new ScoreInfo { User = new User { Username = "auto" } },
             Replay = new SwingAutoGenerator(beatmap).Generate(),
