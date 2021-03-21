@@ -13,7 +13,7 @@ namespace osu.Game.Rulesets.Swing.Configuration
         protected override void InitialiseDefaults()
         {
             base.InitialiseDefaults();
-            Set(SwingRulesetSetting.PlayfieldOrientation, PlayfieldOrientation.Taiko);
+            SetDefault(SwingRulesetSetting.PlayfieldOrientation, PlayfieldOrientation.Taiko);
         }
     }
 
