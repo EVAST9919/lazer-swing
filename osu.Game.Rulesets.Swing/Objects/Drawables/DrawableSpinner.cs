@@ -138,10 +138,10 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             if (Auto)
             {
-                if (Time.Current > HitObject.StartTime + HitObject.Duration * 0.9f)
+                if (Time.Current > HitObject.StartTime + HitObject.Duration * 0.95f)
                 {
                     foreach (var tick in ticks)
-                        tick.TriggerResult(HitResult.Great);
+                        tick.TriggerResult(HitResult.IgnoreHit);
 
                     completion = 0.5f;
                     ApplyResult(r => r.Type = r.Judgement.MaxResult);
