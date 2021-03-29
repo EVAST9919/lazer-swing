@@ -149,6 +149,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     tail.TriggerResult(tracking ? HitResult.Great : HitResult.Good);
                     break;
 
+                case HitResult.Good:
                 case HitResult.Miss:
                     tail.TriggerResult(tracking ? HitResult.Good : HitResult.Miss);
                     break;
