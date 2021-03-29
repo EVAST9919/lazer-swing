@@ -35,7 +35,6 @@ namespace osu.Game.Rulesets.Swing.UI
 
         private Container<HitExplosion> explosions;
         private JudgementContainer<DrawableSwingJudgement> judgementContainer;
-        private JudgementContainer<DrawableSwingJudgement> smallJudgementContainer;
         private ProxyContainer spinnerProxies;
         private ProxyContainer sliderProxies;
 
@@ -100,13 +99,6 @@ namespace osu.Game.Rulesets.Swing.UI
                         Origin = Anchor.Centre,
                         X = 250
                     },
-                    smallJudgementContainer = new JudgementContainer<DrawableSwingJudgement>
-                    {
-                        Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        X = -50,
-                        Scale = new Vector2(0.5f)
-                    },
                     hitReceptor = new HitReceptor()
                 }
             };
@@ -121,7 +113,6 @@ namespace osu.Game.Rulesets.Swing.UI
             {
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
                 judgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
-                smallJudgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
             }, true);
         }
 
@@ -170,10 +161,6 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
                     judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
-                    break;
-
-                case DrawableHoldTick _:
-                    smallJudgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
                     break;
             }
         }

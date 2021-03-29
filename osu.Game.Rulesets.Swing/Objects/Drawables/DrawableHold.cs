@@ -27,7 +27,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTail> tailContainer;
-        private readonly Container<DrawableHoldTick> ticksContainer;
 
         private readonly double unfoldTime;
         private readonly double foldTime;
@@ -38,7 +37,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             AddRangeInternal(new Drawable[]
             {
                 Body = new PathSliderBody(),
-                ticksContainer = new Container<DrawableHoldTick>(),
                 tailContainer = new Container<DrawableHoldTail>(),
                 headContainer = new Container<DrawableHoldHead>(),
                 Ball = new HoldBall()
@@ -82,9 +80,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 case HoldTail tail:
                     return new DrawableHoldTail(tail);
-
-                case HoldTick tick:
-                    return new DrawableHoldTick(tick);
             }
 
             return base.CreateNestedHitObject(hitObject);
@@ -103,10 +98,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 case DrawableHoldTail tail:
                     tailContainer.Child = tail;
                     break;
-
-                case DrawableHoldTick tick:
-                    ticksContainer.Add(tick);
-                    break;
             }
         }
 
@@ -116,7 +107,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             headContainer.Clear();
             tailContainer.Clear();
-            ticksContainer.Clear();
         }
 
         private bool tracking => (HitAction != null || Auto) && Time.Current < HitObject.EndTime;
@@ -149,60 +139,21 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
             if (currentTime > HitObject.StartTime)
             {
-                foreach (var t in ticksContainer)
-                    t.Tracking = tracking;
-
                 Ball.Tracking.Value = tracking;
             }
 
             if (currentTime < HitObject.EndTime)
                 return;
 
-            bool allTicksMisses = true;
-            bool allTicksPerfect = true;
-
-            if (ticksContainer.Count == 0)
-            {
-                allTicksPerfect = true;
-                allTicksMisses = false;
-            }
-            else
-            {
-                foreach (var t in ticksContainer)
-                {
-                    if (t.Result.Type == HitResult.Miss)
-                    {
-                        allTicksPerfect = false;
-                        break;
-                    }
-                }
-
-                if (!allTicksPerfect)
-                {
-                    foreach (var t in ticksContainer)
-                    {
-                        if (t.Result.Type == HitResult.Great)
-                        {
-                            allTicksMisses = false;
-                            break;
-                        }
-                    }
-                }
-                else
-                    allTicksMisses = false;
-            }
-
             var headResult = head.Result.Type;
 
             bool headIsPerfect = headResult == HitResult.Great;
             bool headIsMiss = headResult == HitResult.Miss;
 
-            if (allTicksPerfect && headIsPerfect)
+            if (headIsPerfect)
                 tail.TriggerResult(HitResult.Great);
-            else if ((allTicksMisses || ticksContainer.Count == 0) && headIsMiss)
+            else if (headIsMiss)
                 tail.TriggerResult(HitResult.Miss);
-            else
-                tail.TriggerResult(HitResult.Good);
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }

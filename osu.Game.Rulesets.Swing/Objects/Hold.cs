@@ -66,23 +66,6 @@ namespace osu.Game.Rulesets.Swing.Objects
                             Type = Type
                         });
                         break;
-
-                    case SliderEventType.Tick:
-                        AddNested(new HoldTick
-                        {
-                            StartTime = e.Time,
-                            Type = Type
-                        });
-                        break;
-
-                    case SliderEventType.Repeat:
-                        AddNested(new HoldTick
-                        {
-                            RepeatIndex = e.SpanIndex,
-                            StartTime = e.Time,
-                            Type = Type
-                        });
-                        break;
                 }
             }
 
@@ -111,9 +94,6 @@ namespace osu.Game.Rulesets.Swing.Objects
 
             if (Tail != null)
                 Tail.Samples = Samples;
-
-            foreach (var tick in NestedHitObjects.OfType<HoldTick>())
-                tick.Samples = tick.UsesRepeatSound ? getNodeSamples(tick.RepeatIndex + 1) : sampleList;
         }
 
         private IList<HitSampleInfo> getNodeSamples(int nodeIndex) =>
