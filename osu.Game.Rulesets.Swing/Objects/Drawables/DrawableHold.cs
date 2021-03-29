@@ -109,8 +109,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             tailContainer.Clear();
         }
 
-        private bool tracking => (HitAction != null || Auto) && Time.Current < HitObject.EndTime;
-
         public override bool OnPressed(SwingAction action)
         {
             if (HitActions.Contains(action))
@@ -137,23 +135,24 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             var currentTime = Time.Current;
 
+            var tracking = (HitAction != null || Auto) && !IsHit && currentTime > HitObject.StartTime;
+
             if (currentTime > HitObject.StartTime)
-            {
                 Ball.Tracking.Value = tracking;
-            }
 
             if (currentTime < HitObject.EndTime)
                 return;
 
-            var headResult = head.Result.Type;
+            switch (head.Result.Type)
+            {
+                case HitResult.Great:
+                    tail.TriggerResult(tracking ? HitResult.Great : HitResult.Good);
+                    break;
 
-            bool headIsPerfect = headResult == HitResult.Great;
-            bool headIsMiss = headResult == HitResult.Miss;
-
-            if (headIsPerfect)
-                tail.TriggerResult(HitResult.Great);
-            else if (headIsMiss)
-                tail.TriggerResult(HitResult.Miss);
+                case HitResult.Miss:
+                    tail.TriggerResult(tracking ? HitResult.Good : HitResult.Miss);
+                    break;
+            }
 
             ApplyResult(r => r.Type = r.Judgement.MaxResult);
         }
