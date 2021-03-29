@@ -28,8 +28,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly Container<DrawableHoldHead> headContainer;
         private readonly Container<DrawableHoldTail> tailContainer;
 
-        private readonly double unfoldTime;
-        private readonly double foldTime;
+        private double unfoldTime;
+        private double foldTime;
 
         public DrawableHold(Hold h)
             : base(h)
@@ -174,6 +174,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         protected override void Update(double currentTime)
         {
             base.Update(currentTime);
+
+            unfoldTime = HitObject.StartTime - HitObject.TimePreempt;
+            foldTime = unfoldTime + HitObject.Duration;
 
             var tailValue = MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
             var headValue = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
