@@ -190,7 +190,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                         continue;
                     }
 
-                    tick.TriggerResult(HitResult.Miss);
+                    tick.TriggerResult(HitResult.IgnoreMiss);
                 }
 
                 ApplyResult(r => r.Type = numHits > HitObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
