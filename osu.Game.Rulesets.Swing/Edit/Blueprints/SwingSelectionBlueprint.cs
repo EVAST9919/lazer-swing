@@ -7,7 +7,7 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
     public abstract class SwingSelectionBlueprint<T> : OverlaySelectionBlueprint
         where T : SwingHitObject
     {
-        protected new T HitObject => (T)DrawableObject.HitObject;
+        protected T HitObject => (T)DrawableObject.HitObject;
 
         protected override bool AlwaysShowWhenSelected => false;
 

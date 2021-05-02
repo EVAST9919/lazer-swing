@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Screens.Edit;
 using osu.Game.Screens.Edit.Compose.Components;
@@ -8,7 +9,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Edit
 {
-    public class SwingSelectionHandler : SelectionHandler
+    public class SwingSelectionHandler : EditorSelectionHandler
     {
         [Resolved]
         private IBeatSnapProvider beatSnapProvider { get; set; }
@@ -16,7 +17,7 @@ namespace osu.Game.Rulesets.Swing.Edit
         [Resolved]
         private EditorClock editorClock { get; set; }
 
-        public override bool HandleMovement(MoveSelectionEvent moveEvent)
+        public override bool HandleMovement(MoveSelectionEvent<HitObject> moveEvent)
         {
             var selected = EditorBeatmap.SelectedHitObjects.OfType<SwingHitObject>();
             var currentTime = editorClock.CurrentTime;
@@ -28,7 +29,8 @@ namespace osu.Game.Rulesets.Swing.Edit
                     return false;
             }
 
-            var localPosition = ToLocalSpace(moveEvent.ScreenSpacePosition);
+            // This is wrong
+            var localPosition = moveEvent.Blueprint.ScreenSpaceDrawQuad;
 
             double minTime = double.MaxValue;
 
@@ -40,7 +42,7 @@ namespace osu.Game.Rulesets.Swing.Edit
             foreach (var h in selected)
             {
                 var offset = h.StartTime - minTime;
-                h.StartTime = beatSnapProvider.SnapTime(currentTime + offset + localPosition.X * 1.5f);
+                h.StartTime = beatSnapProvider.SnapTime(currentTime + offset + localPosition.TopLeft.X * 1.5f);
             }
 
             return true;

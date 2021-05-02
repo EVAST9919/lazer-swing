@@ -1,4 +1,5 @@
 ﻿using osu.Game.Rulesets.Edit;
+using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Edit.Blueprints;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
@@ -13,7 +14,7 @@ namespace osu.Game.Rulesets.Swing.Edit
         {
         }
 
-        protected override SelectionHandler CreateSelectionHandler() => new SwingSelectionHandler();
+        protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SwingSelectionHandler();
 
         public override OverlaySelectionBlueprint CreateBlueprintFor(DrawableHitObject hitObject)
         {
