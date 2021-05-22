@@ -13,8 +13,8 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
 
         protected readonly TapPiece Piece;
 
-        public TapSelectionBlueprint(DrawableTap drawable)
-            : base(drawable)
+        public TapSelectionBlueprint(Tap tap)
+            : base(tap)
         {
             RelativeSizeAxes = Axes.None;
             InternalChild = Piece = new TapPiece();

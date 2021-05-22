@@ -12,8 +12,8 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
 
         protected readonly SpinnerPiece Piece;
 
-        public SpinnerSelectionBlueprint(DrawableSpinner drawable)
-            : base(drawable)
+        public SpinnerSelectionBlueprint(Spinner s)
+            : base(s)
         {
             InternalChild = Piece = new SpinnerPiece();
         }

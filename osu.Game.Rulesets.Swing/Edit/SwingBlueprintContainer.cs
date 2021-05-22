@@ -1,8 +1,7 @@
 ﻿using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Swing.Edit.Blueprints;
-using osu.Game.Rulesets.Swing.Objects.Drawables;
+using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
 
 namespace osu.Game.Rulesets.Swing.Edit
@@ -16,18 +15,18 @@ namespace osu.Game.Rulesets.Swing.Edit
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SwingSelectionHandler();
 
-        public override OverlaySelectionBlueprint CreateBlueprintFor(DrawableHitObject hitObject)
+        public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
         {
             switch (hitObject)
             {
-                case DrawableSpinner spinner:
-                    return new SpinnerSelectionBlueprint(spinner);
+                case Spinner s:
+                    return new SpinnerSelectionBlueprint(s);
 
-                case DrawableTap tap:
+                case Tap tap:
                     return new TapSelectionBlueprint(tap);
             }
 
-            return base.CreateBlueprintFor(hitObject);
+            return base.CreateHitObjectBlueprintFor(hitObject);
         }
     }
 }
