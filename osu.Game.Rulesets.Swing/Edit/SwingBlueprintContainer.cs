@@ -24,6 +24,9 @@ namespace osu.Game.Rulesets.Swing.Edit
 
                 case Tap tap:
                     return new TapSelectionBlueprint(tap);
+
+                case Hold hold:
+                    return new HoldSelectionBlueprint(hold);
             }
 
             return base.CreateHitObjectBlueprintFor(hitObject);
