@@ -29,8 +29,7 @@ namespace osu.Game.Rulesets.Swing.Edit
                     return false;
             }
 
-            // This is wrong
-            var localPosition = moveEvent.Blueprint.ScreenSpaceDrawQuad;
+            var localPosition = ToLocalSpace(GetContainingInputManager().CurrentState.Mouse.Position);
 
             double minTime = double.MaxValue;
 
@@ -42,7 +41,7 @@ namespace osu.Game.Rulesets.Swing.Edit
             foreach (var h in selected)
             {
                 var offset = h.StartTime - minTime;
-                h.StartTime = beatSnapProvider.SnapTime(currentTime + offset + localPosition.TopLeft.X * 1.5f);
+                h.StartTime = beatSnapProvider.SnapTime(currentTime + offset + localPosition.X);
             }
 
             return true;
