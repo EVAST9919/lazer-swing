@@ -23,9 +23,9 @@ namespace osu.Game.Rulesets.Swing.Skinning
             };
         }
 
-        protected override void SkinChanged(ISkinSource skin, bool allowFallback)
+        protected override void SkinChanged(ISkinSource skin)
         {
-            base.SkinChanged(skin, allowFallback);
+            base.SkinChanged(skin);
             sprite.Texture = skin.GetTexture(TextureName) ?? textures.Get(TextureName);
         }
     }

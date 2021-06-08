@@ -1,7 +1,6 @@
 ﻿using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Objects.Drawables;
-using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.Replays;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
 using osu.Game.Scoring;
@@ -11,7 +10,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Mods
 {
-    public class SwingModAutoplay : ModAutoplay<SwingHitObject>, IApplicableToDrawableHitObjects
+    public class SwingModAutoplay : ModAutoplay, IApplicableToDrawableHitObjects
     {
         public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
