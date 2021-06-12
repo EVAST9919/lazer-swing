@@ -1,17 +1,19 @@
-﻿using osu.Game.Audio;
+﻿using osu.Framework.Bindables;
+using osu.Game.Audio;
 using osu.Game.Beatmaps;
 using osu.Game.Beatmaps.ControlPoints;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Scoring;
+using osuTK.Graphics;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 
 namespace osu.Game.Rulesets.Swing.Objects
 {
-    public class Hold : SwingHitObject, IHasDuration
+    public class Hold : SwingHitObject, IHasDuration, IHasDisplayColour
     {
         public double EndTime
         {
@@ -34,6 +36,14 @@ namespace osu.Game.Rulesets.Swing.Objects
         public override Judgement CreateJudgement() => new IgnoreJudgement();
 
         protected override HitWindows CreateHitWindows() => HitWindows.Empty;
+
+        public Hold()
+        {
+            TypeBindable.BindValueChanged(_ =>
+            {
+                DisplayColour.Value = Type == HitType.Up ? Tap.COLOUR_TOP : Tap.COLOUR_BOTTOM;
+            });
+        }
 
         protected override void ApplyDefaultsToSelf(ControlPointInfo controlPointInfo, BeatmapDifficulty difficulty)
         {
@@ -98,5 +108,7 @@ namespace osu.Game.Rulesets.Swing.Objects
 
         private IList<HitSampleInfo> getNodeSamples(int nodeIndex) =>
             nodeIndex < NodeSamples.Count ? NodeSamples[nodeIndex] : Samples;
+
+        public Bindable<Color4> DisplayColour { get; } = new Bindable<Color4>(Tap.COLOUR_TOP);
     }
 }

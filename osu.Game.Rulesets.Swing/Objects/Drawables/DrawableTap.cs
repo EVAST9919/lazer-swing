@@ -84,7 +84,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
 
-            TapCircle.Colour = tapCircleColour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            TapCircle.Colour = tapCircleColour = Type.Value == HitType.Up ? Tap.COLOUR_TOP : Tap.COLOUR_BOTTOM;
         }
 
         private bool hasNonMissResult => Result.HasResult && Result.Type != HitResult.Miss;

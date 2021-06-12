@@ -63,7 +63,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Anchor = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Origin = Type.Value == HitType.Up ? Anchor.TopCentre : Anchor.BottomCentre;
             Scale = Type.Value == HitType.Up ? Vector2.One : new Vector2(1, -1);
-            Body.AccentColour = Type.Value == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+            Body.AccentColour = Type.Value == HitType.Up ? Tap.COLOUR_TOP : Tap.COLOUR_BOTTOM;
         }
 
         protected override void LoadSamples()

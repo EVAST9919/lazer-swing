@@ -3,11 +3,15 @@ using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Judgements;
+using osu.Framework.Bindables;
+using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.Objects
 {
-    public class Spinner : SwingHitObject, IHasDuration
+    public class Spinner : SwingHitObject, IHasDuration, IHasDisplayColour
     {
+        public Bindable<Color4> DisplayColour => new Bindable<Color4>(Color4.BlueViolet);
+
         public double EndTime
         {
             get => StartTime + Duration;
