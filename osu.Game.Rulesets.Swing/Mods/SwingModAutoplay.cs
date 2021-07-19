@@ -6,11 +6,10 @@ using osu.Game.Rulesets.Swing.Objects.Drawables;
 using osu.Game.Scoring;
 using osu.Game.Users;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Mods
 {
-    public class SwingModAutoplay : ModAutoplay, IApplicableToDrawableHitObjects
+    public class SwingModAutoplay : ModAutoplay, IApplicableToDrawableHitObject
     {
         public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
@@ -18,12 +17,13 @@ namespace osu.Game.Rulesets.Swing.Mods
             Replay = new SwingAutoGenerator(beatmap).Generate(),
         };
 
-        public void ApplyToDrawableHitObjects(IEnumerable<DrawableHitObject> drawables)
+        public void ApplyToDrawableHitObject(DrawableHitObject drawable)
         {
-            foreach (var d in drawables.OfType<DrawableSwingHitObject>())
+            if (drawable is DrawableSwingHitObject swingObject)
             {
-                d.Auto = true;
-                foreach (DrawableSwingHitObject nested in d.NestedHitObjects)
+                swingObject.Auto = true;
+
+                foreach (DrawableSwingHitObject nested in swingObject.NestedHitObjects)
                     nested.Auto = true;
             }
         }
