@@ -4,6 +4,7 @@ using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -199,8 +200,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
         private bool? lastWasUp;
 
-        public override bool OnPressed(SwingAction action)
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e)
         {
+            var action = e.Action;
             var currentTime = Time.Current;
 
             if (currentTime > HitObject.EndTime || Result.HasResult)

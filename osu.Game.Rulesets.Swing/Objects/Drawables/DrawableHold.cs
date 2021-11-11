@@ -2,6 +2,7 @@
 using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -109,17 +110,17 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             tailContainer.Clear();
         }
 
-        public override bool OnPressed(SwingAction action)
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e)
         {
-            if (HitActions.Contains(action))
-                HitAction = action;
+            if (HitActions.Contains(e.Action))
+                HitAction = e.Action;
 
             return false;
         }
 
-        public override void OnReleased(SwingAction action)
+        public override void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
         {
-            if (action == HitAction)
+            if (e.Action == HitAction)
                 HitAction = null;
         }
 

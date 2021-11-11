@@ -5,8 +5,8 @@ using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.Replays;
 using osu.Game.Rulesets.Swing.Objects.Drawables;
 using osu.Game.Scoring;
-using osu.Game.Users;
 using System.Collections.Generic;
+using osu.Game.Online.API.Requests.Responses;
 
 namespace osu.Game.Rulesets.Swing.Mods
 {
@@ -14,7 +14,7 @@ namespace osu.Game.Rulesets.Swing.Mods
     {
         public override Score CreateReplayScore(IBeatmap beatmap, IReadOnlyList<Mod> mods) => new Score
         {
-            ScoreInfo = new ScoreInfo { User = new User { Username = "auto" } },
+            ScoreInfo = new ScoreInfo { User = new APIUser { Username = "auto" } },
             Replay = new SwingAutoGenerator(beatmap).Generate(),
         };
 

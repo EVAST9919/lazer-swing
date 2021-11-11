@@ -1,4 +1,5 @@
-﻿using osu.Game.Rulesets.Scoring;
+﻿using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
@@ -21,6 +22,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
         }
 
-        public override bool OnPressed(SwingAction action) => false;
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e) => false;
     }
 }

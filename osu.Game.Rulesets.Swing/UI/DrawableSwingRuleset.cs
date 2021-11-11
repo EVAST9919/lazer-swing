@@ -87,7 +87,7 @@ namespace osu.Game.Rulesets.Swing.UI
             if (timingPoints.Count == 0)
                 return bars;
 
-            var timePreempt = (float)BeatmapDifficulty.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.ApproachRate, 1800, 1200, 450);
+            var timePreempt = (float)IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.ApproachRate, 1800, 1200, 450);
 
             for (int i = 0; i < timingPoints.Count; i++)
             {

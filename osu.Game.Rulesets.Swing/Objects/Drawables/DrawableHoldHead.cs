@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Allocation;
 using osu.Framework.Bindables;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Scoring;
 using System;
 using System.Linq;
@@ -57,25 +58,25 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 ApplyResult(r => r.Type = result);
         }
 
-        public override bool OnPressed(SwingAction action)
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e)
         {
             if (Judged)
                 return false;
 
-            validActionPressed = HitActions.Contains(action);
+            validActionPressed = HitActions.Contains(e.Action);
 
             // Only count this as handled if the new judgement is a hit
             UpdateResult(true);
 
             if (IsHit)
-                HitAction = action;
+                HitAction = e.Action;
 
             return false;
         }
 
-        public override void OnReleased(SwingAction action)
+        public override void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
         {
-            if (action == HitAction)
+            if (e.Action == HitAction)
                 HitAction = null;
         }
     }

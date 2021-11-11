@@ -1,5 +1,6 @@
 ﻿using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Screens.Play;
 
 namespace osu.Game.Rulesets.Swing.UI
@@ -8,7 +9,7 @@ namespace osu.Game.Rulesets.Swing.UI
     {
         protected override string Message => "Press hit key to resume";
 
-        public bool OnPressed(SwingAction action)
+        public bool OnPressed(KeyBindingPressEvent<SwingAction> e)
         {
             if (State.Value == Visibility.Hidden)
                 return false;
@@ -17,7 +18,7 @@ namespace osu.Game.Rulesets.Swing.UI
             return true;
         }
 
-        public void OnReleased(SwingAction action)
+        public void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
         {
         }
     }

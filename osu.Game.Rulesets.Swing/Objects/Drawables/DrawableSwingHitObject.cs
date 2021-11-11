@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Input.Bindings;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
@@ -12,9 +13,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
         }
 
-        public abstract bool OnPressed(SwingAction action);
+        public abstract bool OnPressed(KeyBindingPressEvent<SwingAction> e);
 
-        public virtual void OnReleased(SwingAction action)
+        public virtual void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
         {
         }
     }

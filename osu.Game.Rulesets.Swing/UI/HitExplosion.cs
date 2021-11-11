@@ -5,7 +5,6 @@ using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osu.Game.Rulesets.Swing.Objects;
-using osu.Framework.Graphics.Effects;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -57,9 +56,13 @@ namespace osu.Game.Rulesets.Swing.UI
                 Anchor = Anchor.Centre;
                 Origin = Anchor.BottomCentre;
                 Size = new Vector2(7, 40);
-                InternalChild = new Container
+                InternalChild = new BufferedContainer(cachedFrameBuffer: true)
                 {
-                    RelativeSizeAxes = Axes.Both,
+                    Size = new Vector2(7, 40),
+                    EffectColour = colour,
+                    BlurSigma = new Vector2(3),
+                    EffectBlending = BlendingParameters.Additive,
+                    DrawOriginal = true,
                     Child = new Box
                     {
                         Size = new Vector2(1, 34),
@@ -67,13 +70,7 @@ namespace osu.Game.Rulesets.Swing.UI
                         Origin = Anchor.Centre,
                         Colour = colour
                     }
-                }.WithEffect(new GlowEffect
-                {
-                    BlurSigma = new Vector2(3),
-                    Colour = colour,
-                    CacheDrawnEffect = true,
-                    Strength = 10
-                });
+                };
 
                 if (rotated)
                     Rotation = -180;

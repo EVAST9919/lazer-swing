@@ -21,6 +21,7 @@ using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Framework.Extensions.IEnumerableExtensions;
+using osu.Framework.Input.Events;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -266,9 +267,9 @@ namespace osu.Game.Rulesets.Swing.UI
             public Action UpKeyReleased;
             public Action DownKeyReleased;
 
-            public bool OnPressed(SwingAction action)
+            public bool OnPressed(KeyBindingPressEvent<SwingAction> e)
             {
-                switch (action)
+                switch (e.Action)
                 {
                     case SwingAction.UpSwing:
                     case SwingAction.UpSwingAdditional:
@@ -284,9 +285,9 @@ namespace osu.Game.Rulesets.Swing.UI
                 return false;
             }
 
-            public void OnReleased(SwingAction action)
+            public void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
             {
-                switch (action)
+                switch (e.Action)
                 {
                     case SwingAction.UpSwing:
                     case SwingAction.UpSwingAdditional:

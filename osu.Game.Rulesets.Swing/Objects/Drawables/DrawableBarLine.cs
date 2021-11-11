@@ -1,6 +1,7 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 
@@ -71,6 +72,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             this.Delay(rotationDuration - fadeDuration).FadeOut(fadeDuration).Expire(true);
         }
 
-        public override bool OnPressed(SwingAction action) => false;
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e) => false;
     }
 }

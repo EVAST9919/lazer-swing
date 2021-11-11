@@ -5,6 +5,7 @@ using osu.Framework.Graphics;
 using osu.Framework.Graphics.Colour;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Shapes;
+using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
@@ -136,24 +137,24 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 ApplyResult(r => r.Type = result);
         }
 
-        public override bool OnPressed(SwingAction action)
+        public override bool OnPressed(KeyBindingPressEvent<SwingAction> e)
         {
             if (Judged)
                 return false;
 
-            validActionPressed = HitActions.Contains(action);
+            validActionPressed = HitActions.Contains(e.Action);
 
             // Only count this as handled if the new judgement is a hit
             var result = UpdateResult(true);
             if (IsHit)
-                HitAction = action;
+                HitAction = e.Action;
 
             return result;
         }
 
-        public override void OnReleased(SwingAction action)
+        public override void OnReleased(KeyBindingReleaseEvent<SwingAction> e)
         {
-            if (action == HitAction)
+            if (e.Action == HitAction)
                 HitAction = null;
         }
 
