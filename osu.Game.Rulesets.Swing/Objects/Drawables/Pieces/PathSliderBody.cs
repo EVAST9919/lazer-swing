@@ -2,10 +2,10 @@
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Graphics.Lines;
+using osu.Framework.Utils;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Types;
-using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osuTK.Graphics;
@@ -98,7 +98,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             private static readonly float shadow_portion = shadow_radius / radius;
             private static readonly float border_portion = 0.15f + shadow_portion;
             private static readonly float inner_shadow_portion = border_portion + shadow_portion;
-            private const float opacity_at_centre = 0.4f;
+            private const float shadow_start_opacity = 0.4f;
 
             private Color4 accentColour = Color4.White;
 
@@ -125,15 +125,13 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             protected override Color4 ColourAt(float position)
             {
                 if (position <= shadow_portion)
-                    return new Color4(0, 0, 0, 0 - (-opacity_at_centre) * position / shadow_portion);
-
-                //return new Color4(AccentColour.R, AccentColour.G, AccentColour.B, MathExtensions.Map(position, 0, shadow_portion, 0, opacity_at_centre)); - glow
+                    return new Color4(0, 0, 0, Interpolation.ValueAt(position, 0f, shadow_start_opacity, 0f, shadow_portion, Easing.In));
 
                 if (position <= border_portion)
                     return Color4.White;
 
                 if (position <= inner_shadow_portion)
-                    return AccentColour.Darken(MathExtensions.Map(position, border_portion, inner_shadow_portion, opacity_at_centre, 0));
+                    return AccentColour.Darken(Interpolation.ValueAt(position, shadow_start_opacity, 0f, border_portion, inner_shadow_portion, Easing.Out));
 
                 return AccentColour;
             }
