@@ -104,8 +104,6 @@ namespace osu.Game.Rulesets.Swing
             Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/logo"),
         };
 
-        public override DifficultyCalculator CreateDifficultyCalculator(WorkingBeatmap beatmap) => new SwingDifficultyCalculator(this, beatmap);
-
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SwingReplayFrame();
 
         public override HitObjectComposer CreateHitObjectComposer() => new SwingHitObjectComposer(this);
@@ -130,5 +128,7 @@ namespace osu.Game.Rulesets.Swing
                 }
             }
         };
+
+        public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new SwingDifficultyCalculator(RulesetInfo, beatmap);
     }
 }

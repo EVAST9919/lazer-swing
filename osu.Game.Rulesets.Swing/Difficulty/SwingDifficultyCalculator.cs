@@ -11,7 +11,7 @@ namespace osu.Game.Rulesets.Swing.Difficulty
 {
     public class SwingDifficultyCalculator : DifficultyCalculator
     {
-        public SwingDifficultyCalculator(Ruleset ruleset, WorkingBeatmap beatmap)
+        public SwingDifficultyCalculator(IRulesetInfo ruleset, IWorkingBeatmap beatmap)
             : base(ruleset, beatmap)
         {
         }
