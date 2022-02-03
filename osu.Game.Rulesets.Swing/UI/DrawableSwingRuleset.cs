@@ -87,7 +87,7 @@ namespace osu.Game.Rulesets.Swing.UI
             if (timingPoints.Count == 0)
                 return bars;
 
-            var timePreempt = (float)IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.ApproachRate, 1800, 1200, 450);
+            var timePreempt = (float)IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.Difficulty.ApproachRate, 1800, 1200, 450);
 
             for (int i = 0; i < timingPoints.Count; i++)
             {
@@ -95,9 +95,9 @@ namespace osu.Game.Rulesets.Swing.UI
                 int currentBeat = 0;
 
                 // Stop on the beat before the next timing point, or if there is no next timing point stop slightly past the last object
-                double endTime = i < timingPoints.Count - 1 ? timingPoints[i + 1].Time - currentTimingPoint.BeatLength : lastHitTime + currentTimingPoint.BeatLength * (int)currentTimingPoint.TimeSignature;
+                double endTime = i < timingPoints.Count - 1 ? timingPoints[i + 1].Time - currentTimingPoint.BeatLength : lastHitTime + currentTimingPoint.BeatLength * currentTimingPoint.TimeSignature.Numerator;
 
-                double barLength = currentTimingPoint.BeatLength * (int)currentTimingPoint.TimeSignature;
+                double barLength = currentTimingPoint.BeatLength * currentTimingPoint.TimeSignature.Numerator;
 
                 for (double t = currentTimingPoint.Time; Precision.DefinitelyBigger(endTime, t); t += barLength, currentBeat++)
                 {
@@ -111,7 +111,7 @@ namespace osu.Game.Rulesets.Swing.UI
                         t = roundedTime;
                     }
 
-                    bool major = currentBeat % (int)currentTimingPoint.TimeSignature == 0;
+                    bool major = currentBeat % currentTimingPoint.TimeSignature.Numerator == 0;
 
                     bars.AddRange(new[]
                     {

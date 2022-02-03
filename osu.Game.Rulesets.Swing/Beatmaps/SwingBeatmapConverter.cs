@@ -58,7 +58,7 @@ namespace osu.Game.Rulesets.Swing.Beatmaps
 
                 case IHasDuration endTimeData:
                     {
-                        double hitMultiplier = IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.BaseDifficulty.OverallDifficulty, 3, 5, 7.5) * spinner_hit_multiplier;
+                        double hitMultiplier = IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.Difficulty.OverallDifficulty, 3, 5, 7.5) * spinner_hit_multiplier;
 
                         return new List<SwingHitObject>
                         {
