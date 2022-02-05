@@ -26,6 +26,7 @@ using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Scoring;
 using System.Linq;
 using osu.Game.Rulesets.Swing.Objects;
+using osu.Framework.Graphics.Containers;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -120,11 +121,11 @@ namespace osu.Game.Rulesets.Swing
             {
                 Columns = new[]
                 {
-                    new StatisticItem("Timing Distribution", new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap || e.HitObject is HoldHead).ToList())
+                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap || e.HitObject is HoldHead).ToList())
                     {
                         RelativeSizeAxes = Axes.X,
                         Height = 250
-                    }),
+                    }, true)
                 }
             }
         };
