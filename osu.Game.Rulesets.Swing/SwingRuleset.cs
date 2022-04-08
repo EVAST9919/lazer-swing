@@ -26,7 +26,6 @@ using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Scoring;
 using System.Linq;
 using osu.Game.Rulesets.Swing.Objects;
-using osu.Framework.Graphics.Containers;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -34,7 +33,7 @@ namespace osu.Game.Rulesets.Swing
     {
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods = null) => new DrawableSwingRuleset(this, beatmap, mods);
 
-        public override ScoreProcessor CreateScoreProcessor() => new SwingScoreProcessor();
+        public override ScoreProcessor CreateScoreProcessor() => new SwingScoreProcessor(this);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new SwingBeatmapConverter(beatmap, this);
 
@@ -72,7 +71,7 @@ namespace osu.Game.Rulesets.Swing
                 case ModType.Automation:
                     return new Mod[]
                     {
-                        new MultiMod(new SwingModAutoplay(), new SwingModCinema()),
+                        new SwingModAutoplay()
                     };
 
                 case ModType.Fun:
