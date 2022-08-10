@@ -26,6 +26,8 @@ using osu.Game.Screens.Ranking.Statistics;
 using osu.Game.Scoring;
 using System.Linq;
 using osu.Game.Rulesets.Swing.Objects;
+using osu.Framework.Allocation;
+using osu.Framework.Platform;
 
 namespace osu.Game.Rulesets.Swing
 {
@@ -99,10 +101,7 @@ namespace osu.Game.Rulesets.Swing
 
         public override string PlayingVerb => "Rides on a swing";
 
-        public override Drawable CreateIcon() => new Sprite
-        {
-            Texture = new TextureStore(new TextureLoaderStore(CreateResourceStore()), false).Get("Textures/logo"),
-        };
+        public override Drawable CreateIcon() => new SwingIcon(this);
 
         public override IConvertibleReplayFrame CreateConvertibleReplayFrame() => new SwingReplayFrame();
 
@@ -130,5 +129,21 @@ namespace osu.Game.Rulesets.Swing
         };
 
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new SwingDifficultyCalculator(RulesetInfo, beatmap);
+
+        private class SwingIcon : Sprite
+        {
+            private readonly SwingRuleset ruleset;
+
+            public SwingIcon(SwingRuleset ruleset)
+            {
+                this.ruleset = ruleset;
+            }
+
+            [BackgroundDependencyLoader]
+            private void load(GameHost host)
+            {
+                Texture = new TextureStore(host.Renderer, new TextureLoaderStore(ruleset.CreateResourceStore()), false).Get("Textures/logo");
+            }
+        }
     }
 }
