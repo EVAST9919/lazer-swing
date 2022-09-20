@@ -1,4 +1,5 @@
 ﻿using osu.Framework.Graphics.Sprites;
+using osu.Framework.Localisation;
 using osu.Game.Beatmaps;
 using osu.Game.Rulesets.Mods;
 using osu.Game.Rulesets.Swing.Beatmaps;
@@ -13,7 +14,7 @@ namespace osu.Game.Rulesets.Swing.Mods
 
         public override double ScoreMultiplier => 1;
 
-        public override string Description => "Left-right.";
+        public override LocalisableString Description => "Left-right.";
 
         public override ModType Type => ModType.Conversion;
 
