@@ -14,7 +14,7 @@ using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public class PathSliderBody : CompositeDrawable, IHasAccentColour
+    public partial class PathSliderBody : CompositeDrawable, IHasAccentColour
     {
         private const float shadow_radius = 7;
         private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4 + shadow_radius;
@@ -93,7 +93,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             });
         }
 
-        private class DrawableSliderPath : SmoothPath
+        private partial class DrawableSliderPath : SmoothPath
         {
             private static readonly float shadow_portion = shadow_radius / radius;
             private static readonly float border_portion = 0.15f + shadow_portion;
