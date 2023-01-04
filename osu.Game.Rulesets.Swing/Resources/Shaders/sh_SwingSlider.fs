@@ -13,9 +13,12 @@ uniform mediump float headAngle;
 uniform mediump float tailAngle;
 uniform highp float texelSize;
 
+// values in pixels
 const float playfield_size = 512.0;
 const float circle_size = 25.0;
 const float shadow_size = 7.0;
+const float sprite_size = playfield_size + circle_size + shadow_size * 2.0;
+const float path_radius = circle_size * 0.5 + shadow_size;
 
 void main(void)
 {
@@ -25,9 +28,8 @@ void main(void)
     pixelAngle += float(pixelAngle < 0.0) * TWO_PI;
 
     highp float dst;
-    
-    highp float sprite_size = playfield_size + circle_size + shadow_size * 2.0;
-    highp float pathRadius = (circle_size * 0.5 + shadow_size) / sprite_size;
+
+    highp float pathRadius = path_radius / sprite_size;
     highp float arcDstFromEdge = 0.5 - pathRadius;
 
     if (pixelAngle > tailAngle && pixelAngle < headAngle)
