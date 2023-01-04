@@ -7,7 +7,7 @@ using osuTK;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableBarLine : DrawableSwingHitObject<BarLine>
+    public partial class DrawableBarLine : DrawableSwingHitObject<BarLine>
     {
         private readonly double rotationDuration;
         private readonly double fadeDuration;

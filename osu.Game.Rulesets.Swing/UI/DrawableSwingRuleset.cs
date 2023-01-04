@@ -10,16 +10,14 @@ using osu.Game.Input.Handlers;
 using osu.Game.Replays;
 using osu.Game.Rulesets.Swing.Replays;
 using osu.Framework.Allocation;
-using System.Linq;
 using osu.Game.Rulesets.Objects;
-using osu.Framework.Utils;
 using System;
 using osu.Game.Screens.Play;
 using osu.Game.Scoring;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class DrawableSwingRuleset : DrawableRuleset<SwingHitObject>
+    public partial class DrawableSwingRuleset : DrawableRuleset<SwingHitObject>
     {
         private SwingPlayfield playfield;
 
@@ -31,7 +29,13 @@ namespace osu.Game.Rulesets.Swing.UI
         [BackgroundDependencyLoader]
         private void load()
         {
-            generate(Beatmap).ForEach(playfield.Add);
+            float timePreempt = (float)IBeatmapDifficultyInfo.DifficultyRange(Beatmap.BeatmapInfo.Difficulty.ApproachRate, 1800, 1200, 450);
+
+            foreach (var b in new BarLineGenerator<BarLine>(Beatmap).BarLines)
+            {
+                b.TimePreempt = timePreempt;
+                playfield.Add(b);
+            }
         }
 
         protected override PassThroughInputManager CreateInputManager() => new SwingInputManager(Ruleset.RulesetInfo);
@@ -70,62 +74,6 @@ namespace osu.Game.Rulesets.Swing.UI
             }
 
             return null;
-        }
-
-        private static List<BarLine> generate(IBeatmap beatmap)
-        {
-            var bars = new List<BarLine>();
-
-            if (beatmap.HitObjects.Count == 0)
-                return bars;
-
-            var lastObject = beatmap.HitObjects.Last();
-            double lastHitTime = 1 + lastObject.GetEndTime();
-
-            var timingPoints = beatmap.ControlPointInfo.TimingPoints;
-
-            if (timingPoints.Count == 0)
-                return bars;
-
-            var timePreempt = (float)IBeatmapDifficultyInfo.DifficultyRange(beatmap.BeatmapInfo.Difficulty.ApproachRate, 1800, 1200, 450);
-
-            for (int i = 0; i < timingPoints.Count; i++)
-            {
-                var currentTimingPoint = timingPoints[i];
-                int currentBeat = 0;
-
-                // Stop on the beat before the next timing point, or if there is no next timing point stop slightly past the last object
-                double endTime = i < timingPoints.Count - 1 ? timingPoints[i + 1].Time - currentTimingPoint.BeatLength : lastHitTime + currentTimingPoint.BeatLength * currentTimingPoint.TimeSignature.Numerator;
-
-                double barLength = currentTimingPoint.BeatLength * currentTimingPoint.TimeSignature.Numerator;
-
-                for (double t = currentTimingPoint.Time; Precision.DefinitelyBigger(endTime, t); t += barLength, currentBeat++)
-                {
-                    var roundedTime = Math.Round(t, MidpointRounding.AwayFromZero);
-
-                    // in the case of some bar lengths, rounding errors can cause t to be slightly less than
-                    // the expected whole number value due to floating point inaccuracies.
-                    // if this is the case, apply rounding.
-                    if (Precision.AlmostEquals(t, roundedTime))
-                    {
-                        t = roundedTime;
-                    }
-
-                    bool major = currentBeat % currentTimingPoint.TimeSignature.Numerator == 0;
-
-                    bars.AddRange(new[]
-                    {
-                        new BarLine
-                        {
-                            StartTime = t,
-                            Major = major,
-                            TimePreempt = timePreempt
-                        }
-                    });
-                }
-            }
-
-            return bars;
         }
     }
 }
