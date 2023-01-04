@@ -22,10 +22,12 @@ using osu.Game.Rulesets.Judgements;
 using osu.Game.Rulesets.Scoring;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Input.Events;
+using osu.Framework.Graphics.Pooling;
+using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class SwingPlayfield : Playfield
+    public partial class SwingPlayfield : Playfield
     {
         public static readonly Vector2 FULL_SIZE = new Vector2(512, 512);
 
@@ -34,7 +36,9 @@ namespace osu.Game.Rulesets.Swing.UI
 
         private readonly Bindable<PlayfieldOrientation> orientation = new Bindable<PlayfieldOrientation>(PlayfieldOrientation.Taiko);
 
-        private Container<HitExplosion> explosions;
+        private readonly DrawablePool<HitExplosion> explosionsPool = new DrawablePool<HitExplosion>(20, 100);
+
+        private JudgementContainer<HitExplosion> explosions;
         private JudgementContainer<DrawableSwingJudgement> judgementContainer;
         private ProxyContainer spinnerProxies;
         private ProxyContainer sliderProxies;
@@ -80,7 +84,7 @@ namespace osu.Game.Rulesets.Swing.UI
                         EdgeSmoothness = Vector2.One,
                         Colour = ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0))
                     },
-                    explosions = new Container<HitExplosion>
+                    explosions = new JudgementContainer<HitExplosion>
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -148,7 +152,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
-                        explosions.Add(new HitExplosion((DrawableSwingHitObject)judgedObject));
+                        explosions.Add(explosionsPool.Get(doj => doj.Apply(result, judgedObject)));
                     break;
             }
 
@@ -168,7 +172,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
         public void Add(BarLine bar) => base.Add(new DrawableBarLine(bar));
 
-        private class Rings : CompositeDrawable
+        private partial class Rings : CompositeDrawable
         {
             [Resolved]
             private Bindable<WorkingBeatmap> working { get; set; }
@@ -231,7 +235,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
             public void ReleaseBottomRing() => bottomRing.FadeColour(Color4.White, 300, Easing.Out);
 
-            private class GlowContainer : Container
+            private partial class GlowContainer : Container
             {
                 public override bool RemoveCompletedTransforms => false;
 
@@ -260,7 +264,7 @@ namespace osu.Game.Rulesets.Swing.UI
             }
         }
 
-        private class HitReceptor : CompositeDrawable, IKeyBindingHandler<SwingAction>
+        private partial class HitReceptor : CompositeDrawable, IKeyBindingHandler<SwingAction>
         {
             public Action UpKeyPressed;
             public Action DownKeyPressed;
@@ -302,7 +306,7 @@ namespace osu.Game.Rulesets.Swing.UI
             }
         }
 
-        private class HalfRing : Container
+        private partial class HalfRing : Container
         {
             private static readonly float size = FULL_SIZE.X - SwingHitObject.DEFAULT_SIZE;
             private readonly float padding;
@@ -326,7 +330,7 @@ namespace osu.Game.Rulesets.Swing.UI
             }
         }
 
-        private class GlowingHalfRing : CompositeDrawable
+        private partial class GlowingHalfRing : CompositeDrawable
         {
             private const float glow_radius = 7;
 
@@ -347,7 +351,7 @@ namespace osu.Game.Rulesets.Swing.UI
             }
         }
 
-        private class ProxyContainer : LifetimeManagementContainer
+        private partial class ProxyContainer : LifetimeManagementContainer
         {
             public ProxyContainer()
             {
@@ -355,6 +359,29 @@ namespace osu.Game.Rulesets.Swing.UI
             }
 
             public void Add(Drawable h) => AddInternal(h);
+        }
+
+        private partial class DrawableJudgementPool : DrawablePool<HitExplosion>
+        {
+            private readonly Action<HitExplosion> onLoaded;
+
+            public DrawableJudgementPool(Action<HitExplosion> onLoaded)
+                : base(20)
+            {
+                this.onLoaded = onLoaded;
+            }
+
+            protected override HitExplosion CreateNewDrawable()
+            {
+                var judgement = base.CreateNewDrawable();
+
+                // just a placeholder to initialise the correct drawable hierarchy for this pool.
+                judgement.Apply(new JudgementResult(new HitObject(), new Judgement()) { Type = HitResult.Perfect }, null);
+
+                onLoaded?.Invoke(judgement);
+
+                return judgement;
+            }
         }
     }
 }

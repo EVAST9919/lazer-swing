@@ -5,86 +5,116 @@ using osuTK.Graphics;
 using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osu.Game.Rulesets.Swing.Objects;
+using osu.Game.Graphics;
+using osu.Game.Rulesets.Judgements;
+using osu.Framework.Allocation;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class HitExplosion : CompositeDrawable
+    public partial class HitExplosion : DrawableJudgement
     {
-        private readonly ExplosiveLine topLine;
-        private readonly ExplosiveLine bottomLine;
+        private ExplosiveLine topLine;
+        private ExplosiveLine bottomLine;
 
-        public HitExplosion(DrawableSwingHitObject h)
+        [BackgroundDependencyLoader]
+        private void load()
         {
-            Color4 colour;
-
-            switch (h)
-            {
-                case DrawableSpinner _:
-                    colour = Color4.BlueViolet;
-                    break;
-
-                default:
-                    colour = h.HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
-                    break;
-            }
-
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
             InternalChildren = new Drawable[]
             {
-                topLine = new ExplosiveLine(colour),
-                bottomLine = new ExplosiveLine(colour, true),
+                topLine = new ExplosiveLine(),
+                bottomLine = new ExplosiveLine(true)
             };
         }
 
-        protected override void Update()
+        protected override void PrepareForUse()
         {
-            base.Update();
+            base.PrepareForUse();
 
-            if (!topLine.IsAlive && !bottomLine.IsAlive)
-                Expire(true);
+            Color4 colour;
+
+            switch (JudgedObject)
+            {
+                case DrawableSpinner _:
+                    colour = Color4.BlueViolet;
+                    break;
+                default:
+                    colour = ((DrawableSwingHitObject)JudgedObject).HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+                    break;
+            }
+
+            topLine.AccentColour = colour;
+            bottomLine.AccentColour = colour;
         }
 
-        private class ExplosiveLine : CompositeDrawable
+        protected override void ApplyHitAnimations()
         {
-            private readonly bool rotated;
+            topLine.ResetAnimation();
+            bottomLine.ResetAnimation();
 
-            public ExplosiveLine(Color4 colour, bool rotated = false)
+            topLine.Animate();
+            bottomLine.Animate();
+
+            base.ApplyHitAnimations();
+        }
+
+        protected partial class ExplosiveLine : CompositeDrawable, IHasAccentColour
+        {
+            private Color4 accentColour;
+
+            public Color4 AccentColour
+            {
+                get => accentColour;
+                set
+                {
+                    accentColour = value;
+                    bufferedContainer.EffectColour = value;
+                    box.Colour = value;
+                }
+            }
+
+            private readonly bool rotated;
+            private readonly BufferedContainer bufferedContainer;
+            private readonly Box box;
+
+            public ExplosiveLine(bool rotated = false)
             {
                 this.rotated = rotated;
 
                 Anchor = Anchor.Centre;
                 Origin = Anchor.BottomCentre;
                 Size = new Vector2(7, 40);
-                InternalChild = new BufferedContainer(cachedFrameBuffer: true)
+                InternalChild = bufferedContainer = new BufferedContainer(cachedFrameBuffer: true)
                 {
                     Size = new Vector2(7, 40),
-                    EffectColour = colour,
                     BlurSigma = new Vector2(3),
                     EffectBlending = BlendingParameters.Additive,
                     DrawOriginal = true,
-                    Child = new Box
+                    Child = box = new Box
                     {
                         Size = new Vector2(1, 34),
                         Anchor = Anchor.Centre,
-                        Origin = Anchor.Centre,
-                        Colour = colour
+                        Origin = Anchor.Centre
                     }
                 };
 
                 if (rotated)
                     Rotation = -180;
+            }
 
+            public void ResetAnimation()
+            {
+                ClearTransforms();
+
+                Alpha = 1f;
                 Y = (rotated ? 1 : -1) * SwingHitObject.DEFAULT_SIZE / 2;
             }
 
-            protected override void LoadComplete()
+            public void Animate()
             {
-                base.LoadComplete();
-
                 this.FadeOut(250, Easing.Out);
                 this.MoveToY((rotated ? 1 : -1) * (SwingHitObject.DEFAULT_SIZE / 2 + SwingPlayfield.FULL_SIZE.Y / 6), 250, Easing.Out);
-                Expire(true);
             }
         }
     }
