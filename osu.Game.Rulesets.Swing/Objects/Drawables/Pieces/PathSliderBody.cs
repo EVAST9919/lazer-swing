@@ -1,23 +1,20 @@
-﻿using osu.Framework.Extensions.Color4Extensions;
+﻿using System;
+using osu.Framework.Allocation;
 using osu.Framework.Graphics;
-using osu.Framework.Graphics.Containers;
-using osu.Framework.Graphics.Lines;
-using osu.Framework.Utils;
+using osu.Framework.Graphics.Primitives;
+using osu.Framework.Graphics.Rendering;
+using osu.Framework.Graphics.Shaders;
 using osu.Game.Graphics;
-using osu.Game.Rulesets.Objects;
-using osu.Game.Rulesets.Objects.Types;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osuTK.Graphics;
-using System;
-using System.Collections.Generic;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public partial class PathSliderBody : CompositeDrawable, IHasAccentColour
+    public partial class PathSliderBody : Drawable, IHasAccentColour
     {
-        private const float shadow_radius = 7;
-        private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4 + shadow_radius;
+        private const float shadow_size = 7;
+        private static readonly float radius = SwingHitObject.DEFAULT_SIZE / 4 + shadow_size;
         private static readonly float half_playfiled = SwingPlayfield.FULL_SIZE.Y / 2;
 
         private Color4 accentColour;
@@ -28,112 +25,105 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             set
             {
                 accentColour = value;
-                sliderPath.AccentColour = value;
+                Invalidate(Invalidation.DrawNode);
             }
         }
 
-        private readonly List<Vector2> currentCurve = new List<Vector2>();
+        private float headAngle;
 
-        private readonly Container pathContainer;
-        private readonly SliderPath verticesController;
+        public float HeadAngle
+        {
+            get => headAngle;
+            set
+            {
+                headAngle = value;
+                Invalidate(Invalidation.DrawNode);
+            }
+        }
 
-        private DrawableSliderPath sliderPath;
-        private readonly Vector2 size;
+        private float tailAngle;
+
+        public float TailAngle
+        {
+            get => tailAngle;
+            set
+            {
+                tailAngle = value;
+                Invalidate(Invalidation.DrawNode);
+            }
+        }
 
         public PathSliderBody()
         {
             Anchor = Anchor.TopCentre;
-            Origin = Anchor.TopCentre;
-            InternalChild = pathContainer = new Container
-            {
-                Anchor = Anchor.TopCentre,
-                Origin = Anchor.TopCentre,
-                Size = size = new Vector2((half_playfiled + radius) * 2, half_playfiled + radius * 2),
-                Y = -radius
-            };
-
-            verticesController = new SliderPath(PathType.PerfectCurve, new[]
-            {
-                new Vector2(half_playfiled * 2, 0),
-                new Vector2(half_playfiled, half_playfiled),
-                new Vector2(0, 0),
-            });
-
-            RecyclePath();
+            Origin = Anchor.Centre;
+            Size = new Vector2((half_playfiled + radius) * 2);
+            Rotation = 90;
         }
 
-        private double lastStartDegree = -1;
-        private double lastEndDegree = -1;
+        private IShader shader;
 
-        public void SetProgressDegree(double headDegree, double tailDegree)
+        [BackgroundDependencyLoader]
+        private void load(ShaderManager shaders)
         {
-            if (headDegree == lastStartDegree && tailDegree == lastEndDegree)
-                return;
-
-            var start = headDegree / 180;
-            var end = tailDegree / 180;
-
-            verticesController.GetPathToProgress(currentCurve, end, start);
-
-            sliderPath.Vertices = currentCurve;
-            sliderPath.OriginPosition = sliderPath.PositionInBoundingBox(Vector2.Zero) - new Vector2(radius);
-
-            lastStartDegree = headDegree;
-            lastEndDegree = tailDegree;
+            shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "SwingSlider");
         }
 
-        public void RecyclePath()
+        protected override DrawNode CreateDrawNode() => new PathSliderBodyDrawNode(this);
+
+        private class PathSliderBodyDrawNode : DrawNode
         {
-            pathContainer.Child = sliderPath = new DrawableSliderPath(size).With(p =>
+            public new PathSliderBody Source => (PathSliderBody)base.Source;
+
+            public PathSliderBodyDrawNode(PathSliderBody source)
+                : base(source)
             {
-                p.AccentColour = sliderPath?.AccentColour ?? accentColour;
-                p.Vertices = sliderPath?.Vertices ?? Array.Empty<Vector2>();
-                p.PathRadius = sliderPath?.PathRadius ?? radius;
-                p.OriginPosition = sliderPath?.OriginPosition ?? Vector2.Zero;
-            });
-        }
-
-        private partial class DrawableSliderPath : SmoothPath
-        {
-            private static readonly float shadow_portion = shadow_radius / radius;
-            private static readonly float border_portion = 0.15f + shadow_portion;
-            private static readonly float inner_shadow_portion = border_portion + shadow_portion;
-            private const float shadow_start_opacity = 0.4f;
-
-            private Color4 accentColour = Color4.White;
-
-            public Color4 AccentColour
-            {
-                get => accentColour;
-                set
-                {
-                    if (accentColour == value)
-                        return;
-
-                    accentColour = value;
-
-                    InvalidateTexture();
-                }
             }
 
-            public DrawableSliderPath(Vector2 size)
+            private float headAngle;
+            private float tailAngle;
+            private Vector4 accent;
+            private IShader shader;
+            private Vector2 drawSize;
+            private float texelSize;
+
+            public override void ApplyState()
             {
-                AutoSizeAxes = Axes.None;
-                Size = size;
+                base.ApplyState();
+
+                shader = Source.shader;
+                drawSize = Source.DrawSize;
+
+                headAngle = Source.headAngle / 180f * (float)Math.PI;
+                tailAngle = Source.tailAngle / 180f * (float)Math.PI;
+                accent = new Vector4(Source.accentColour.R, Source.accentColour.G, Source.accentColour.B, Source.accentColour.A);
+                texelSize = 1.5f / drawSize.X;
             }
 
-            protected override Color4 ColourAt(float position)
+            public override void Draw(IRenderer renderer)
             {
-                if (position <= shadow_portion)
-                    return new Color4(0, 0, 0, Interpolation.ValueAt(position, 0f, shadow_start_opacity, 0f, shadow_portion, Easing.In));
+                if (tailAngle > headAngle)
+                    return;
 
-                if (position <= border_portion)
-                    return Color4.White;
+                base.Draw(renderer);
 
-                if (position <= inner_shadow_portion)
-                    return AccentColour.Darken(Interpolation.ValueAt(position, shadow_start_opacity, 0f, border_portion, inner_shadow_portion, Easing.Out));
+                shader.Bind();
 
-                return AccentColour;
+                shader.GetUniform<float>("headAngle").UpdateValue(ref headAngle);
+                shader.GetUniform<float>("tailAngle").UpdateValue(ref tailAngle);
+                shader.GetUniform<float>("texelSize").UpdateValue(ref texelSize);
+                shader.GetUniform<Vector4>("accent").UpdateValue(ref accent);
+
+                Quad quad = new Quad(
+                    Vector2Extensions.Transform(Vector2.Zero, DrawInfo.Matrix),
+                    Vector2Extensions.Transform(new Vector2(drawSize.X, 0f), DrawInfo.Matrix),
+                    Vector2Extensions.Transform(new Vector2(0f, drawSize.Y), DrawInfo.Matrix),
+                    Vector2Extensions.Transform(drawSize, DrawInfo.Matrix)
+                );
+
+                renderer.DrawQuad(renderer.WhitePixel, quad, DrawColourInfo.Colour);
+
+                shader.Unbind();
             }
         }
     }

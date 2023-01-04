@@ -5,21 +5,9 @@ namespace osu.Game.Rulesets.Swing.Extensions
 {
     public static class MathExtensions
     {
-        public static float Map(float value, float lowerCurrent, float upperCurrent, float lowerTarget, float upperTarget)
-        {
-            value = Math.Clamp(value, lowerCurrent, upperCurrent);
-            return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
-        }
+        public static double Distance(Vector2 input, Vector2 comparison) => Math.Sqrt(Pow2(input.X - comparison.X) + Pow2(input.Y - comparison.Y));
 
-        public static double Map(double value, double lowerCurrent, double upperCurrent, double lowerTarget, double upperTarget)
-        {
-            value = Math.Clamp(value, lowerCurrent, upperCurrent);
-            return (value - lowerCurrent) / (upperCurrent - lowerCurrent) * (upperTarget - lowerTarget) + lowerTarget;
-        }
-
-        public static double Distance(Vector2 input, Vector2 comparison) => Math.Sqrt(Pow(input.X - comparison.X) + Pow(input.Y - comparison.Y));
-
-        public static double Pow(double input) => input * input;
+        public static double Pow2(double input) => input * input;
 
         public static float GetSafeAngle(float angle)
         {

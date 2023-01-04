@@ -8,10 +8,12 @@ using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Screens.Edit;
+using osu.Framework.Utils;
+using System;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces
 {
-    public class TapPiece : CircularContainer
+    public partial class TapPiece : CircularContainer
     {
         [Resolved]
         private EditorClock editorClock { get; set; }
@@ -36,11 +38,11 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces
         {
             if (tap.Type == HitType.Up)
             {
-                Position = MathExtensions.GetRotatedPosition(new Vector2(SwingPlayfield.FULL_SIZE.Y - 150, 0), new Vector2(SwingPlayfield.FULL_SIZE.Y / 2 - 150, 0), (float)MathExtensions.Map(editorClock.CurrentTime, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt, 0, -180));
+                Position = MathExtensions.GetRotatedPosition(new Vector2(SwingPlayfield.FULL_SIZE.Y - 150, 0), new Vector2(SwingPlayfield.FULL_SIZE.Y / 2 - 150, 0), Interpolation.ValueAt(Math.Clamp(editorClock.CurrentTime, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt), 0f, -180f, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt));
             }
             else
             {
-                Position = MathExtensions.GetRotatedPosition(new Vector2(SwingPlayfield.FULL_SIZE.Y - 150, SwingPlayfield.FULL_SIZE.Y), new Vector2(SwingPlayfield.FULL_SIZE.Y / 2 - 150, SwingPlayfield.FULL_SIZE.Y), (float)MathExtensions.Map(editorClock.CurrentTime, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt, 0, 180));
+                Position = MathExtensions.GetRotatedPosition(new Vector2(SwingPlayfield.FULL_SIZE.Y - 150, SwingPlayfield.FULL_SIZE.Y), new Vector2(SwingPlayfield.FULL_SIZE.Y / 2 - 150, SwingPlayfield.FULL_SIZE.Y), Interpolation.ValueAt(Math.Clamp(editorClock.CurrentTime, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt), 0f, 180f, tap.StartTime - tap.TimePreempt, tap.StartTime + tap.TimePreempt));
             }
         }
     }

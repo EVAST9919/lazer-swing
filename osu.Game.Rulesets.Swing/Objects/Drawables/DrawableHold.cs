@@ -3,10 +3,10 @@ using osu.Framework.Bindables;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
-using osu.Game.Rulesets.Swing.Extensions;
 using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osuTK;
 using osuTK.Graphics;
@@ -14,7 +14,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableHold : DrawableSwingHitObject<Hold>
+    public partial class DrawableHold : DrawableSwingHitObject<Hold>
     {
         protected override bool RequiresTimedUpdate => true;
 
@@ -180,16 +180,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             unfoldTime = HitObject.StartTime - HitObject.TimePreempt;
             foldTime = unfoldTime + HitObject.Duration;
 
-            var tailValue = MathExtensions.Map(currentTime, foldTime, HitObject.EndTime, 0, 90);
-            var headValue = MathExtensions.Map(currentTime, unfoldTime, HitObject.StartTime, 0, 90);
-
-            Body.SetProgressDegree(headValue, tailValue);
-        }
-
-        public override void OnKilled()
-        {
-            base.OnKilled();
-            Body?.RecyclePath();
+            Body.HeadAngle = Interpolation.ValueAt(MathHelper.Clamp(currentTime, unfoldTime, HitObject.StartTime), 0f, 90f, unfoldTime, HitObject.StartTime);
+            Body.TailAngle = Interpolation.ValueAt(MathHelper.Clamp(currentTime, foldTime, HitObject.EndTime), 0f, 90f, foldTime, HitObject.EndTime);
         }
     }
 }
