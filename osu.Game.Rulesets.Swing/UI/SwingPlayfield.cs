@@ -23,7 +23,6 @@ using osu.Game.Rulesets.Scoring;
 using osu.Framework.Extensions.IEnumerableExtensions;
 using osu.Framework.Input.Events;
 using osu.Framework.Graphics.Pooling;
-using osu.Game.Rulesets.Objects;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
@@ -36,9 +35,9 @@ namespace osu.Game.Rulesets.Swing.UI
 
         private readonly Bindable<PlayfieldOrientation> orientation = new Bindable<PlayfieldOrientation>(PlayfieldOrientation.Taiko);
 
-        private readonly DrawablePool<HitExplosion> explosionsPool = new DrawablePool<HitExplosion>(20, 100);
+        private DrawablePool<HitExplosion> explosionsPool;
 
-        private JudgementContainer<HitExplosion> explosions;
+        private ExplosionsContainer explosions;
         private JudgementContainer<DrawableSwingJudgement> judgementContainer;
         private ProxyContainer spinnerProxies;
         private ProxyContainer sliderProxies;
@@ -84,7 +83,7 @@ namespace osu.Game.Rulesets.Swing.UI
                         EdgeSmoothness = Vector2.One,
                         Colour = ColourInfo.GradientVertical(Color4.White, Color4.Black.Opacity(0))
                     },
-                    explosions = new JudgementContainer<HitExplosion>
+                    explosions = new ExplosionsContainer
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -119,6 +118,8 @@ namespace osu.Game.Rulesets.Swing.UI
                 Rotation = u.NewValue == PlayfieldOrientation.Mania ? -90 : 0;
                 judgementContainer.Rotation = u.NewValue == PlayfieldOrientation.Taiko ? 0 : 90;
             }, true);
+
+            AddInternal(explosionsPool = new DrawablePool<HitExplosion>(20, 100));
         }
 
         public override void Add(DrawableHitObject h)
@@ -152,7 +153,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
                     if (result.Type != HitResult.Miss)
-                        explosions.Add(explosionsPool.Get(doj => doj.Apply(result, judgedObject)));
+                        explosions.Add(explosionsPool.Get(doj => doj.Apply(result, judgedObject as DrawableSwingHitObject)));
                     break;
             }
 
@@ -361,26 +362,15 @@ namespace osu.Game.Rulesets.Swing.UI
             public void Add(Drawable h) => AddInternal(h);
         }
 
-        private partial class DrawableJudgementPool : DrawablePool<HitExplosion>
+        private partial class ExplosionsContainer : Container<HitExplosion>
         {
-            private readonly Action<HitExplosion> onLoaded;
-
-            public DrawableJudgementPool(Action<HitExplosion> onLoaded)
-                : base(20)
+            public override void Add(HitExplosion explosion)
             {
-                this.onLoaded = onLoaded;
-            }
+                // remove any existing judgements for the judged object.
+                // this can be the case when rewinding.
+                RemoveAll(c => c.JudgedObject == explosion.JudgedObject, false);
 
-            protected override HitExplosion CreateNewDrawable()
-            {
-                var judgement = base.CreateNewDrawable();
-
-                // just a placeholder to initialise the correct drawable hierarchy for this pool.
-                judgement.Apply(new JudgementResult(new HitObject(), new Judgement()) { Type = HitResult.Perfect }, null);
-
-                onLoaded?.Invoke(judgement);
-
-                return judgement;
+                base.Add(explosion);
             }
         }
     }

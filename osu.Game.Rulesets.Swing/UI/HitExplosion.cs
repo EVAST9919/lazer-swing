@@ -6,13 +6,16 @@ using osu.Framework.Graphics.Shapes;
 using osuTK;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Graphics;
-using osu.Game.Rulesets.Judgements;
 using osu.Framework.Allocation;
+using osu.Framework.Graphics.Pooling;
+using osu.Game.Rulesets.Judgements;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public partial class HitExplosion : DrawableJudgement
+    public partial class HitExplosion : PoolableDrawable
     {
+        private const float duration = 250;
+
         private ExplosiveLine topLine;
         private ExplosiveLine bottomLine;
 
@@ -28,11 +31,15 @@ namespace osu.Game.Rulesets.Swing.UI
             };
         }
 
-        protected override void PrepareForUse()
-        {
-            base.PrepareForUse();
+        private Color4 colour;
+        private JudgementResult result;
 
-            Color4 colour;
+        public DrawableSwingHitObject JudgedObject { get; private set; }
+
+        public void Apply(JudgementResult result, DrawableSwingHitObject judgetObject)
+        {
+            this.result = result;
+            JudgedObject = judgetObject;
 
             switch (JudgedObject)
             {
@@ -40,23 +47,31 @@ namespace osu.Game.Rulesets.Swing.UI
                     colour = Color4.BlueViolet;
                     break;
                 default:
-                    colour = ((DrawableSwingHitObject)JudgedObject).HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
+                    colour = judgetObject.HitObject.Type == HitType.Up ? Color4.DeepSkyBlue : Color4.Red;
                     break;
             }
+        }
+
+        protected override void PrepareForUse()
+        {
+            base.PrepareForUse();
+
+            ClearTransforms(true);
+
+            LifetimeStart = result.TimeAbsolute;
+            LifetimeEnd = result.TimeAbsolute + duration;
 
             topLine.AccentColour = colour;
             bottomLine.AccentColour = colour;
-        }
 
-        protected override void ApplyHitAnimations()
-        {
             topLine.ResetAnimation();
             bottomLine.ResetAnimation();
 
-            topLine.Animate();
-            bottomLine.Animate();
-
-            base.ApplyHitAnimations();
+            using(BeginAbsoluteSequence(result.TimeAbsolute))
+            {
+                topLine.Animate();
+                bottomLine.Animate();
+            }
         }
 
         protected partial class ExplosiveLine : CompositeDrawable, IHasAccentColour
@@ -105,16 +120,14 @@ namespace osu.Game.Rulesets.Swing.UI
 
             public void ResetAnimation()
             {
-                ClearTransforms();
-
                 Alpha = 1f;
                 Y = (rotated ? 1 : -1) * SwingHitObject.DEFAULT_SIZE / 2;
             }
 
             public void Animate()
             {
-                this.FadeOut(250, Easing.Out);
-                this.MoveToY((rotated ? 1 : -1) * (SwingHitObject.DEFAULT_SIZE / 2 + SwingPlayfield.FULL_SIZE.Y / 6), 250, Easing.Out);
+                this.FadeOut(duration, Easing.Out);
+                this.MoveToY((rotated ? 1 : -1) * (SwingHitObject.DEFAULT_SIZE / 2 + SwingPlayfield.FULL_SIZE.Y / 6), duration, Easing.Out);
             }
         }
     }
