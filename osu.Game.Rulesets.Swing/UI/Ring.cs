@@ -5,7 +5,7 @@ using osuTK.Graphics;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class Ring : CircularContainer
+    public partial class Ring : CircularContainer
     {
         public Ring(float thickness = 2)
         {

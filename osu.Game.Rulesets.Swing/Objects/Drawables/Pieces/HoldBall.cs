@@ -6,9 +6,9 @@ using osu.Game.Rulesets.Swing.UI;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 {
-    public class HoldBall : CompositeDrawable
+    public partial class HoldBall : CompositeDrawable
     {
-        private readonly static float size = SwingHitObject.DEFAULT_SIZE / 2;
+        private static readonly float size = SwingHitObject.DEFAULT_SIZE / 1.5f;
 
         public readonly BindableBool Tracking = new BindableBool();
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
@@ -21,7 +21,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             AddInternal(new Container
             {
                 Height = SwingPlayfield.FULL_SIZE.Y / 2,
-                Child = Ring = new Ring(3.5f)
+                Child = Ring = new Ring(4)
                 {
                     Anchor = Anchor.BottomCentre,
                     Origin = Anchor.Centre,
@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
             {
                 if (tracking.NewValue)
                 {
-                    Ring.ResizeTo(new Vector2(size * 1.5f), 75, Easing.Out);
+                    Ring.ResizeTo(new Vector2(size * 1.3f), 75, Easing.Out);
                 }
                 else
                 {
