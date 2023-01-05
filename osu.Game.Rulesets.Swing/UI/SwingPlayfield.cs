@@ -38,7 +38,7 @@ namespace osu.Game.Rulesets.Swing.UI
         private DrawablePool<HitExplosion> explosionsPool;
 
         private ExplosionsContainer explosions;
-        private JudgementContainer<DrawableSwingJudgement> judgementContainer;
+        private Container<DrawableSwingJudgement> judgementContainer;
         private ProxyContainer spinnerProxies;
         private ProxyContainer sliderProxies;
 
@@ -97,7 +97,7 @@ namespace osu.Game.Rulesets.Swing.UI
                     spinnerProxies = new ProxyContainer(),
                     sliderProxies = new ProxyContainer(),
                     HitObjectContainer,
-                    judgementContainer = new JudgementContainer<DrawableSwingJudgement>
+                    judgementContainer = new Container<DrawableSwingJudgement>
                     {
                         Anchor = Anchor.Centre,
                         Origin = Anchor.Centre,
@@ -166,6 +166,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldHead _:
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
+                    judgementContainer.Clear();
                     judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
                     break;
             }
