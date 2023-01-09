@@ -5,6 +5,7 @@ using osu.Framework.Graphics.Effects;
 using osu.Framework.Graphics.Shapes;
 using osu.Framework.Graphics.UserInterface;
 using osu.Framework.Input.Events;
+using osu.Framework.Utils;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
@@ -16,7 +17,7 @@ using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableSpinner : DrawableSwingHitObject<Spinner>
+    public partial class DrawableSpinner : DrawableSwingHitObject<Spinner>
     {
         private readonly double glowDuration;
 
@@ -76,7 +77,6 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     },
                     glow = new Glow
                     {
-                        Rotation = 90,
                         Alpha = 0
                     }
                 }
@@ -255,31 +255,28 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             }
         }
 
-        private class Glow : CompositeDrawable
+        private partial class Glow : CompositeDrawable
         {
-            private const float glow_size = 4;
+            private const float glow_size = 5;
 
             public Glow()
             {
-                Origin = Anchor.BottomCentre;
+                Origin = Anchor.Centre;
                 Anchor = Anchor.Centre;
-                Size = new Vector2(200 + (glow_size + 5) * 2, 100 + glow_size + 5);
-                InternalChild = new Container
+                Size = new Vector2(200 + Blur.KernelSize(glow_size) * 2f);
+                InternalChild = new CircularProgress
                 {
                     RelativeSizeAxes = Axes.Both,
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    Child = new BasicHalfRing
-                    {
-                        Anchor = Anchor.BottomCentre,
-                        Origin = Anchor.BottomCentre,
-                        Size = new Vector2(200, 100),
-                    }
+                    Anchor = Anchor.Centre,
+                    Origin = Anchor.Centre,
+                    Current = { Value = 0.5f },
+                    InnerRadius = 0.01f,
                 }.WithEffect(new GlowEffect
                 {
                     BlurSigma = new Vector2(glow_size),
-                    Strength = 20,
-                    Colour = Color4.BlueViolet
+                    Strength = 5,
+                    Colour = Color4.BlueViolet,
+                    PadExtent = true
                 });
             }
         }
