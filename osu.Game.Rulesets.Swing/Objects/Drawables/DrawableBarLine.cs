@@ -15,6 +15,9 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         private readonly Container topContainer;
         private readonly Container bottomContainer;
 
+        private static Vector2 major_size = new Vector2(3, 10);
+        private static Vector2 minor_size = new Vector2(2, 7);
+
         public DrawableBarLine(BarLine h)
             : base(h)
         {
@@ -23,7 +26,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             Origin = Anchor.Centre;
             Depth = -float.MaxValue;
 
-            var size = h.Major ? 12 : 7;
+            var size = h.Major ? major_size : minor_size;
 
             AddRangeInternal(new Drawable[]
             {
@@ -33,12 +36,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Origin = Anchor.TopCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 2,
                     Rotation = -90,
-                    Child = new EquilateralTriangle
+                    Child = new Circle
                     {
                         Anchor = Anchor.BottomCentre,
                         Origin = Anchor.BottomCentre,
-                        Size = new Vector2(size),
-                        EdgeSmoothness = Vector2.One
+                        Size = size
                     }
                 },
                 bottomContainer = new Container
@@ -47,13 +49,12 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     Origin = Anchor.BottomCentre,
                     Height = SwingPlayfield.FULL_SIZE.Y / 2 - SwingHitObject.DEFAULT_SIZE / 2 - 2,
                     Rotation = 90,
-                    Child = new EquilateralTriangle
+                    Child = new Circle
                     {
                         Anchor = Anchor.TopCentre,
                         Origin = Anchor.BottomCentre,
-                        Size = new Vector2(size),
-                        Rotation = -180,
-                        EdgeSmoothness = Vector2.One
+                        Size = size,
+                        Rotation = -180
                     }
                 }
             });
