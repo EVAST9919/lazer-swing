@@ -1,44 +1,42 @@
 ﻿using osu.Framework.Graphics;
 using osu.Framework.Graphics.Containers;
+using osu.Framework.Graphics.UserInterface;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class FoldableHalfRing : CompositeDrawable
+    public partial class FoldableHalfRing : CompositeDrawable
     {
-        private readonly BasicHalfRing ring;
+        private readonly CircularProgress progress;
 
         public FoldableHalfRing(RingState state)
         {
-            InternalChild = new Container
+            InternalChild = progress = new CircularProgress
             {
                 RelativeSizeAxes = Axes.Both,
-                Height = 0.5f,
                 Anchor = Anchor.Centre,
-                Origin = Anchor.BottomCentre,
-                Masking = true,
-                Child = ring = new BasicHalfRing
-                {
-                    Anchor = Anchor.BottomCentre,
-                    Origin = Anchor.BottomCentre,
-                    RelativeSizeAxes = Axes.Both,
-                    Rotation = state == RingState.Closed ? 180 : 0
-                }
+                Origin = Anchor.Centre,
+                Current = { Value = 0 },
+                Rotation = -90,
+                InnerRadius = 0.01f
             };
         }
 
-        public void Open(double time)
+        public void Open(double duration)
         {
-            ring.RotateTo(180).Then().RotateTo(360, time, Easing.Out);
+            progress.RotateTo(-90);
+            progress.FillTo(0.5f, duration, Easing.Out);
         }
 
-        public void Close(double time)
+        public void Close(double duration)
         {
-            ring.RotateTo(540, time, Easing.Out);
+            progress.RotateTo(90, duration, Easing.Out);
+            progress.FillTo(0f, duration, Easing.Out);
         }
 
-        public void CloseBack(double time)
+        public void CloseBack(double duration)
         {
-            ring.RotateTo(180, time, Easing.Out);
+            progress.RotateTo(-90, duration, Easing.Out);
+            progress.FillTo(0f, duration, Easing.Out);
         }
     }
 
