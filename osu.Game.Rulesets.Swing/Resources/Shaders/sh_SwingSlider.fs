@@ -6,12 +6,17 @@
 #include "sh_Utils.h"
 #include "sh_Masking.h"
 
-varying highp vec2 v_TexCoord;
+layout(location = 2) in highp vec2 v_TexCoord;
 
-uniform lowp vec4 accent;
-uniform mediump float headAngle;
-uniform mediump float tailAngle;
-uniform highp float texelSize;
+layout(std140, set = 0, binding = 0) uniform m_SliderBodyParameters
+{
+    vec4 accent;
+    float headAngle;
+    float tailAngle;
+    float texelSize;
+};
+
+layout(location = 0) out vec4 o_Colour;
 
 // values in pixels
 const float playfield_size = 512.0;
@@ -48,7 +53,7 @@ void main(void)
 
     if (textureDepth > 1.0)
     {
-        gl_FragColor = vec4(0.0);
+        o_Colour = vec4(0.0);
         return;
     }
 
@@ -79,5 +84,5 @@ void main(void)
         col = accent;
     }
     
-    gl_FragColor = getRoundedColor(col, v_TexCoord);
+    o_Colour = getRoundedColor(col, v_TexCoord);
 }

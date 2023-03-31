@@ -1,9 +1,11 @@
 ﻿using System;
+using System.Runtime.InteropServices;
 using osu.Framework.Allocation;
 using osu.Framework.Graphics;
 using osu.Framework.Graphics.Primitives;
 using osu.Framework.Graphics.Rendering;
 using osu.Framework.Graphics.Shaders;
+using osu.Framework.Graphics.Shaders.Types;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
@@ -100,6 +102,8 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 texelSize = 1.5f / drawSize.X;
             }
 
+            private IUniformBuffer<SliderBodyParameters> parametersBuffer;
+
             public override void Draw(IRenderer renderer)
             {
                 if (tailAngle > headAngle)
@@ -109,10 +113,15 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
                 shader.Bind();
 
-                shader.GetUniform<float>("headAngle").UpdateValue(ref headAngle);
-                shader.GetUniform<float>("tailAngle").UpdateValue(ref tailAngle);
-                shader.GetUniform<float>("texelSize").UpdateValue(ref texelSize);
-                shader.GetUniform<Vector4>("accent").UpdateValue(ref accent);
+                parametersBuffer ??= renderer.CreateUniformBuffer<SliderBodyParameters>();
+                parametersBuffer.Data = new SliderBodyParameters
+                {
+                    Accent = accent,
+                    HeadAngle = headAngle,
+                    TailAngle = tailAngle,
+                    TexelSize = texelSize
+                };
+                shader.BindUniformBlock("m_SliderBodyParameters", parametersBuffer);
 
                 Quad quad = new Quad(
                     Vector2Extensions.Transform(Vector2.Zero, DrawInfo.Matrix),
@@ -124,6 +133,22 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
                 renderer.DrawQuad(renderer.WhitePixel, quad, DrawColourInfo.Colour);
 
                 shader.Unbind();
+            }
+
+            protected override void Dispose(bool isDisposing)
+            {
+                base.Dispose(isDisposing);
+                parametersBuffer?.Dispose();
+            }
+
+            [StructLayout(LayoutKind.Sequential, Pack = 1)]
+            private record struct SliderBodyParameters
+            {
+                public UniformVector4 Accent;
+                public UniformFloat HeadAngle;
+                public UniformFloat TailAngle;
+                public UniformFloat TexelSize;
+                private readonly UniformPadding4 pad;
             }
         }
     }
