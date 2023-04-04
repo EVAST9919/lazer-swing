@@ -68,7 +68,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
         [BackgroundDependencyLoader]
         private void load(ShaderManager shaders)
         {
-            shader = shaders.Load("RulesetVertex", "SwingSlider");
+            shader = shaders.Load(VertexShaderDescriptor.TEXTURE_2, "SwingSlider");
         }
 
         protected override DrawNode CreateDrawNode() => new PathSliderBodyDrawNode(this);
