@@ -9,7 +9,6 @@ using osu.Game.Rulesets.UI;
 using System;
 using osu.Framework.Graphics.Textures;
 using osu.Framework.Input.Bindings;
-using osu.Game.Rulesets.Swing.Scoring;
 using osu.Game.Rulesets.Swing.Difficulty;
 using osu.Game.Rulesets.Swing.UI;
 using osu.Game.Rulesets.Swing.Beatmaps;
@@ -31,11 +30,9 @@ using osu.Framework.Platform;
 
 namespace osu.Game.Rulesets.Swing
 {
-    public class SwingRuleset : Ruleset
+    public partial class SwingRuleset : Ruleset
     {
         public override DrawableRuleset CreateDrawableRulesetWith(IBeatmap beatmap, IReadOnlyList<Mod> mods = null) => new DrawableSwingRuleset(this, beatmap, mods);
-
-        public override ScoreProcessor CreateScoreProcessor() => new SwingScoreProcessor(this);
 
         public override IBeatmapConverter CreateBeatmapConverter(IBeatmap beatmap) => new SwingBeatmapConverter(beatmap, this);
 
@@ -113,24 +110,18 @@ namespace osu.Game.Rulesets.Swing
             HitResult.Good
         };
 
-        public override StatisticRow[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
+        public override StatisticItem[] CreateStatisticsForScore(ScoreInfo score, IBeatmap playableBeatmap) => new[]
         {
-            new StatisticRow
+            new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap || e.HitObject is HoldHead).ToList())
             {
-                Columns = new[]
-                {
-                    new StatisticItem("Timing Distribution", () => new HitEventTimingDistributionGraph(score.HitEvents.Where(e => e.HitObject is Tap || e.HitObject is HoldHead).ToList())
-                    {
-                        RelativeSizeAxes = Axes.X,
-                        Height = 250
-                    }, true)
-                }
-            }
+                RelativeSizeAxes = Axes.X,
+                Height = 250
+            }, true)
         };
 
         public override DifficultyCalculator CreateDifficultyCalculator(IWorkingBeatmap beatmap) => new SwingDifficultyCalculator(RulesetInfo, beatmap);
 
-        private class SwingIcon : Sprite
+        private partial class SwingIcon : Sprite
         {
             private readonly SwingRuleset ruleset;
 

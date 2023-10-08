@@ -65,7 +65,7 @@ namespace osu.Game.Rulesets.Swing.Objects
         {
             base.CreateNestedHitObjects(cancellationToken);
 
-            foreach (var e in SliderEventGenerator.Generate(StartTime, SpanDuration, Velocity, TickDistance, Path.Distance, Path.SpanCount(), null, cancellationToken))
+            foreach (var e in SliderEventGenerator.Generate(StartTime, SpanDuration, Velocity, TickDistance, Path.Distance, Path.SpanCount(), cancellationToken))
             {
                 switch (e.Type)
                 {
