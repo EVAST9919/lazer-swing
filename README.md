@@ -8,12 +8,13 @@ Original skin files can be found here: https://github.com/EVAST9919/lazer-swing/
 
 # Links
 Support:
+
 https://www.patreon.com/evast
+
+https://boosty.to/evast
 
 Follow me:
 
-https://discord.gg/HQgy3Ey
-
-https://twitter.com/ev4st
+https://discord.gg/d2ZCzC42yH
 
 https://youtube.com/c/evast_osu
