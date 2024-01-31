@@ -2,12 +2,11 @@
 using osu.Framework.Bindables;
 using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Scoring;
-using System;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableHoldHead : DrawableSwingHitObject<HoldHead>
+    public partial class DrawableHoldHead : DrawableSwingHitObject<HoldHead>
     {
         protected readonly Bindable<HitType> Type = new Bindable<HitType>();
 
@@ -47,6 +46,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     ApplyResult(r => r.Type = HitResult.Miss);
                 }
+
                 return;
             }
 

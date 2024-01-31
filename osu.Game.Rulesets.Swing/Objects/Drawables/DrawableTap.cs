@@ -12,12 +12,11 @@ using osu.Game.Rulesets.Swing.Objects.Drawables.Pieces;
 using osu.Game.Rulesets.Swing.UI;
 using osuTK;
 using osuTK.Graphics;
-using System;
 using System.Linq;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableTap : DrawableSwingHitObject<Tap>
+    public partial class DrawableTap : DrawableSwingHitObject<Tap>
     {
         protected override bool RequiresTimedUpdate => true;
 
@@ -126,6 +125,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 {
                     ApplyResult(r => r.Type = HitResult.Miss);
                 }
+
                 return;
             }
 

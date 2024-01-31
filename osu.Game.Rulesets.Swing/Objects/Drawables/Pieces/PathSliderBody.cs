@@ -104,7 +104,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables.Pieces
 
             private IUniformBuffer<SliderBodyParameters> parametersBuffer;
 
-            public override void Draw(IRenderer renderer)
+            protected override void Draw(IRenderer renderer)
             {
                 if (tailAngle > headAngle)
                     return;
