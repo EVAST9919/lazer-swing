@@ -129,7 +129,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 if (Auto)
                 {
-                    filler.FillTo(0.5f, HitObject.Duration * 0.9);
+                    filler.ProgressTo(0.5f, HitObject.Duration * 0.9);
                     progressLine.RotateTo(0.5f * 360, HitObject.Duration * 0.9);
                 }
             }
@@ -145,7 +145,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                         tick.TriggerResult(HitResult.IgnoreHit);
 
                     completion = 0.5f;
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                    ApplyMaxResult();
                 }
 
                 return;
@@ -170,11 +170,11 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
 
                 completion = (float)numHits / HitObject.RequiredHits / 2;
 
-                filler.FillTo(completion, 250, Easing.OutQuint);
+                filler.ProgressTo(completion, 250, Easing.OutQuint);
                 progressLine.RotateTo(completion * 360, 250, Easing.OutQuint);
 
                 if (numHits == HitObject.RequiredHits)
-                    ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                    ApplyMaxResult();
             }
             else
             {
@@ -194,7 +194,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     tick.TriggerResult(HitResult.IgnoreMiss);
                 }
 
-                ApplyResult(r => r.Type = numHits > HitObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
+                ApplyResult(numHits > HitObject.RequiredHits / 2 ? HitResult.Good : HitResult.Miss);
             }
         }
 
@@ -234,7 +234,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 case ArmedState.Miss:
                     ring.CloseBack(transition_duration);
-                    filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                    filler.ProgressTo(completion).Then().ProgressTo(0, transition_duration, Easing.Out);
                     progressLine.RotateTo(completion * 360).Then().RotateTo(0, transition_duration, Easing.Out);
                     glow.FadeOut(glowDuration, Easing.OutQuint);
                     this.FadeColour(Color4.Red, transition_duration, Easing.OutQuint);
@@ -246,7 +246,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     ring.Close(transition_duration);
                     glow.FadeOut(glowDuration, Easing.OutQuint);
                     filler.FlashColour(Color4.White, transition_duration, Easing.Out);
-                    filler.FillTo(completion).Then().FillTo(0, transition_duration, Easing.Out);
+                    filler.ProgressTo(completion).Then().ProgressTo(0, transition_duration, Easing.Out);
                     progressLine.RotateTo(completion * 360).Then().RotateTo(180, transition_duration, Easing.Out);
                     filler.RotateTo(180, transition_duration, Easing.Out);
                     this.Delay(transition_duration).FadeOut(100).Expire(true);
@@ -269,7 +269,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     RelativeSizeAxes = Axes.Both,
                     Anchor = Anchor.Centre,
                     Origin = Anchor.Centre,
-                    Current = { Value = 0.5f },
+                    Progress = 0.5f,
                     InnerRadius = 0.01f,
                 }.WithEffect(new GlowEffect
                 {

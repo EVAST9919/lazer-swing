@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Swing.UI
                 RelativeSizeAxes = Axes.Both,
                 Anchor = Anchor.Centre,
                 Origin = Anchor.Centre,
-                Current = { Value = 0 },
+                Progress = 0,
                 Rotation = -90,
                 InnerRadius = 0.01f
             };
@@ -24,19 +24,19 @@ namespace osu.Game.Rulesets.Swing.UI
         public void Open(double duration)
         {
             progress.RotateTo(-90);
-            progress.FillTo(0.5f, duration, Easing.Out);
+            progress.ProgressTo(0.5f, duration, Easing.Out);
         }
 
         public void Close(double duration)
         {
             progress.RotateTo(90, duration, Easing.Out);
-            progress.FillTo(0f, duration, Easing.Out);
+            progress.ProgressTo(0f, duration, Easing.Out);
         }
 
         public void CloseBack(double duration)
         {
             progress.RotateTo(-90, duration, Easing.Out);
-            progress.FillTo(0f, duration, Easing.Out);
+            progress.ProgressTo(0f, duration, Easing.Out);
         }
     }
 
