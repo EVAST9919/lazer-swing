@@ -167,7 +167,11 @@ namespace osu.Game.Rulesets.Swing.UI
                 case DrawableHoldTail _:
                 case DrawableSpinner _:
                     judgementContainer.Clear();
-                    judgementContainer.Add(new DrawableSwingJudgement(result, judgedObject));
+
+                    var j = new DrawableSwingJudgement();
+                    j.Apply(result, judgedObject);
+
+                    judgementContainer.Add(j);
                     break;
             }
         }

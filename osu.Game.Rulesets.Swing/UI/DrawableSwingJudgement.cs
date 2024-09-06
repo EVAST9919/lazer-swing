@@ -1,25 +1,32 @@
 ﻿using osu.Framework.Allocation;
 using osu.Game.Graphics;
 using osu.Game.Rulesets.Judgements;
-using osu.Game.Rulesets.Objects.Drawables;
 using osu.Game.Rulesets.Scoring;
 using osu.Framework.Graphics;
+using osu.Game.Rulesets.Objects.Drawables;
 
 namespace osu.Game.Rulesets.Swing.UI
 {
-    public class DrawableSwingJudgement : DrawableJudgement
+    public partial class DrawableSwingJudgement : DrawableJudgement
     {
-        public DrawableSwingJudgement(JudgementResult result, DrawableHitObject judgedObject)
-            : base(result, judgedObject)
+        [Resolved]
+        private OsuColour colours { get; set; }
+
+        [BackgroundDependencyLoader]
+        private void load()
         {
             Anchor = Anchor.Centre;
             Origin = Anchor.Centre;
         }
 
-        [BackgroundDependencyLoader]
-        private void load(OsuColour colours)
+        public override void Apply(JudgementResult result, DrawableHitObject judgedObject)
         {
-            switch (Result.Type)
+            base.Apply(result, judgedObject);
+
+            if (JudgementBody == null)
+                return;
+
+            switch (result.Type)
             {
                 case HitResult.Good:
                     JudgementBody.Colour = colours.GreenLight;
@@ -33,7 +40,7 @@ namespace osu.Game.Rulesets.Swing.UI
 
         protected override Drawable CreateDefaultJudgement(HitResult result) => new DefaultSwingJudgementPiece(result);
 
-        private class DefaultSwingJudgementPiece : DefaultJudgementPiece
+        private partial class DefaultSwingJudgementPiece : DefaultJudgementPiece
         {
             public DefaultSwingJudgementPiece(HitResult result)
                 : base(result)
