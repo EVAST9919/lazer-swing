@@ -8,7 +8,7 @@ using System;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints
 {
-    public class SpinnerPlacementBlueprint : PlacementBlueprint
+    public class SpinnerPlacementBlueprint : HitObjectPlacementBlueprint
     {
         public new Spinner HitObject => (Spinner)base.HitObject;
 

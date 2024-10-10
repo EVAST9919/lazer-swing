@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Swing.Objects;
 
 namespace osu.Game.Rulesets.Swing.Edit
 {
-    public class TapCompositionTool : HitObjectCompositionTool
+    public class TapCompositionTool : CompositionTool
     {
         public TapCompositionTool()
             : base(nameof(Tap))

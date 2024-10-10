@@ -5,7 +5,7 @@ using osu.Game.Rulesets.Swing.Objects;
 
 namespace osu.Game.Rulesets.Swing.Edit
 {
-    public class SpinnerCompositionTool : HitObjectCompositionTool
+    public class SpinnerCompositionTool : CompositionTool
     {
         public SpinnerCompositionTool()
             : base(nameof(Spinner))

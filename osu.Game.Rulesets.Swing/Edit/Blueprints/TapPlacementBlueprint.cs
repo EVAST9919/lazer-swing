@@ -8,7 +8,7 @@ using osuTK.Input;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints
 {
-    public class TapPlacementBlueprint : PlacementBlueprint
+    public class TapPlacementBlueprint : HitObjectPlacementBlueprint
     {
         public new Tap HitObject => (Tap)base.HitObject;
 
