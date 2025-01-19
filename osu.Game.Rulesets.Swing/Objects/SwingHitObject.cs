@@ -34,7 +34,15 @@ namespace osu.Game.Rulesets.Swing.Objects
             set => TypeBindable.Value = value;
         }
 
-        public Vector2 Position => new Vector2(X, Y);
+        public Vector2 Position
+        {
+            get => new Vector2(X, Y);
+            set
+            {
+                X = value.X;
+                Y = value.Y;
+            }
+        }
 
         public float X { get; set; }
 
