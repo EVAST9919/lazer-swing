@@ -1,12 +1,15 @@
-﻿using osu.Game.Rulesets.Edit;
+﻿using System.Collections.Generic;
+using osu.Framework.Input.Events;
+using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Objects;
 using osu.Game.Rulesets.Swing.Edit.Blueprints;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Screens.Edit.Compose.Components;
+using osuTK;
 
 namespace osu.Game.Rulesets.Swing.Edit
 {
-    public class SwingBlueprintContainer : ComposeBlueprintContainer
+    public partial class SwingBlueprintContainer : ComposeBlueprintContainer
     {
         public SwingBlueprintContainer(SwingHitObjectComposer composer)
             : base(composer)
@@ -14,6 +17,11 @@ namespace osu.Game.Rulesets.Swing.Edit
         }
 
         protected override SelectionHandler<HitObject> CreateSelectionHandler() => new SwingSelectionHandler();
+
+        protected override bool TryMoveBlueprints(DragEvent e, IList<(SelectionBlueprint<HitObject> blueprint, Vector2[] originalSnapPositions)> blueprints)
+        {
+            return true;
+        }
 
         public override HitObjectSelectionBlueprint CreateHitObjectBlueprintFor(HitObject hitObject)
         {

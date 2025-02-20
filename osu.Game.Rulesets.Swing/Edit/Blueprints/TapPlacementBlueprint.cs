@@ -4,11 +4,12 @@ using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces;
 using osu.Game.Rulesets.Swing.Objects;
 using osu.Game.Rulesets.Swing.UI;
+using osuTK;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints
 {
-    public class TapPlacementBlueprint : HitObjectPlacementBlueprint
+    public partial class TapPlacementBlueprint : HitObjectPlacementBlueprint
     {
         public new Tap HitObject => (Tap)base.HitObject;
 
@@ -30,14 +31,14 @@ namespace osu.Game.Rulesets.Swing.Edit.Blueprints
             piece.UpdateFrom(tap);
         }
 
-        public override void UpdateTimeAndPosition(SnapResult result)
+        /*public override void UpdateTimeAndPosition(SnapResult result)
         {
             base.UpdateTimeAndPosition(result);
 
             var localPosition = ToLocalSpace(result.ScreenSpacePosition);
             tap.Type = localPosition.Y > SwingPlayfield.FULL_SIZE.Y / 2 ? HitType.Down : HitType.Up;
             tap.StartTime = beatSnapProvider.SnapTime(EditorClock.CurrentTime + localPosition.X * 1.5f);
-        }
+        }*/
 
         protected override bool OnMouseDown(MouseDownEvent e)
         {
