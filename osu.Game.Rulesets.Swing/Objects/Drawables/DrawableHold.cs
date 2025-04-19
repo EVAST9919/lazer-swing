@@ -156,7 +156,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                     break;
             }
 
-            ApplyResult(r => r.Type = r.Judgement.MaxResult);
+            ApplyResult((r, u) => r.Type = r.Judgement.MaxResult);
         }
 
         protected override void UpdateHitStateTransforms(ArmedState state)

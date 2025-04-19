@@ -3,7 +3,7 @@ using osu.Game.Rulesets.Scoring;
 
 namespace osu.Game.Rulesets.Swing.Objects.Drawables
 {
-    public class DrawableSpinnerTick : DrawableSwingHitObject<SpinnerTick>
+    public partial class DrawableSpinnerTick : DrawableSwingHitObject<SpinnerTick>
     {
         public override bool DisplayResult => false;
 
@@ -15,7 +15,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         public void TriggerResult(HitResult type)
         {
             HitObject.StartTime = Time.Current;
-            ApplyResult(r => r.Type = type);
+            ApplyResult((r, u) => r.Type = type);
         }
 
         protected override void CheckForResult(bool userTriggered, double timeOffset)

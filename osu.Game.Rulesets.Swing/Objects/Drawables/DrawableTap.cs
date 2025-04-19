@@ -115,7 +115,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
         {
             if (Auto && timeOffset >= 0)
             {
-                ApplyResult(r => r.Type = r.Judgement.MaxResult);
+                ApplyResult((r, u) => r.Type = r.Judgement.MaxResult);
                 return;
             }
 
@@ -123,7 +123,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
             {
                 if (!HitObject.HitWindows.CanBeHit(timeOffset))
                 {
-                    ApplyResult(r => r.Type = HitResult.Miss);
+                    ApplyResult((r, u) => r.Type = HitResult.Miss);
                 }
 
                 return;
@@ -134,7 +134,7 @@ namespace osu.Game.Rulesets.Swing.Objects.Drawables
                 return;
 
             if (validActionPressed)
-                ApplyResult(r => r.Type = result);
+                ApplyResult((r, u) => r.Type = result);
         }
 
         public override bool OnPressed(KeyBindingPressEvent<SwingAction> e)

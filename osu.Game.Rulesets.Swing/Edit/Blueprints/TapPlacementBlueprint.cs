@@ -3,8 +3,6 @@ using osu.Framework.Input.Events;
 using osu.Game.Rulesets.Edit;
 using osu.Game.Rulesets.Swing.Edit.Blueprints.Pieces;
 using osu.Game.Rulesets.Swing.Objects;
-using osu.Game.Rulesets.Swing.UI;
-using osuTK;
 using osuTK.Input;
 
 namespace osu.Game.Rulesets.Swing.Edit.Blueprints

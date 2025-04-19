@@ -2,6 +2,7 @@
 using osu.Game.Configuration;
 using osu.Game.Rulesets.Mods;
 using System.Linq;
+using osu.Framework.Localisation;
 
 namespace osu.Game.Rulesets.Swing.Mods
 {
@@ -19,7 +20,7 @@ namespace osu.Game.Rulesets.Swing.Mods
             ReadCurrentFromDifficulty = diff => diff.ApproachRate
         };
 
-        public override string SettingDescription
+        public override LocalisableString Description
         {
             get
             {
@@ -27,9 +28,9 @@ namespace osu.Game.Rulesets.Swing.Mods
 
                 return string.Join(", ", new[]
                 {
-                    base.SettingDescription,
+                    base.Description,
                     approachRate
-                }.Where(s => !string.IsNullOrEmpty(s)));
+                }.Where(s => !string.IsNullOrEmpty(s.ToString())));
             }
         }
 
