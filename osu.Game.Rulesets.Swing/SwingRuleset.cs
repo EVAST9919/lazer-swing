@@ -104,7 +104,7 @@ namespace osu.Game.Rulesets.Swing
 
         public override HitObjectComposer CreateHitObjectComposer() => new SwingHitObjectComposer(this);
 
-        protected override IEnumerable<HitResult> GetValidHitResults() => new[]
+        public override IEnumerable<HitResult> GetValidHitResults() => new[]
         {
             HitResult.Great,
             HitResult.Good
